@@ -46,6 +46,7 @@
                                     title="Suspend {{ $user->name }}?"
                                     description="The user will be immediately logged out and blocked from signing in."
                                     confirm="Suspend"
+                                    method="PATCH"
                                     action="{{ route('admin.users.suspend', $user) }}"
                                 >
                                     <x-slot:trigger>

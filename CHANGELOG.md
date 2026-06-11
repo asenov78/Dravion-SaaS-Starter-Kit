@@ -2,6 +2,15 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.1.0] — 2026-06-11
+### Fixed
+- Admin layout: complete redesign — Linear/DataNest style sidebar, proper active states, user info at bottom, collapse button
+- Settings page: settings table migration was missing (now runs on deploy)
+- Alert Dialog: hardcoded DELETE method — now accepts `method` prop (suspend uses PATCH)
+- `$errors` null guard in create/edit views (safe outside web middleware)
+- Dashboard: removed Tailwind grid classes, pure inline styles for consistency
+- All views: unified inline-style approach, no mixed Tailwind/inline
+
 ## [1.0.0] — 2026-06-11
 ### Added
 - All views refactored to use `<x-ui.*>` components (login, register, dashboard, users/index, users/create, users/edit)

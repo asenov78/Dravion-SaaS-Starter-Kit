@@ -7,7 +7,7 @@
     <x-ui.alert variant="success" class="mb-4">{{ session('success') }}</x-ui.alert>
     @endif
 
-    @if($errors->any())
+    @if(!empty($errors) && $errors->any())
     <x-ui.alert class="mb-4">{{ $errors->first() }}</x-ui.alert>
     @endif
 

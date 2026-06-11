@@ -4,6 +4,7 @@
     'confirm'     => 'Confirm',
     'cancel'      => 'Cancel',
     'action'      => null,
+    'method'      => 'DELETE',
     'variant'     => 'danger',
 ])
 
@@ -39,7 +40,7 @@
                 </button>
                 @if($action)
                 <form method="POST" action="{{ $action }}" style="display:inline;">
-                    @csrf @method('DELETE')
+                    @csrf @method($method)
                     <button type="submit"
                         style="padding:7px 14px; background:#7f1d1d20; border:1px solid #7f1d1d50; border-radius:7px; color:#f87171; font-size:13px; cursor:pointer; font-family:Inter,system-ui;">
                         {{ $confirm }}

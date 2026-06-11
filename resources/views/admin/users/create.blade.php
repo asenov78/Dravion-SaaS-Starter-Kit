@@ -3,7 +3,7 @@
 <div style="max-width:560px;">
     <x-ui.breadcrumb :items="[['label'=>'Users','href'=>route('admin.users.index')],['label'=>'New User']]" style="margin-bottom:20px;" />
 
-    @if($errors->any())
+    @if(!empty($errors) && $errors->any())
     <x-ui.alert class="mb-4">{{ $errors->first() }}</x-ui.alert>
     @endif
 
