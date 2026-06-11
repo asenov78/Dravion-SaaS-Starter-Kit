@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.0.0] — 2026-06-11
+### Added
+- All views refactored to use `<x-ui.*>` components (login, register, dashboard, users/index, users/create, users/edit)
+- Settings page: key-value DB store, `Setting` model with `get/set/setMany` helpers
+- Activity Log page: spatie/activitylog integration, paginated table with causer avatars and tooltips
+- `SettingsController`, `ActivityController`
+- User model logs activity on name/email/status changes via `LogsActivity` trait
+- Button component: added `tag` + `href` props for link rendering
+- 80 tests green
+
 ## [0.9.0] — 2026-06-11
 ### Added
 - Batch E components: Menubar, Navigation Menu, Context Menu

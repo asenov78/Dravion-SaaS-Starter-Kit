@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\InstallController;
 use App\Http\Controllers\Auth\LoginController;
@@ -38,6 +40,7 @@ Route::middleware(['auth', 'role:admin|manager'])->prefix('admin')->name('admin.
     Route::patch('/users/{user}/suspend',  [UserController::class, 'suspend'])->name('users.suspend');
     Route::patch('/users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
 
-    Route::get('/settings', fn () => view('admin.settings'))->name('settings');
-    Route::get('/activity',  fn () => view('admin.activity'))->name('activity');
+    Route::get('/settings',  [SettingsController::class, 'index'])->name('settings');
+    Route::put('/settings',  [SettingsController::class, 'update'])->name('settings.update');
+    Route::get('/activity',  [ActivityController::class, 'index'])->name('activity');
 });
