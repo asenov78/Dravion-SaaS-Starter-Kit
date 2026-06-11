@@ -226,11 +226,11 @@
 
         {{-- Status pills --}}
         <div style="display:flex; align-items:center; gap:8px; flex:1; justify-content:center;">
-            <div style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:4px 10px;">
+            <div style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:4px 10px;">
                 <span style="width:6px; height:6px; border-radius:50%; background:#818cf8; flex-shrink:0; box-shadow:0 0 6px #818cf8aa;"></span>
                 <span style="font-size:11.5px; color:#8a9aba; font-weight:500;">Live data</span>
             </div>
-            <div style="display:flex; align-items:center; gap:6px; background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.18); border-radius:20px; padding:4px 10px;">
+            <div style="display:flex; align-items:center; gap:6px; background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.18); border-radius:8px; padding:4px 10px;">
                 <span style="width:6px; height:6px; border-radius:50%; background:#4ade80; flex-shrink:0; box-shadow:0 0 6px #4ade8088;"></span>
                 <span style="font-size:11.5px; color:#4ade80; font-weight:500;">System healthy</span>
             </div>
