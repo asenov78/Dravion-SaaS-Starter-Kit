@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [0.5.0] — 2026-06-11
+### Added
+- Batch A UI components: Separator, Avatar, Skeleton, Spinner, Progress, Breadcrumb
+- Batch A form components: Textarea, Checkbox, Select, Radio Group, Table, Kbd
+- 18 new unit tests — 52 total, all green
+
 ## [0.4.0] — 2026-06-11
 ### Added
 - Blade UI component library (`<x-ui.*>`): button, badge, card, input, alert, label, stat

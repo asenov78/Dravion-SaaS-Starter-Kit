@@ -96,4 +96,155 @@ class UiComponentsTest extends TestCase
         $view = $this->blade('<x-ui.alert variant="success">Done!</x-ui.alert>');
         $view->assertSee('Done!');
     }
+
+    // --- Separator ---
+
+    public function test_separator_renders(): void
+    {
+        $view = $this->blade('<x-ui.separator />');
+        $view->assertSee('hr', false);
+    }
+
+    public function test_separator_vertical(): void
+    {
+        $view = $this->blade('<x-ui.separator orientation="vertical" />');
+        $view->assertSee('vertical');
+    }
+
+    // --- Avatar ---
+
+    public function test_avatar_renders_initials(): void
+    {
+        $view = $this->blade('<x-ui.avatar name="John Doe" />');
+        $view->assertSee('JD');
+    }
+
+    public function test_avatar_renders_image_when_src_provided(): void
+    {
+        $view = $this->blade('<x-ui.avatar name="Jane" src="/img/jane.jpg" />');
+        $view->assertSee('/img/jane.jpg', false);
+    }
+
+    // --- Skeleton ---
+
+    public function test_skeleton_renders(): void
+    {
+        $view = $this->blade('<x-ui.skeleton />');
+        $view->assertSee('skeleton');
+    }
+
+    public function test_skeleton_accepts_class(): void
+    {
+        $view = $this->blade('<x-ui.skeleton class="h-4 w-32" />');
+        $view->assertSee('h-4');
+    }
+
+    // --- Spinner ---
+
+    public function test_spinner_renders(): void
+    {
+        $view = $this->blade('<x-ui.spinner />');
+        $view->assertSee('svg', false);
+    }
+
+    // --- Progress ---
+
+    public function test_progress_renders_value(): void
+    {
+        $view = $this->blade('<x-ui.progress :value="60" />');
+        $view->assertSee('60%', false);
+    }
+
+    public function test_progress_clamps_to_100(): void
+    {
+        $view = $this->blade('<x-ui.progress :value="120" />');
+        $view->assertSee('100%', false);
+    }
+
+    // --- Breadcrumb ---
+
+    public function test_breadcrumb_renders_items(): void
+    {
+        $view = $this->blade('<x-ui.breadcrumb :items="$items" />', [
+            'items' => [['label' => 'Home', 'href' => '/'], ['label' => 'Users']],
+        ]);
+        $view->assertSee('Home');
+        $view->assertSee('Users');
+    }
+
+    // --- Textarea ---
+
+    public function test_textarea_renders_with_name(): void
+    {
+        $view = $this->blade('<x-ui.textarea name="bio" />');
+        $view->assertSee('name="bio"', false);
+        $view->assertSee('textarea', false);
+    }
+
+    public function test_textarea_shows_error(): void
+    {
+        $view = $this->blade('<x-ui.textarea name="bio" error="Required" />');
+        $view->assertSee('Required');
+    }
+
+    // --- Checkbox ---
+
+    public function test_checkbox_renders(): void
+    {
+        $view = $this->blade('<x-ui.checkbox name="agree" />');
+        $view->assertSee('type="checkbox"', false);
+        $view->assertSee('name="agree"', false);
+    }
+
+    public function test_checkbox_renders_label(): void
+    {
+        $view = $this->blade('<x-ui.checkbox name="agree" label="I agree" />');
+        $view->assertSee('I agree');
+    }
+
+    // --- Select ---
+
+    public function test_select_renders_options(): void
+    {
+        $view = $this->blade('<x-ui.select name="role" :options="$opts" />', [
+            'opts' => ['admin' => 'Admin', 'user' => 'User'],
+        ]);
+        $view->assertSee('Admin');
+        $view->assertSee('User');
+        $view->assertSee('name="role"', false);
+    }
+
+    // --- Radio Group ---
+
+    public function test_radio_group_renders_options(): void
+    {
+        $view = $this->blade('<x-ui.radio-group name="size" :options="$opts" />', [
+            'opts' => ['sm' => 'Small', 'lg' => 'Large'],
+        ]);
+        $view->assertSee('Small');
+        $view->assertSee('Large');
+        $view->assertSee('type="radio"', false);
+    }
+
+    // --- Table ---
+
+    public function test_table_renders_headers_and_rows(): void
+    {
+        $view = $this->blade('<x-ui.table :headers="$h" :rows="$r" />', [
+            'h' => ['Name', 'Email'],
+            'r' => [['Alice', 'alice@test.com']],
+        ]);
+        $view->assertSee('Name');
+        $view->assertSee('Alice');
+        $view->assertSee('alice@test.com');
+    }
+
+    // --- Kbd ---
+
+    public function test_kbd_renders(): void
+    {
+        $view = $this->blade('<x-ui.kbd>Ctrl+K</x-ui.kbd>');
+        $view->assertSee('Ctrl+K');
+        $view->assertSee('kbd', false);
+    }
 }
