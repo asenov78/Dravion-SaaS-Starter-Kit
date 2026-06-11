@@ -1,11 +1,21 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\InstallController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'));
+
+// Installer — disabled after install.lock exists
+Route::middleware(\App\Http\Middleware\InstallGuard::class)
+    ->prefix('install')->name('install.')->group(function () {
+        Route::get('/', [InstallController::class, 'index'])->name('index');
+        Route::get('/{step}', [InstallController::class, 'show'])->name('step');
+        Route::post('/{step}', [InstallController::class, 'process'])->name('process');
+    });
 
 // Auth
 Route::middleware('guest')->group(function () {
@@ -23,4 +33,8 @@ Route::middleware('auth')->get('/dashboard', fn () => view('dashboard'))->name('
 // Admin
 Route::middleware(['auth', 'role:admin|manager'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('users', UserController::class)->except(['show', 'destroy']);
+    Route::patch('/users/{user}/suspend',  [UserController::class, 'suspend'])->name('users.suspend');
+    Route::patch('/users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
 });
