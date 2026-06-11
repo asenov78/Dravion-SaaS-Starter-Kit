@@ -104,14 +104,21 @@
         @php
         $sections = [
             'GENERAL' => [
-                ['route' => 'admin.dashboard', 'label' => 'Dashboard', 'icon' => 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10'],
+                ['route' => 'admin.dashboard',   'label' => 'Dashboard',    'icon' => 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',   'badge' => null, 'dot' => false, 'disabled' => false],
+                ['route' => null,                 'label' => 'Analytics',    'icon' => 'M18 20V10 M12 20V4 M6 20v-6',                                        'badge' => 'BETA','dot' => false, 'disabled' => true],
+                ['route' => null,                 'label' => 'Billing',      'icon' => 'M3 10h18 M3 6h18 M3 14h18 M3 18h18 M3 2h18v20H3z M8 2v20',          'badge' => null, 'dot' => false, 'disabled' => true],
+                ['route' => null,                 'label' => 'Messages',     'icon' => 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',    'badge' => null, 'dot' => true,  'disabled' => true],
             ],
             'TOOLS' => [
-                ['route' => 'admin.users.index', 'label' => 'Users', 'icon' => 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75'],
-                ['route' => 'admin.activity',    'label' => 'Activity', 'icon' => 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8'],
+                ['route' => 'admin.users.index',  'label' => 'Users',        'icon' => 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75', 'badge' => null, 'dot' => false, 'disabled' => false],
+                ['route' => 'admin.activity',     'label' => 'Activity',     'icon' => 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M16 13H8 M16 17H8 M10 9H8', 'badge' => null, 'dot' => false, 'disabled' => false],
+                ['route' => null,                 'label' => 'Roles',        'icon' => 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',                       'badge' => null, 'dot' => false, 'disabled' => true],
+                ['route' => null,                 'label' => 'Automation',   'icon' => 'M13 2L3 14h9l-1 8 10-12h-9l1-8z',                                    'badge' => 'SOON','dot'=> false, 'disabled' => true],
             ],
             'SUPPORT' => [
-                ['route' => 'admin.settings', 'label' => 'Settings', 'icon' => 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'],
+                ['route' => 'admin.settings',     'label' => 'Settings',     'icon' => 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z', 'badge' => null, 'dot' => false, 'disabled' => false],
+                ['route' => null,                 'label' => 'Security',     'icon' => 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4',        'badge' => null, 'dot' => false, 'disabled' => true],
+                ['route' => null,                 'label' => 'Help',         'icon' => 'M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3 M12 17h.01',                  'badge' => null, 'dot' => false, 'disabled' => true],
             ],
         ];
         @endphp
@@ -120,20 +127,30 @@
         <div class="nav-section-label" style="padding:10px 10px 5px; font-size:10px; font-weight:600; letter-spacing:0.09em; color:#2a3a55; text-transform:uppercase; transition:opacity 0.15s;" :style="{ opacity: open ? '1' : '0' }">{{ $section }}</div>
 
         @foreach($items as $item)
-        @php $active = request()->routeIs($item['route']); @endphp
+        @php $active = !$item['disabled'] && $item['route'] && request()->routeIs($item['route']); @endphp
+        @if(!$item['disabled'] && $item['route'])
         <a href="{{ route($item['route']) }}"
            class="nav-link {{ $active ? 'active' : '' }}"
            title="{{ $item['label'] }}">
+        @else
+        <span class="nav-link" title="{{ $item['label'] }}" style="opacity:0.4; cursor:default;">
+        @endif
             <span class="nav-icon-wrap">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <path d="{{ $item['icon'] }}"/>
                 </svg>
             </span>
             <span class="nav-label">{{ $item['label'] }}</span>
-            @if(!empty($item['badge']))
+            @if($item['badge'])
             <span class="nav-badge nav-label">{{ $item['badge'] }}</span>
+            @elseif($item['dot'])
+            <span class="nav-dot nav-label"></span>
             @endif
+        @if(!$item['disabled'] && $item['route'])
         </a>
+        @else
+        </span>
+        @endif
         @endforeach
         @endforeach
 
