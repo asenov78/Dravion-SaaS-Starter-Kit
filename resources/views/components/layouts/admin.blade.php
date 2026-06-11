@@ -60,12 +60,15 @@
         }
     </style>
 </head>
-<body style="background:#060d1a; color:#e2e2e9; font-family:Inter,system-ui,sans-serif; height:100%; display:flex; overflow:hidden; position:relative;"
+<body style="background:#060d1a; color:#e2e2e9; font-family:Inter,system-ui,sans-serif; height:100%; display:flex; align-items:stretch; overflow:hidden; position:relative; padding:8px;"
     x-data="{ open: localStorage.getItem('sidebar') !== 'closed' }"
     x-init="$watch('open', v => localStorage.setItem('sidebar', v ? 'open' : 'closed'))"
     :class="open ? '' : 'sidebar-collapsed'">
 
 <x-ui.net-bg />
+
+{{-- ═══════════ APP SHELL ═══════════ --}}
+<div style="flex:1; display:flex; min-width:0; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.07); position:relative; z-index:1;">
 
 {{-- ═══════════ SIDEBAR ═══════════ --}}
 <aside style="background:rgba(8,16,36,0.72); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-right:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; flex-shrink:0; height:100%; transition:width 0.22s ease; overflow:hidden; position:relative; z-index:10;"
@@ -279,7 +282,7 @@
     </header>
 
     {{-- ── PAGE HEADER ── --}}
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 24px; border-bottom:1px solid rgba(255,255,255,0.04); flex-shrink:0; gap:12px; background:rgba(6,13,26,0.3);">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.04); flex-shrink:0; gap:12px; background:rgba(6,13,26,0.3);">
         <div style="display:flex; align-items:center; gap:10px; min-width:0;">
             <h1 style="color:#e2e2e9; font-size:18px; font-weight:700; margin:0; letter-spacing:-0.02em; white-space:nowrap;">{{ $title ?? 'Dashboard' }}</h1>
             @isset($breadcrumb)
@@ -299,6 +302,8 @@
         {{ $slot }}
     </main>
 </div>
+
+</div>{{-- /app shell --}}
 
 </body>
 </html>
