@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="height:100%;">
+<html lang="en" style="height:100%; overflow:hidden;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,14 +98,14 @@
 
         {{-- Collapse button --}}
         <button @click="open = !open"
-            style="display:flex; align-items:center; gap:10px; width:100%; padding:6px 10px; border-radius:7px; background:transparent; border:none; cursor:pointer; color:#4b4b5b; font-size:12px; font-family:Inter,system-ui; text-align:left; transition:background 0.1s, color 0.1s;"
+            style="display:flex; align-items:center; gap:10px; width:100%; padding:5px 10px; border-radius:7px; background:transparent; border:none; cursor:pointer; color:#4b4b5b; font-size:12px; font-family:Inter,system-ui; text-align:left; transition:background 0.1s, color 0.1s;"
             onmouseover="this.style.background='#1a1a1f';this.style.color='#9b9bab'"
             onmouseout="this.style.background='transparent';this.style.color='#4b4b5b'">
-            <svg style="flex-shrink:0; width:16px; height:16px; transition:transform 0.2s;" :style="open ? '' : 'transform:rotate(180deg)'"
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+            <svg style="flex-shrink:0; width:14px; height:14px; transition:transform 0.2s;" :style="open ? '' : 'transform:rotate(180deg)'"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 18l-6-6 6-6"/>
             </svg>
-            <span class="nav-label">Collapse</span>
+            <span class="nav-label" style="font-size:12px;">Collapse</span>
         </button>
     </div>
 </aside>

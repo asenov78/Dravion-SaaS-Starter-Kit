@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.1.1] — 2026-06-11
+### Fixed
+- Sidebar: collapse button arrow smaller (14px single chevron, not double arrow)
+- Sidebar: html/body height:100%+overflow:hidden so nav fills full height and user+collapse stays pinned at bottom
+
 ## [1.1.0] — 2026-06-11
 ### Fixed
 - Admin layout: complete redesign — Linear/DataNest style sidebar, proper active states, user info at bottom, collapse button
