@@ -37,4 +37,7 @@ Route::middleware(['auth', 'role:admin|manager'])->prefix('admin')->name('admin.
     Route::resource('users', UserController::class)->except(['show', 'destroy']);
     Route::patch('/users/{user}/suspend',  [UserController::class, 'suspend'])->name('users.suspend');
     Route::patch('/users/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
+
+    Route::get('/settings', fn () => view('admin.settings'))->name('settings');
+    Route::get('/activity',  fn () => view('admin.activity'))->name('activity');
 });
