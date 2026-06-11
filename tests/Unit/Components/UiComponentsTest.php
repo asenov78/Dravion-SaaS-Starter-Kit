@@ -458,4 +458,61 @@ class UiComponentsTest extends TestCase
         $view = $this->blade('<x-ui.scroll-area height="200px">Long content here</x-ui.scroll-area>');
         $view->assertSee('Long content here');
     }
+
+    // --- Menubar ---
+
+    public function test_menubar_renders_menus(): void
+    {
+        $view = $this->blade('<x-ui.menubar :menus="$menus" />', [
+            'menus' => [
+                ['label' => 'File', 'items' => [['label' => 'New'], ['label' => 'Open']]],
+                ['label' => 'Edit', 'items' => [['label' => 'Copy']]],
+            ],
+        ]);
+        $view->assertSee('File');
+        $view->assertSee('Edit');
+        $view->assertSee('New');
+        $view->assertSee('Copy');
+    }
+
+    // --- Navigation Menu ---
+
+    public function test_navigation_menu_renders_links(): void
+    {
+        $view = $this->blade('<x-ui.navigation-menu :items="$items" />', [
+            'items' => [
+                ['label' => 'Dashboard', 'href' => '/dashboard'],
+                ['label' => 'Users', 'href' => '/users'],
+            ],
+        ]);
+        $view->assertSee('Dashboard');
+        $view->assertSee('Users');
+        $view->assertSee('href="/dashboard"', false);
+    }
+
+    public function test_navigation_menu_marks_active(): void
+    {
+        $view = $this->blade('<x-ui.navigation-menu :items="$items" active="/users" />', [
+            'items' => [
+                ['label' => 'Dashboard', 'href' => '/dashboard'],
+                ['label' => 'Users', 'href' => '/users'],
+            ],
+        ]);
+        $view->assertSee('Users');
+    }
+
+    // --- Context Menu ---
+
+    public function test_context_menu_renders_trigger_and_items(): void
+    {
+        $view = $this->blade('<x-ui.context-menu :items="$items">Right-click here</x-ui.context-menu>', [
+            'items' => [
+                ['label' => 'Copy'],
+                ['label' => 'Paste'],
+            ],
+        ]);
+        $view->assertSee('Right-click here');
+        $view->assertSee('Copy');
+        $view->assertSee('Paste');
+    }
 }

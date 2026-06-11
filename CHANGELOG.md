@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [0.9.0] — 2026-06-11
+### Added
+- Batch E components: Menubar, Navigation Menu, Context Menu
+- shadcn/ui component parity COMPLETE — 38 components total
+- 4 new unit tests — 80 total, all green
+
 ## [0.8.0] — 2026-06-11
 ### Added
 - Batch D components: Alert Dialog, Slider, Aspect Ratio, Popover, Toggle Group, Input OTP, Scroll Area
