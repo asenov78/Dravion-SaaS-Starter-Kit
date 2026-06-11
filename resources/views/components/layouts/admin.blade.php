@@ -29,8 +29,8 @@
             white-space: nowrap;
             overflow: hidden;
         }
-        .nav-link:hover { background: #1a1a1f; color: #c2c2ce; }
-        .nav-link.active { background: #5e6ad215; color: #818cf8; }
+        .nav-link:hover { background: #ffffff08; color: #c2c2ce; }
+        .nav-link.active { background: #5e6ad222; color: #818cf8; }
         .nav-link .nav-icon { flex-shrink: 0; width: 16px; height: 16px; }
         .nav-label { overflow: hidden; transition: opacity 0.15s, width 0.2s; }
         .sidebar-collapsed .nav-label { opacity: 0; width: 0; }
@@ -43,11 +43,11 @@
     :class="open ? '' : 'sidebar-collapsed'">
 
 {{-- ═══════════ SIDEBAR ═══════════ --}}
-<aside style="background:#111113; border-right:1px solid #2a2a35; display:flex; flex-direction:column; flex-shrink:0; height:100%; transition:width 0.2s ease; overflow:hidden;"
+<aside style="background:transparent; border-right:1px solid #1e1e27; display:flex; flex-direction:column; flex-shrink:0; height:100%; transition:width 0.2s ease; overflow:hidden;"
     :style="{ width: open ? '220px' : '52px' }">
 
     {{-- Logo --}}
-    <div style="display:flex; align-items:center; gap:10px; padding:0 14px; height:52px; border-bottom:1px solid #2a2a35; flex-shrink:0;">
+    <div style="display:flex; align-items:center; gap:10px; padding:0 14px; height:52px; border-bottom:1px solid #1e1e27; flex-shrink:0;">
         <div style="width:26px; height:26px; background:#5e6ad2; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
@@ -57,7 +57,10 @@
     </div>
 
     {{-- Nav --}}
-    <nav style="flex:1; overflow-y:auto; overflow-x:hidden; padding:10px 8px; display:flex; flex-direction:column; gap:1px;">
+    <nav style="flex:1; overflow-y:auto; overflow-x:hidden; padding:12px 8px; display:flex; flex-direction:column; gap:1px;">
+
+        {{-- Section label --}}
+        <div class="nav-section-label" style="padding:0 10px 6px; font-size:10px; font-weight:600; letter-spacing:0.08em; color:#3a3a45; text-transform:uppercase; transition:opacity 0.15s;" :style="{ opacity: open ? '1' : '0' }">Navigation</div>
 
         @php
         $nav = [
@@ -83,7 +86,7 @@
     </nav>
 
     {{-- User + Collapse --}}
-    <div style="border-top:1px solid #2a2a35; padding:8px; flex-shrink:0; display:flex; flex-direction:column; gap:2px;">
+    <div style="border-top:1px solid #1e1e27; padding:8px; flex-shrink:0; display:flex; flex-direction:column; gap:2px;">
 
         {{-- User row --}}
         <div style="display:flex; align-items:center; gap:10px; border-radius:7px; overflow:hidden; cursor:default; padding:6px 10px;"
@@ -118,7 +121,7 @@
 <div style="flex:1; display:flex; flex-direction:column; min-width:0; height:100%; overflow:hidden;">
 
     {{-- TOPBAR --}}
-    <header style="height:52px; background:#111113; border-bottom:1px solid #2a2a35; display:flex; align-items:center; justify-content:space-between; padding:0 24px; flex-shrink:0; gap:16px;">
+    <header style="height:52px; background:transparent; border-bottom:1px solid #1e1e27; display:flex; align-items:center; justify-content:space-between; padding:0 24px; flex-shrink:0; gap:16px;">
 
         <div style="display:flex; align-items:center; gap:10px; min-width:0;">
             <h1 style="color:#e2e2e9; font-size:14px; font-weight:600; margin:0; white-space:nowrap;">{{ $title ?? 'Dashboard' }}</h1>
