@@ -87,7 +87,7 @@
 
         {{-- User row --}}
         <div style="display:flex; align-items:center; gap:10px; border-radius:7px; overflow:hidden; cursor:default; padding:6px 10px;"
-            :style="open ? 'justify-content:flex-start' : 'justify-content:center; padding:6px 0'"
+            :style="{ justifyContent: open ? 'flex-start' : 'center', padding: open ? '6px 10px' : '6px 0' }"
         >
             <div style="width:26px; height:26px; border-radius:50%; background:#5e6ad2; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0;">
                 {{ substr(auth()->user()->name, 0, 1) }}
@@ -101,11 +101,11 @@
         {{-- Collapse button --}}
         <button @click="open = !open"
             style="display:flex; align-items:center; gap:10px; width:100%; padding:6px 10px; border-radius:7px; background:transparent; border:none; cursor:pointer; color:#6b6b7b; font-size:12px; font-family:Inter,system-ui; transition:background 0.1s, color 0.1s;"
-            :style="open ? 'justify-content:flex-start' : 'justify-content:center; padding:6px 0'"
+            :style="{ justifyContent: open ? 'flex-start' : 'center', padding: open ? '6px 10px' : '6px 0' }"
             onmouseover="this.style.background='#1a1a1f';this.style.color='#c2c2ce'"
             onmouseout="this.style.background='transparent';this.style.color='#6b6b7b'">
             <svg style="flex-shrink:0; width:15px; height:15px; transition:transform 0.2s;"
-                :style="open ? '' : 'transform:rotate(180deg)'"
+                :style="{ transform: open ? 'rotate(0deg)' : 'rotate(180deg)' }"
                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
