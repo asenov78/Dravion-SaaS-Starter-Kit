@@ -44,7 +44,7 @@
 
 {{-- ═══════════ SIDEBAR ═══════════ --}}
 <aside style="background:#111113; border-right:1px solid #2a2a35; display:flex; flex-direction:column; flex-shrink:0; height:100%; transition:width 0.2s ease; overflow:hidden;"
-    :style="open ? 'width:220px' : 'width:52px'">
+    :style="{ width: open ? '220px' : '52px' }">
 
     {{-- Logo --}}
     <div style="display:flex; align-items:center; gap:10px; padding:0 14px; height:52px; border-bottom:1px solid #2a2a35; flex-shrink:0;">
@@ -86,7 +86,9 @@
     <div style="border-top:1px solid #2a2a35; padding:8px; flex-shrink:0; display:flex; flex-direction:column; gap:2px;">
 
         {{-- User row --}}
-        <div style="display:flex; align-items:center; gap:10px; padding:7px 10px; border-radius:7px; overflow:hidden; cursor:default;">
+        <div style="display:flex; align-items:center; gap:10px; border-radius:7px; overflow:hidden; cursor:default; padding:6px 10px;"
+            :style="open ? 'justify-content:flex-start' : 'justify-content:center; padding:6px 0'"
+        >
             <div style="width:26px; height:26px; border-radius:50%; background:#5e6ad2; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0;">
                 {{ substr(auth()->user()->name, 0, 1) }}
             </div>
@@ -98,10 +100,12 @@
 
         {{-- Collapse button --}}
         <button @click="open = !open"
-            style="display:flex; align-items:center; gap:10px; width:100%; padding:5px 10px; border-radius:7px; background:transparent; border:none; cursor:pointer; color:#4b4b5b; font-size:12px; font-family:Inter,system-ui; text-align:left; transition:background 0.1s, color 0.1s;"
-            onmouseover="this.style.background='#1a1a1f';this.style.color='#9b9bab'"
-            onmouseout="this.style.background='transparent';this.style.color='#4b4b5b'">
-            <svg style="flex-shrink:0; width:14px; height:14px; transition:transform 0.2s;" :style="open ? '' : 'transform:rotate(180deg)'"
+            style="display:flex; align-items:center; gap:10px; width:100%; padding:6px 10px; border-radius:7px; background:transparent; border:none; cursor:pointer; color:#6b6b7b; font-size:12px; font-family:Inter,system-ui; transition:background 0.1s, color 0.1s;"
+            :style="open ? 'justify-content:flex-start' : 'justify-content:center; padding:6px 0'"
+            onmouseover="this.style.background='#1a1a1f';this.style.color='#c2c2ce'"
+            onmouseout="this.style.background='transparent';this.style.color='#6b6b7b'">
+            <svg style="flex-shrink:0; width:15px; height:15px; transition:transform 0.2s;"
+                :style="open ? '' : 'transform:rotate(180deg)'"
                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>

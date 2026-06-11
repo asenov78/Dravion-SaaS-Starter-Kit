@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.1.2] — 2026-06-11
+### Fixed
+- Sidebar: Alpine `:style` string was replacing entire style attr (losing display:flex) — switched to object syntax `{ width: ... }`
+- Sidebar: user avatar + collapse button centered when collapsed, visible chevron `›`
+
 ## [1.1.1] — 2026-06-11
 ### Fixed
 - Sidebar: collapse button arrow smaller (14px single chevron, not double arrow)
