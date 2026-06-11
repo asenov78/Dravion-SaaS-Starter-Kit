@@ -387,4 +387,75 @@ class UiComponentsTest extends TestCase
         $view->assertSee('Show more');
         $view->assertSee('Hidden content');
     }
+
+    // --- Alert Dialog ---
+
+    public function test_alert_dialog_renders_trigger_and_message(): void
+    {
+        $view = $this->blade('<x-ui.alert-dialog title="Delete?" description="This cannot be undone."><x-slot:trigger>Delete</x-slot:trigger></x-ui.alert-dialog>');
+        $view->assertSee('Delete?');
+        $view->assertSee('This cannot be undone.');
+        $view->assertSee('Delete');
+    }
+
+    public function test_alert_dialog_has_confirm_and_cancel(): void
+    {
+        $view = $this->blade('<x-ui.alert-dialog title="Sure?" description="Really?" confirm="Yes, delete" cancel="No"><x-slot:trigger>Go</x-slot:trigger></x-ui.alert-dialog>');
+        $view->assertSee('Yes, delete');
+        $view->assertSee('No');
+    }
+
+    // --- Slider ---
+
+    public function test_slider_renders(): void
+    {
+        $view = $this->blade('<x-ui.slider name="volume" :value="50" />');
+        $view->assertSee('type="range"', false);
+        $view->assertSee('name="volume"', false);
+    }
+
+    // --- Aspect Ratio ---
+
+    public function test_aspect_ratio_renders_slot(): void
+    {
+        $view = $this->blade('<x-ui.aspect-ratio ratio="16/9">Content</x-ui.aspect-ratio>');
+        $view->assertSee('Content');
+    }
+
+    // --- Popover ---
+
+    public function test_popover_renders_trigger_and_content(): void
+    {
+        $view = $this->blade('<x-ui.popover><x-slot:trigger>Click me</x-slot:trigger>Popover body</x-ui.popover>');
+        $view->assertSee('Click me');
+        $view->assertSee('Popover body');
+    }
+
+    // --- Toggle Group ---
+
+    public function test_toggle_group_renders_options(): void
+    {
+        $view = $this->blade('<x-ui.toggle-group name="align" :options="$opts" />', [
+            'opts' => ['left' => 'L', 'center' => 'C', 'right' => 'R'],
+        ]);
+        $view->assertSee('L');
+        $view->assertSee('C');
+        $view->assertSee('R');
+    }
+
+    // --- Input OTP ---
+
+    public function test_input_otp_renders_correct_digit_count(): void
+    {
+        $view = $this->blade('<x-ui.input-otp name="otp" :digits="6" />');
+        $view->assertSee('name="otp"', false);
+    }
+
+    // --- Scroll Area ---
+
+    public function test_scroll_area_renders_slot(): void
+    {
+        $view = $this->blade('<x-ui.scroll-area height="200px">Long content here</x-ui.scroll-area>');
+        $view->assertSee('Long content here');
+    }
 }

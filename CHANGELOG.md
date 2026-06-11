@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [0.8.0] — 2026-06-11
+### Added
+- Batch D components: Alert Dialog, Slider, Aspect Ratio, Popover, Toggle Group, Input OTP, Scroll Area
+- 8 new unit tests — 76 total, all green
+
 ## [0.7.0] — 2026-06-11
 ### Added
 - Batch C components: Pagination, Toast, Drawer, Hover Card, Collapsible
