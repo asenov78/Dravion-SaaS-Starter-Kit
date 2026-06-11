@@ -209,28 +209,90 @@
 {{-- ═══════════ MAIN ═══════════ --}}
 <div style="flex:1; display:flex; flex-direction:column; min-width:0; height:100%; overflow:hidden; position:relative; z-index:1;">
 
-    {{-- TOPBAR --}}
-    <header style="height:52px; background:rgba(6,13,26,0.5); backdrop-filter:blur(8px); border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:space-between; padding:0 24px; flex-shrink:0; gap:16px;">
+    {{-- ── TOPBAR ── --}}
+    <header style="height:52px; background:rgba(6,13,26,0.55); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:space-between; padding:0 20px; flex-shrink:0; gap:12px;">
 
-        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-            <h1 style="color:#e2e2e9; font-size:14px; font-weight:600; margin:0; white-space:nowrap;">{{ $title ?? 'Dashboard' }}</h1>
-            @isset($breadcrumb)
-            <span style="color:#1e2a45; font-size:14px;">/</span>
-            <span style="color:#4a5a7a; font-size:12px;">{{ $breadcrumb }}</span>
-            @endisset
+        {{-- Search --}}
+        <div style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.07); border-radius:8px; padding:0 12px; height:32px; min-width:200px; max-width:260px; flex-shrink:0;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4a5a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" placeholder="Search…" style="background:transparent; border:none; outline:none; color:#c8d0e0; font-size:12px; font-family:Inter,system-ui; width:100%; caret-color:#818cf8;" />
+            <span style="color:#2a3a55; font-size:10px; white-space:nowrap; flex-shrink:0;">⌘ F</span>
         </div>
 
-        <div style="display:flex; align-items:center; gap:10px; flex-shrink:0;">
+        {{-- Status pills --}}
+        <div style="display:flex; align-items:center; gap:8px; flex:1; justify-content:center;">
+            <div style="display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:4px 10px;">
+                <span style="width:6px; height:6px; border-radius:50%; background:#818cf8; flex-shrink:0; box-shadow:0 0 6px #818cf8aa;"></span>
+                <span style="font-size:11.5px; color:#8a9aba; font-weight:500;">Live data</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; background:rgba(74,222,128,0.07); border:1px solid rgba(74,222,128,0.18); border-radius:20px; padding:4px 10px;">
+                <span style="width:6px; height:6px; border-radius:50%; background:#4ade80; flex-shrink:0; box-shadow:0 0 6px #4ade8088;"></span>
+                <span style="font-size:11.5px; color:#4ade80; font-weight:500;">System healthy</span>
+            </div>
+        </div>
+
+        {{-- Right: icons + user --}}
+        <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+
+            {{-- Flash success --}}
             @if(session('success'))
-            <div style="display:flex; align-items:center; gap:6px; background:#14532d20; border:1px solid #14532d50; border-radius:6px; padding:5px 10px; color:#4ade80; font-size:12px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            <div style="display:flex; align-items:center; gap:6px; background:#14532d20; border:1px solid #14532d50; border-radius:6px; padding:4px 10px; color:#4ade80; font-size:11px; margin-right:4px;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
                 {{ session('success') }}
             </div>
             @endif
 
-            <x-ui.badge variant="accent">{{ auth()->user()->getRoleNames()->first() ?? 'user' }}</x-ui.badge>
+            {{-- Icon buttons --}}
+            <button style="width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.07); cursor:pointer; display:flex; align-items:center; justify-content:center; color:#4a5a7a; transition:background 0.1s, color 0.1s; position:relative;"
+                onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#c8d0e0'"
+                onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='#4a5a7a'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <span style="position:absolute; top:5px; right:5px; width:6px; height:6px; background:#f97316; border-radius:50%; border:1.5px solid #060d1a;"></span>
+            </button>
+
+            <button style="width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.07); cursor:pointer; display:flex; align-items:center; justify-content:center; color:#4a5a7a; transition:background 0.1s, color 0.1s;"
+                onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#c8d0e0'"
+                onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='#4a5a7a'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+
+            {{-- Divider --}}
+            <div style="width:1px; height:20px; background:rgba(255,255,255,0.07); margin:0 4px;"></div>
+
+            {{-- User --}}
+            <div style="display:flex; align-items:center; gap:8px; padding:4px 8px; border-radius:8px; cursor:default; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
+                <div style="width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#5e6ad2,#818cf8); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0;">
+                    {{ substr(auth()->user()->name, 0, 1) }}
+                </div>
+                <div>
+                    <p style="color:#c8d0e0; font-size:12px; font-weight:600; margin:0; white-space:nowrap; line-height:1.2;">{{ auth()->user()->name }}</p>
+                    <p style="color:#4a5a7a; font-size:10px; margin:0; white-space:nowrap; line-height:1.3;">{{ auth()->user()->getRoleNames()->first() }}</p>
+                </div>
+            </div>
         </div>
     </header>
+
+    {{-- ── PAGE HEADER ── --}}
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 24px; border-bottom:1px solid rgba(255,255,255,0.04); flex-shrink:0; gap:12px; background:rgba(6,13,26,0.3);">
+        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+            <h1 style="color:#e2e2e9; font-size:18px; font-weight:700; margin:0; letter-spacing:-0.02em; white-space:nowrap;">{{ $title ?? 'Dashboard' }}</h1>
+            @isset($breadcrumb)
+            <span style="color:#1e2a45; font-size:16px;">/</span>
+            <span style="color:#4a5a7a; font-size:13px;">{{ $breadcrumb }}</span>
+            @endisset
+        </div>
+
+        {{-- Per-page actions (Filter, Export, etc.) --}}
+        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+            {{ $actions ?? '' }}
+        </div>
+    </div>
 
     {{-- PAGE --}}
     <main style="flex:1; overflow-y:auto; padding:24px;">
