@@ -37,7 +37,7 @@
         .sidebar-collapsed .nav-section-label { opacity: 0; }
     </style>
 </head>
-<body style="background:#0a0a0b; color:#e2e2e9; font-family:Inter,system-ui,sans-serif; height:100%; display:flex; overflow:hidden;"
+<body style="background:#0a1628 url('/images/bg.jpg') center center / cover no-repeat fixed; color:#e2e2e9; font-family:Inter,system-ui,sans-serif; height:100%; display:flex; overflow:hidden;"
     x-data="{ open: localStorage.getItem('sidebar') !== 'closed' }"
     x-init="$watch('open', v => localStorage.setItem('sidebar', v ? 'open' : 'closed'))"
     :class="open ? '' : 'sidebar-collapsed'">

@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.1.5] — 2026-06-11
+### Changed
+- Admin layout: full-page dark blue geometric background image (`public/images/bg.jpg`), sidebar and topbar transparent
+
 ## [1.1.2] — 2026-06-11
 ### Fixed
 - Sidebar: Alpine `:style` string was replacing entire style attr (losing display:flex) — switched to object syntax `{ width: ... }`
