@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.1.6] — 2026-06-11
+### Changed
+- Admin layout: replaced static bg.jpg with CSS-animated canvas network (dark blue + cyan nodes/lines, 55 particles, `requestAnimationFrame`)
+
 ## [1.1.5] — 2026-06-11
 ### Changed
 - Admin layout: full-page dark blue geometric background image (`public/images/bg.jpg`), sidebar and topbar transparent
