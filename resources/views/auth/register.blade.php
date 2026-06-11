@@ -7,9 +7,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body style="background:#0a0a0b; font-family:Inter,system-ui,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center;">
+<body style="background:#060d1a; font-family:Inter,system-ui,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; position:relative;">
 
-<div style="width:100%; max-width:380px; padding:0 16px;">
+<x-ui.net-bg />
+
+<div style="width:100%; max-width:380px; padding:0 16px; position:relative; z-index:1;">
     <div style="text-align:center; margin-bottom:32px;">
         <div style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; background:#5e6ad2; border-radius:10px; margin-bottom:16px;">
             <span style="color:#fff; font-weight:700; font-size:18px;">D</span>
