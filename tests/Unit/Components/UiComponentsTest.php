@@ -247,4 +247,87 @@ class UiComponentsTest extends TestCase
         $view->assertSee('Ctrl+K');
         $view->assertSee('kbd', false);
     }
+
+    // --- Accordion ---
+
+    public function test_accordion_renders_item(): void
+    {
+        $view = $this->blade('<x-ui.accordion title="What is Dravion?">It is a SaaS kit.</x-ui.accordion>');
+        $view->assertSee('What is Dravion?');
+        $view->assertSee('It is a SaaS kit.');
+    }
+
+    // --- Tabs ---
+
+    public function test_tabs_renders_tab_labels(): void
+    {
+        $view = $this->blade('<x-ui.tabs :tabs="$tabs">Tab content</x-ui.tabs>', [
+            'tabs' => [['label' => 'General'], ['label' => 'Security']],
+        ]);
+        $view->assertSee('General');
+        $view->assertSee('Security');
+    }
+
+    // --- Dialog ---
+
+    public function test_dialog_renders_trigger_and_title(): void
+    {
+        $view = $this->blade('<x-ui.dialog title="Confirm Delete"><x-slot:trigger>Open</x-slot:trigger>Are you sure?</x-ui.dialog>');
+        $view->assertSee('Confirm Delete');
+        $view->assertSee('Open');
+        $view->assertSee('Are you sure?');
+    }
+
+    // --- Dropdown Menu ---
+
+    public function test_dropdown_renders_items(): void
+    {
+        $view = $this->blade('<x-ui.dropdown :items="$items"><x-slot:trigger>Options</x-slot:trigger></x-ui.dropdown>', [
+            'items' => [['label' => 'Edit', 'href' => '#'], ['label' => 'Delete', 'href' => '#']],
+        ]);
+        $view->assertSee('Options');
+        $view->assertSee('Edit');
+        $view->assertSee('Delete');
+    }
+
+    // --- Tooltip ---
+
+    public function test_tooltip_renders_text(): void
+    {
+        $view = $this->blade('<x-ui.tooltip text="Save changes"><button>Save</button></x-ui.tooltip>');
+        $view->assertSee('Save changes');
+        $view->assertSee('Save');
+    }
+
+    // --- Switch ---
+
+    public function test_switch_renders(): void
+    {
+        $view = $this->blade('<x-ui.switch name="notifications" />');
+        $view->assertSee('name="notifications"', false);
+    }
+
+    public function test_switch_renders_label(): void
+    {
+        $view = $this->blade('<x-ui.switch name="notifications" label="Enable notifications" />');
+        $view->assertSee('Enable notifications');
+    }
+
+    // --- Toggle ---
+
+    public function test_toggle_renders(): void
+    {
+        $view = $this->blade('<x-ui.toggle name="bold">B</x-ui.toggle>');
+        $view->assertSee('B');
+    }
+
+    // --- Sheet ---
+
+    public function test_sheet_renders_trigger_and_title(): void
+    {
+        $view = $this->blade('<x-ui.sheet title="Edit User"><x-slot:trigger>Edit</x-slot:trigger>Form here</x-ui.sheet>');
+        $view->assertSee('Edit User');
+        $view->assertSee('Edit');
+        $view->assertSee('Form here');
+    }
 }

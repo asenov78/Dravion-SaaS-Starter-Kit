@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [0.6.0] — 2026-06-11
+### Added
+- Batch B Alpine.js components: Accordion, Tabs, Dialog, Dropdown, Tooltip, Switch, Toggle, Sheet
+- 9 new unit tests — 61 total, all green
+
 ## [0.5.0] — 2026-06-11
 ### Added
 - Batch A UI components: Separator, Avatar, Skeleton, Spinner, Progress, Breadcrumb
