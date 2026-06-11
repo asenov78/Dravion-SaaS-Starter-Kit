@@ -330,4 +330,61 @@ class UiComponentsTest extends TestCase
         $view->assertSee('Edit');
         $view->assertSee('Form here');
     }
+
+    // --- Pagination ---
+
+    public function test_pagination_renders_page_links(): void
+    {
+        $view = $this->blade('<x-ui.pagination :current="2" :total="5" url="/users" />');
+        $view->assertSee('href="/users?page=1"', false);
+        $view->assertSee('href="/users?page=3"', false);
+    }
+
+    public function test_pagination_hides_prev_on_first_page(): void
+    {
+        $view = $this->blade('<x-ui.pagination :current="1" :total="3" url="/users" />');
+        $view->assertDontSee('href="/users?page=0"', false);
+    }
+
+    // --- Toast ---
+
+    public function test_toast_renders_message(): void
+    {
+        $view = $this->blade('<x-ui.toast message="Saved!" />');
+        $view->assertSee('Saved!');
+    }
+
+    public function test_toast_success_variant(): void
+    {
+        $view = $this->blade('<x-ui.toast message="Done" variant="success" />');
+        $view->assertSee('Done');
+    }
+
+    // --- Drawer ---
+
+    public function test_drawer_renders_trigger_and_title(): void
+    {
+        $view = $this->blade('<x-ui.drawer title="Filters"><x-slot:trigger>Open</x-slot:trigger>Content</x-ui.drawer>');
+        $view->assertSee('Filters');
+        $view->assertSee('Open');
+        $view->assertSee('Content');
+    }
+
+    // --- Hover Card ---
+
+    public function test_hover_card_renders(): void
+    {
+        $view = $this->blade('<x-ui.hover-card><x-slot:trigger>@username</x-slot:trigger>Profile info here</x-ui.hover-card>');
+        $view->assertSee('@username');
+        $view->assertSee('Profile info here');
+    }
+
+    // --- Collapsible ---
+
+    public function test_collapsible_renders(): void
+    {
+        $view = $this->blade('<x-ui.collapsible><x-slot:trigger>Show more</x-slot:trigger>Hidden content</x-ui.collapsible>');
+        $view->assertSee('Show more');
+        $view->assertSee('Hidden content');
+    }
 }
