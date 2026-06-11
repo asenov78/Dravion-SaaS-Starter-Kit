@@ -2,6 +2,17 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [0.4.0] — 2026-06-11
+### Added
+- Blade UI component library (`<x-ui.*>`): button, badge, card, input, alert, label, stat
+- 12 unit tests for UI components — all green (34 total)
+
+## [0.3.0] — 2026-06-11
+### Added
+- Admin layout: Linear-style dark sidebar, collapsible with Alpine.js + localStorage
+- Dashboard view: stat cards, recent users table
+- Users index view: avatar, role/status badges, suspend/activate actions
+
 ## [0.2.0] — 2026-06-11
 ### Added
 - User Management CRUD (list, create, edit, suspend) — Slice 3
