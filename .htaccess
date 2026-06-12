@@ -1,19 +1,15 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /dravion/
 
-    # Serve static assets from public/ transparently (build/css/js/images)
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{DOCUMENT_ROOT}/$1 !-f
+    # Serve existing files/dirs directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Serve static assets from public/ transparently
     RewriteRule ^(build/.+|css/.+|js/.+|images/.+|favicon\.ico|robots\.txt)$ public/$1 [L,QSA]
 
-    # Remove trailing slashes (not directories)
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
-
-    # Route all requests to root index.php
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
+    # Route everything else to root index.php
     RewriteRule ^ index.php [L]
 </IfModule>
