@@ -1,15 +1,11 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /dravion/
 
-    # Serve existing files/dirs directly
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # Serve static assets from public/ transparently
     RewriteRule ^(build/.+|css/.+|js/.+|images/.+|favicon\.ico|robots\.txt)$ public/$1 [L,QSA]
 
-    # Route everything else to root index.php
     RewriteRule ^ index.php [L]
 </IfModule>
