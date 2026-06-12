@@ -9,7 +9,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => view('welcome'));
+Route::get('/', function () {
+    if (! file_exists(storage_path('install.lock'))) {
+        return redirect('/install');
+    }
+    return redirect('/login');
+});
 
 // Installer — disabled after install.lock exists
 Route::middleware(\App\Http\Middleware\InstallGuard::class)
