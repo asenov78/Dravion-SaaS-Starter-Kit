@@ -1,15 +1,19 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # 1. Serve existing files/dirs from public/ transparently (CSS, JS, images)
+    # Serve static assets from public/ transparently (build/css/js/images)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{DOCUMENT_ROOT}/%{REQUEST_URI} !-f
-    RewriteCond public/%{REQUEST_FILENAME} -f
-    RewriteRule ^(.+)$ public/$1 [L,QSA]
+    RewriteCond %{DOCUMENT_ROOT}/$1 !-f
+    RewriteRule ^(build/.+|css/.+|js/.+|images/.+|favicon\.ico|robots\.txt)$ public/$1 [L,QSA]
 
-    # 2. Everything else → public/index.php (Laravel front controller)
+    # Remove trailing slashes (not directories)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Route all requests to root index.php
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^ public/index.php [L]
+    RewriteRule ^ index.php [L]
 </IfModule>
