@@ -92,3 +92,10 @@ All notable changes to Dravion SaaS Starter Kit.
 - Authentication: login, register, logout, suspended user block
 - Role-Based Access Control: admin, manager, editor, user (Spatie Permission)
 - 12 feature tests — all green
+
+## [1.2.3] — 2026-06-12
+### Added
+- README.md — complete rewrite: features, routes table, DB tables, install guide, tech stack
+- TODO.md — full done/pending/workflow checklist
+### Changed
+- CHANGELOG.md — added missing 1.1.3–1.1.9 entries

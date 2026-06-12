@@ -1,58 +1,174 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Dravion SaaS Starter Kit
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**v1.2.2** · Laravel 13 · PHP 8.2+ · Alpine.js · Spatie Permission · shadcn/ui-parity Blade components
 
-## About Laravel
+Production-ready SaaS starter kit for shared hosting — dark admin panel, animated network background, installer wizard, RBAC, activity logging, 38 UI components.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Admin Panel
+- Linear/Quantix-style dark sidebar — glass backdrop, animated collapse, GENERAL/TOOLS/SUPPORT sections
+- Topbar — search, Live data + System healthy pills, notification bell, user avatar/name
+- Page header — title + per-page `$actions` slot (date range, filter, export)
+- Floating layout — 8px gap from browser edges, `border-radius:12px` app shell
+- Animated canvas background — 55 particles, dark blue + cyan network lines (`requestAnimationFrame`)
+- Background on all pages — login, register, admin (via `<x-ui.net-bg>`)
 
-## Learning Laravel
+### Authentication
+- Login, Register, Logout
+- Suspended user block
+- Guest middleware on auth routes
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Role-Based Access Control (Spatie)
+| Role | Access |
+|---|---|
+| `admin` | Full admin panel + all permissions |
+| `manager` | Users + Activity |
+| `editor` | View users |
+| `user` | User dashboard only |
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### User Management
+- List, Create, Edit, Suspend, Activate
+- Role assignment per user
+- Avatar initials, status/role badges
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Settings
+- Key-value DB store (`settings` table)
+- `Setting::get()` / `Setting::set()` / `Setting::setMany()`
+- Admin UI: app name, email, timezone, maintenance mode, registration toggle
 
-## Agentic Development
+### Activity Log (Spatie)
+- Logs User model changes: `name`, `email`, `status` (dirty-only, no empty logs)
+- Paginated table (30/page), causer avatars, log_name + causer filters
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Installer Wizard (`/install`)
+| Step | Action |
+|---|---|
+| 1. Requirements | PHP ≥8.2, 9 extensions, writable paths |
+| 2. Database | PDO connection test, stores in session |
+| 3. Admin | name/email/password for super-admin |
+| 4. License | purchase code |
+| 5. Finish | writes `.env`, `migrate --force`, seeds roles, creates admin, writes `install.lock` |
 
-```bash
-composer require laravel/boost --dev
+After `storage/install.lock` exists → all `/install/*` routes return 404.
 
-php artisan boost:install
+### UI Component Library — 38 components (`<x-ui.*>`)
+
+| Category | Components |
+|---|---|
+| Core | `button` `badge` `card` `input` `alert` `label` `stat` |
+| Form | `textarea` `checkbox` `select` `radio-group` `input-otp` |
+| Layout | `separator` `aspect-ratio` `scroll-area` |
+| Display | `avatar` `skeleton` `spinner` `progress` `breadcrumb` `kbd` `table` |
+| Overlay | `dialog` `sheet` `drawer` `alert-dialog` `tooltip` `hover-card` `popover` |
+| Navigation | `tabs` `accordion` `dropdown` `menubar` `navigation-menu` `context-menu` `pagination` |
+| Interaction | `switch` `toggle` `toggle-group` `slider` `collapsible` |
+| Feedback | `toast` |
+| Background | `net-bg` |
+
+---
+
+## Routes
+
+```
+Public
+  GET  /                           welcome page
+  GET  /login                      login form
+  POST /login                      authenticate
+  GET  /register                   register form
+  POST /register                   create account
+  POST /logout                     sign out (auth)
+
+Installer (blocked after install.lock)
+  GET  /install                    → redirect to /install/requirements
+  GET  /install/{step}             show step
+  POST /install/{step}             process step
+
+User (auth)
+  GET  /dashboard                  user dashboard
+
+Admin (auth + role:admin|manager)
+  GET  /admin/dashboard            dashboard with stat cards + recent users
+  GET  /admin/users                user list
+  GET  /admin/users/create         create form
+  POST /admin/users                store
+  GET  /admin/users/{id}/edit      edit form
+  PUT  /admin/users/{id}           update
+  PATCH /admin/users/{id}/suspend  suspend
+  PATCH /admin/users/{id}/activate activate
+  GET  /admin/settings             settings form
+  PUT  /admin/settings             update settings
+  GET  /admin/activity             activity log (paginated)
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## Database
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Table | Purpose |
+|---|---|
+| `users` | Auth + `status` (active/suspended) |
+| `roles` `permissions` `model_has_roles` `model_has_permissions` `role_has_permissions` | Spatie RBAC |
+| `activity_log` | Spatie activitylog |
+| `settings` | Key-value store |
+| `cache` `jobs` `sessions` | Laravel internals |
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Installation
 
-## Security Vulnerabilities
+### Shared Hosting (recommended)
+1. Upload files, set document root to `/public`
+2. Visit `yourdomain.com/install`
+3. Follow the 5-step wizard — done
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Local Dev
+```bash
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan db:seed --class=RolesAndPermissionsSeeder
+npm install && npm run dev
+php artisan serve
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Tests
+
+```bash
+php artisan test
+```
+
+**80 tests, all green.**
+
+| Suite | Tests |
+|---|---|
+| Auth | login, register, suspended block |
+| User CRUD | create, edit, suspend, activate |
+| Settings | get/set, admin form |
+| Activity | log entries, pagination |
+| UI Components | 38 component render tests |
+| Installer | 17 tests (guard, steps, finish) |
+
+---
+
+## Tech Stack
+
+- **Laravel 13** · PHP 8.2+
+- **Alpine.js v3** — interactive UI (sidebar, modals, dropdowns)
+- **Spatie laravel-permission** — RBAC
+- **Spatie laravel-activitylog** — audit trail
+- **Vite** — asset bundling
+- **Inter** — font (Google Fonts)
+
+---
+
+## Update Packages
+
+Each release ships a zip archive with only changed files (directory structure preserved) for drop-in deployment on shared hosting.
+
+See [CHANGELOG.md](CHANGELOG.md) for per-version changes.
