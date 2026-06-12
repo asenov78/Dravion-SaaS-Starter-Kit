@@ -102,12 +102,50 @@ class InstallController extends Controller
     private function handleLicense(Request $request)
     {
         $request->validate([
-            'purchase_code' => 'nullable|string|max:255',
+            'purchase_code' => 'required|string|max:255',
         ]);
 
-        session(['install_license' => $request->only('purchase_code')]);
+        $code   = trim($request->input('purchase_code'));
+        $appUrl = session('install_db.app_url', config('app.url'));
+        $domain = parse_url($appUrl, PHP_URL_HOST) ?? request()->getHost();
+
+        $response = $this->callLicenseServer('activate', [
+            'purchase_code' => $code,
+            'domain'        => $domain,
+        ]);
+
+        if (! $response || isset($response['error'])) {
+            $msg = $response['error'] ?? 'Could not reach license server. Check your purchase code.';
+            return back()->withErrors(['purchase_code' => $msg])->withInput();
+        }
+
+        session(['install_license' => [
+            'purchase_code' => $code,
+            'license_key'   => $response['license_key'],
+        ]]);
 
         return redirect()->route('install.step', 'finish');
+    }
+
+    private function callLicenseServer(string $endpoint, array $body): ?array
+    {
+        $url = rtrim(config('dravion.license_server', 'https://apsbg.com/dravion-server'), '/') . '/api/router.php?endpoint=' . $endpoint;
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => json_encode($body),
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_TIMEOUT        => 10,
+            CURLOPT_SSL_VERIFYPEER => true,
+        ]);
+        $raw  = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($raw === false) return null;
+        return json_decode($raw, true);
     }
 
     private function handleFinish(Request $request)
