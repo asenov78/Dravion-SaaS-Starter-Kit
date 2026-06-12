@@ -102,7 +102,7 @@ class InstallController extends Controller
     private function handleLicense(Request $request)
     {
         $request->validate([
-            'purchase_code' => 'required|string|max:255',
+            'purchase_code' => 'nullable|string|max:255',
         ]);
 
         session(['install_license' => $request->only('purchase_code')]);
