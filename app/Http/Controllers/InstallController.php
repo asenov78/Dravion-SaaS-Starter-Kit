@@ -236,8 +236,10 @@ class InstallController extends Controller
         $existing = file_exists(base_path('.env')) ? file_get_contents(base_path('.env')) : '';
         preg_match('/APP_KEY=(.+)/', $existing, $m);
         $appKey = !empty($m[1]) ? trim($m[1]) : 'base64:' . base64_encode(random_bytes(32));
-        $pass   = addslashes($db['db_password'] ?? '');
-        $appUrl = rtrim($db['app_url'] ?? $this->detectAppUrl(), '/');
+        $pass       = addslashes($db['db_password'] ?? '');
+        $appUrl     = rtrim($db['app_url'] ?? $this->detectAppUrl(), '/');
+        $licenseKey = $license['license_key'] ?? '';
+        $purchaseCode = $license['purchase_code'] ?? '';
 
         $env = <<<ENV
 APP_NAME=Dravion
@@ -260,8 +262,10 @@ CACHE_STORE=file
 QUEUE_CONNECTION=sync
 SESSION_DRIVER=file
 SESSION_LIFETIME=120
+SESSION_SECURE_COOKIE=false
 
-DRAVION_LICENSE_KEY={$license['purchase_code']}
+DRAVION_LICENSE_KEY={$licenseKey}
+DRAVION_PURCHASE_CODE={$purchaseCode}
 ENV;
         file_put_contents(base_path('.env'), $env);
     }
