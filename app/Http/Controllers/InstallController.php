@@ -29,6 +29,10 @@ class InstallController extends Controller
             $data['checks'] = $this->runChecks();
         }
 
+        if ($step === 'database') {
+            $data['detected_url'] = $this->detectAppUrl();
+        }
+
         return view("install.{$step}", $data);
     }
 
@@ -58,6 +62,7 @@ class InstallController extends Controller
     private function handleDatabase(Request $request)
     {
         $request->validate([
+            'app_url'     => 'required|url',
             'db_host'     => 'required|string',
             'db_port'     => 'required|integer',
             'db_name'     => 'required|string',
@@ -76,7 +81,7 @@ class InstallController extends Controller
             return back()->withErrors(['db_host' => 'Connection failed: ' . $e->getMessage()])->withInput();
         }
 
-        session(['install_db' => $request->only('db_host', 'db_port', 'db_name', 'db_user', 'db_password')]);
+        session(['install_db' => $request->only('app_url', 'db_host', 'db_port', 'db_name', 'db_user', 'db_password')]);
 
         return redirect()->route('install.step', 'admin');
     }
@@ -147,6 +152,16 @@ class InstallController extends Controller
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
+    private function detectAppUrl(): string
+    {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        // Strip /install and anything after it from the current URI
+        $path = preg_replace('#/install(/.*)?$#', '', $_SERVER['REQUEST_URI'] ?? '');
+        $path = rtrim($path, '/');
+        return $scheme . '://' . $host . $path;
+    }
+
     private function runChecks(): array
     {
         return [
@@ -184,13 +199,14 @@ class InstallController extends Controller
         preg_match('/APP_KEY=(.+)/', $existing, $m);
         $appKey = !empty($m[1]) ? trim($m[1]) : 'base64:' . base64_encode(random_bytes(32));
         $pass   = addslashes($db['db_password'] ?? '');
+        $appUrl = rtrim($db['app_url'] ?? $this->detectAppUrl(), '/');
 
         $env = <<<ENV
 APP_NAME=Dravion
 APP_ENV=production
 APP_KEY={$appKey}
 APP_DEBUG=false
-APP_URL=http://localhost
+APP_URL={$appUrl}
 
 LOG_CHANNEL=stack
 LOG_LEVEL=error

@@ -62,12 +62,13 @@ class InstallTest extends TestCase
 
     public function test_database_validates_required_fields(): void
     {
-        $this->post('/install/database', [])->assertSessionHasErrors(['db_host', 'db_name', 'db_user']);
+        $this->post('/install/database', [])->assertSessionHasErrors(['app_url', 'db_host', 'db_name', 'db_user']);
     }
 
     public function test_database_invalid_connection_returns_error(): void
     {
         $this->post('/install/database', [
+            'app_url'     => 'http://localhost',
             'db_host'     => '127.0.0.1',
             'db_port'     => '3306',
             'db_name'     => 'nonexistent_db_xyz',

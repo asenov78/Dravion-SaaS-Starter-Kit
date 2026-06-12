@@ -1,7 +1,7 @@
 <x-install.layout :steps="$steps" :current="$current">
 
-<h2 style="color:#e2e2e9; font-size:16px; font-weight:700; margin:0 0 4px; letter-spacing:-0.01em;">Database Connection</h2>
-<p style="color:#4a5a7a; font-size:13px; margin:0 0 20px;">Enter your MySQL database credentials. A connection test will be run before proceeding.</p>
+<h2 style="color:#e2e2e9; font-size:16px; font-weight:700; margin:0 0 4px; letter-spacing:-0.01em;">Site URL & Database</h2>
+<p style="color:#4a5a7a; font-size:13px; margin:0 0 20px;">Confirm your site URL (auto-detected) and enter database credentials.</p>
 
 @if($errors->any())
 <div style="display:flex; align-items:center; gap:8px; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.2); border-radius:8px; padding:10px 14px; color:#f87171; font-size:12px; margin-bottom:16px;">
@@ -13,6 +13,14 @@
 <form method="POST" action="{{ route('install.process', 'database') }}">
     @csrf
     <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
+
+        {{-- App URL — auto-detected, user can override --}}
+        <div>
+            <x-ui.input name="app_url" label="Site URL" :value="old('app_url', $detected_url)" :error="$errors->first('app_url')" required />
+            <p style="color:#2a3a55; font-size:11px; margin:5px 0 0 2px;">Auto-detected from your current request. Edit if wrong.</p>
+        </div>
+
+        <div style="height:1px; background:rgba(255,255,255,0.05);"></div>
 
         <div style="display:flex; gap:12px;">
             <div style="flex:1;">
