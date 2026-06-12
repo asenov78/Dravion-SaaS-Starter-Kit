@@ -221,6 +221,7 @@ class InstallController extends Controller
     private function hotSwapDb(array $db): void
     {
         config([
+            'database.default'                    => 'mysql',
             'database.connections.mysql.host'     => $db['db_host'],
             'database.connections.mysql.port'     => $db['db_port'] ?? 3306,
             'database.connections.mysql.database' => $db['db_name'],
@@ -228,6 +229,7 @@ class InstallController extends Controller
             'database.connections.mysql.password' => $db['db_password'] ?? '',
         ]);
         DB::purge('mysql');
+        DB::purge('sqlite');
         DB::reconnect('mysql');
     }
 
