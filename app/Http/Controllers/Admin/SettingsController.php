@@ -33,6 +33,9 @@ class SettingsController extends Controller
             'activity_log_profile'   => Setting::get('activity_log_profile', '1'),
             'activity_log_settings'  => Setting::get('activity_log_settings', '1'),
             'broadcast_banner'       => Setting::get('broadcast_banner', ''),
+            'footer_text'            => Setting::get('footer_text', ''),
+            'footer_copyright'       => Setting::get('footer_copyright', ''),
+            'header_tagline'         => Setting::get('header_tagline', ''),
         ];
 
         $availableLocales = ['en' => 'English', 'bg' => 'Български'];
@@ -52,6 +55,9 @@ class SettingsController extends Controller
             'default_language'  => 'nullable|in:en,bg',
             'logo'              => 'nullable|image|max:2048',
             'broadcast_banner'  => 'nullable|string|max:500',
+            'footer_text'       => 'nullable|string|max:500',
+            'footer_copyright'  => 'nullable|string|max:200',
+            'header_tagline'    => 'nullable|string|max:200',
         ]);
 
         $logoPath = Setting::get('logo', '');
@@ -81,6 +87,9 @@ class SettingsController extends Controller
             'activity_log_profile'  => $request->boolean('activity_log_profile') ? '1' : '0',
             'activity_log_settings' => $request->boolean('activity_log_settings') ? '1' : '0',
             'broadcast_banner'      => $request->input('broadcast_banner', ''),
+            'footer_text'           => $request->input('footer_text', ''),
+            'footer_copyright'      => $request->input('footer_copyright', ''),
+            'header_tagline'        => $request->input('header_tagline', ''),
         ]);
 
         return redirect()->route('admin.settings')->with('success', __('flash.settings_saved'));

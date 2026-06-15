@@ -45,4 +45,9 @@ return [
     'default_language_desc'  => 'Fallback language for guests and new users.',
     'broadcast_banner'       => 'Broadcast Banner',
     'broadcast_banner_desc'  => 'Show an announcement bar to all admin users. Leave empty to hide.',
+    'public_site'                => 'Public Site',
+    'header_tagline'             => 'Header Tagline / Slogan',
+    'footer_text'                => 'Footer Tagline Text',
+    'footer_copyright'           => 'Copyright Text',
+    'footer_copyright_placeholder' => '© 2025 Company Name. All rights reserved.',
 ];

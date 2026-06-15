@@ -49,11 +49,19 @@
             </button>
 
             <!-- Mobile Logo -->
+            @php
+                $headerLogo = \App\Models\Setting::get('logo', '');
+                $headerName = \App\Models\Setting::get('app_name', config('app.name'));
+            @endphp
             <a href="{{ route('admin.dashboard') }}" class="xl:hidden flex items-center gap-2">
-                <div class="w-7 h-7 bg-brand-500 rounded-md flex items-center justify-center">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                </div>
-                <span class="font-bold text-gray-900 dark:text-white text-sm">DRAVION</span>
+                @if($headerLogo)
+                    <img src="{{ Storage::url($headerLogo) }}" class="w-7 h-7 object-contain rounded-md" alt="logo">
+                @else
+                    <div class="w-7 h-7 bg-brand-500 rounded-md flex items-center justify-center">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    </div>
+                @endif
+                <span class="font-bold text-gray-900 dark:text-white text-sm">{{ $headerName }}</span>
             </a>
 
             <!-- Application Menu Toggle (mobile only) -->

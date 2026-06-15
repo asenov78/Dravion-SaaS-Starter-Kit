@@ -53,6 +53,31 @@
         </div>
     </div>
 
+    {{-- Public Site --}}
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('settings.public_site') }}</h3>
+        </div>
+        <div class="p-6 flex flex-col gap-5">
+            <div>
+                <label for="header_tagline" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.header_tagline') }}</label>
+                <input type="text" name="header_tagline" id="header_tagline" value="{{ $settings['header_tagline'] }}" maxlength="200"
+                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" />
+            </div>
+            <div>
+                <label for="footer_text" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.footer_text') }}</label>
+                <textarea name="footer_text" id="footer_text" rows="2" maxlength="500"
+                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90">{{ $settings['footer_text'] }}</textarea>
+            </div>
+            <div>
+                <label for="footer_copyright" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.footer_copyright') }}</label>
+                <input type="text" name="footer_copyright" id="footer_copyright" value="{{ $settings['footer_copyright'] }}" maxlength="200"
+                    placeholder="{{ __('settings.footer_copyright_placeholder') }}"
+                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" />
+            </div>
+        </div>
+    </div>
+
     {{-- Logo --}}
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">

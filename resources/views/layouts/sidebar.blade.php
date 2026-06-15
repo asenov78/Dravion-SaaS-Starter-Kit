@@ -49,14 +49,22 @@
     @mouseleave="$store.sidebar.setHovered(false)">
 
     {{-- Logo --}}
+    @php
+        $sidebarLogo = \App\Models\Setting::get('logo', '');
+        $sidebarName = \App\Models\Setting::get('app_name', config('app.name'));
+    @endphp
     <div class="pt-8 pb-7 flex"
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center' : 'justify-start'">
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-            <div class="flex-shrink-0 w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            </div>
+            @if($sidebarLogo)
+                <img src="{{ Storage::url($sidebarLogo) }}" class="w-8 h-8 object-contain rounded-lg" alt="logo">
+            @else
+                <div class="flex-shrink-0 w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+            @endif
             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                class="text-lg font-bold text-gray-900 dark:text-white tracking-tight">DRAVION</span>
+                class="text-lg font-bold text-gray-900 dark:text-white tracking-tight">{{ $sidebarName }}</span>
         </a>
     </div>
 
