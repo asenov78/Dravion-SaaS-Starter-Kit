@@ -51,6 +51,22 @@ document.addEventListener('alpine:init', () => {
                     onUpdate: ({ editor }) => {
                         this.content = editor.getHTML();
                     },
+                    onSelectionUpdate: ({ editor }) => {
+                        if (!this.showPreview) return;
+                        const { from } = editor.state.selection;
+                        const doc = editor.state.doc;
+                        // Find index of top-level block containing the cursor
+                        let blockIndex = 0;
+                        doc.forEach((node, offset) => {
+                            if (from > offset + node.nodeSize) blockIndex++;
+                        });
+                        const panel = this.$el.querySelector('[data-preview-content]');
+                        if (!panel) return;
+                        const target = panel.children[blockIndex];
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    },
                 });
                 // Always keep data-tiptap-target in sync with content
                 this.$watch('content', (val) => {

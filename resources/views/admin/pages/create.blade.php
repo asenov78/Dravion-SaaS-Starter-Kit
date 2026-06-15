@@ -147,7 +147,7 @@
                             <span class="tiptap-live-dot"></span>
                             Live Preview
                         </div>
-                        <div class="cms-content" style="padding:20px 24px; overflow-y:auto; flex:1;" x-html="content"></div>
+                        <div class="cms-content" data-preview-content style="padding:20px 24px; overflow-y:auto; flex:1;" x-html="content"></div>
                     </div>
                 </div>
             </div>
