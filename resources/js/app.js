@@ -24,65 +24,70 @@ window.FullCalendar = Calendar;
 window.createPopper = createPopper;
 
 // TipTap rich-text editor Alpine component
+// NOTE: editor stored in closure var, NOT as Alpine reactive property.
+// Alpine Proxy wraps reactive props → ProseMirror tr.before !== raw state → "mismatched transaction".
 document.addEventListener('alpine:init', () => {
-    Alpine.data('tiptap', (options = {}) => ({
-        editor: null,
-        content: options.content ?? '',
-        showPreview: false,
-        _textarea: null,
+    Alpine.data('tiptap', (options = {}) => {
+        let _editor = null; // raw, non-proxied reference
 
-        init() {
-            this.editor = new Editor({
-                element: this.$refs.editorEl,
-                extensions: [
-                    StarterKit,
-                    Link.configure({ openOnClick: false }),
-                    Placeholder.configure({ placeholder: options.placeholder ?? '' }),
-                    Typography,
-                ],
-                content: this.content,
-                onUpdate: ({ editor }) => {
-                    this.content = editor.getHTML();
-                    if (this._textarea) this._textarea.value = this.content;
-                },
-            });
-            this._textarea = this.$el.querySelector('textarea[data-tiptap-target]');
-        },
+        return {
+            content: options.content ?? '',
+            showPreview: false,
 
-        destroy() {
-            this.editor?.destroy();
-        },
+            init() {
+                _editor = new Editor({
+                    element: this.$refs.editorEl,
+                    extensions: [
+                        StarterKit,
+                        Link.configure({ openOnClick: false }),
+                        Placeholder.configure({ placeholder: options.placeholder ?? '' }),
+                        Typography,
+                    ],
+                    content: this.content,
+                    onUpdate: ({ editor }) => {
+                        this.content = editor.getHTML();
+                        const ta = this.$el.querySelector('textarea[data-tiptap-target]');
+                        if (ta) ta.value = this.content;
+                    },
+                });
+            },
 
-        execCmd(cmd, value) {
-            if (!this.editor) return;
-            const chain = this.editor.chain().focus();
-            switch (cmd) {
-                case 'bold':        chain.toggleBold().run(); break;
-                case 'italic':      chain.toggleItalic().run(); break;
-                case 'strike':      chain.toggleStrike().run(); break;
-                case 'h2':          chain.toggleHeading({ level: 2 }).run(); break;
-                case 'h3':          chain.toggleHeading({ level: 3 }).run(); break;
-                case 'ul':          chain.toggleBulletList().run(); break;
-                case 'ol':          chain.toggleOrderedList().run(); break;
-                case 'blockquote':  chain.toggleBlockquote().run(); break;
-                case 'code':        chain.toggleCode().run(); break;
-                case 'codeBlock':   chain.toggleCodeBlock().run(); break;
-                case 'hr':          chain.setHorizontalRule().run(); break;
-                case 'undo':        chain.undo().run(); break;
-                case 'redo':        chain.redo().run(); break;
-                case 'link': {
-                    const url = prompt('URL:');
-                    if (url) chain.setLink({ href: url }).run();
-                    break;
+            destroy() {
+                _editor?.destroy();
+                _editor = null;
+            },
+
+            execCmd(cmd) {
+                if (!_editor) return;
+                const chain = _editor.chain().focus();
+                switch (cmd) {
+                    case 'bold':        chain.toggleBold().run(); break;
+                    case 'italic':      chain.toggleItalic().run(); break;
+                    case 'strike':      chain.toggleStrike().run(); break;
+                    case 'h2':          chain.toggleHeading({ level: 2 }).run(); break;
+                    case 'h3':          chain.toggleHeading({ level: 3 }).run(); break;
+                    case 'ul':          chain.toggleBulletList().run(); break;
+                    case 'ol':          chain.toggleOrderedList().run(); break;
+                    case 'blockquote':  chain.toggleBlockquote().run(); break;
+                    case 'code':        chain.toggleCode().run(); break;
+                    case 'codeBlock':   chain.toggleCodeBlock().run(); break;
+                    case 'hr':          chain.setHorizontalRule().run(); break;
+                    case 'undo':        chain.undo().run(); break;
+                    case 'redo':        chain.redo().run(); break;
+                    case 'link': {
+                        const url = prompt('URL:');
+                        if (url) chain.setLink({ href: url }).run();
+                        break;
+                    }
+                    case 'unlink':      chain.unsetLink().run(); break;
                 }
-                case 'unlink':      chain.unsetLink().run(); break;
-            }
-        },
+            },
 
-        isActive(type, attrs) {
-            return this.editor ? this.editor.isActive(type, attrs) : false;
-        },
-    }));
+            isActive(type, attrs) {
+                return _editor ? _editor.isActive(type, attrs) : false;
+            },
+        };
+    });
 });
 
 Alpine.start();
