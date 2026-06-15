@@ -24,33 +24,40 @@ document.addEventListener('alpine:init', () => {
         showPreview: false,
         _textarea: null,
 
-        init() {
-            import('@tiptap/core').then(({ Editor }) => {
-                import('@tiptap/starter-kit').then(({ default: StarterKit }) => {
-                    import('@tiptap/extension-link').then(({ default: Link }) => {
-                        import('@tiptap/extension-placeholder').then(({ default: Placeholder }) => {
-                            import('@tiptap/extension-typography').then(({ default: Typography }) => {
-                                this.editor = new Editor({
-                                    element: this.$refs.editorEl,
-                                    extensions: [
-                                        StarterKit,
-                                        Link.configure({ openOnClick: false }),
-                                        Placeholder.configure({ placeholder: options.placeholder ?? '' }),
-                                        Typography,
-                                    ],
-                                    content: this.content,
-                                    onUpdate: ({ editor }) => {
-                                        this.content = editor.getHTML();
-                                        if (this._textarea) this._textarea.value = this.content;
-                                    },
-                                });
-                                // find the hidden textarea sibling
-                                this._textarea = this.$el.querySelector('textarea[data-tiptap-target]');
-                            });
-                        });
-                    });
-                });
+        async init() {
+            // Capture $refs/$el BEFORE async — unavailable inside promise callbacks
+            const el = this.$refs.editorEl;
+            const textarea = this.$el.querySelector('textarea[data-tiptap-target]');
+
+            const [
+                { Editor },
+                { default: StarterKit },
+                { default: Link },
+                { default: Placeholder },
+                { default: Typography },
+            ] = await Promise.all([
+                import('@tiptap/core'),
+                import('@tiptap/starter-kit'),
+                import('@tiptap/extension-link'),
+                import('@tiptap/extension-placeholder'),
+                import('@tiptap/extension-typography'),
+            ]);
+
+            this.editor = new Editor({
+                element: el,
+                extensions: [
+                    StarterKit,
+                    Link.configure({ openOnClick: false }),
+                    Placeholder.configure({ placeholder: options.placeholder ?? '' }),
+                    Typography,
+                ],
+                content: this.content,
+                onUpdate: ({ editor }) => {
+                    this.content = editor.getHTML();
+                    if (this._textarea) this._textarea.value = this.content;
+                },
             });
+            this._textarea = textarea;
         },
 
         destroy() {
