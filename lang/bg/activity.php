@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'title'       => 'Дневник на активността',
+    'subtitle'    => 'История на системната и потребителска активност',
+    'empty'       => 'Все още няма записана активност.',
+    'event'       => 'Събитие',
+    'description' => 'Описание',
+    'user'        => 'Потребител',
+    'subject'     => 'Обект',
+    'when'        => 'Кога',
+    'system'      => 'Система',
+    'log'         => [
+        'user_created'        => 'Създаден потребител :name (:email)',
+        'user_updated'        => 'Обновен потребител :name (:email)',
+        'user_suspended'      => 'Спрян потребител :name (:email)',
+        'user_activated'      => 'Активиран потребител :name (:email)',
+        'user_deleted'        => 'Изтрит потребител :name (:email)',
+        'user_restored'       => 'Възстановен потребител :name (:email)',
+        'role_created'        => "Ролята ':role' е създадена",
+        'role_deleted'        => "Ролята ':role' е изтрита",
+        'permissions_updated' => 'Матрицата с права е обновена от :name',
+        'settings_updated'    => 'Системните настройки са обновени от :name',
+        'profile_updated'     => 'Профилът на :name (:email) е обновен',
+        'user_logged_in'      => ':name влезе в системата',
+        'user_logged_out'     => ':name излезе от системата',
+    ],
+];

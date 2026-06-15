@@ -97,6 +97,33 @@ class UiComponentsTest extends TestCase
         $view->assertSee('Done!');
     }
 
+    public function test_alert_renders_title_and_message(): void
+    {
+        $view = $this->blade('<x-ui.alert variant="info" title="Heads up" message="Read this carefully" />');
+        $view->assertSee('Heads up');
+        $view->assertSee('Read this carefully');
+    }
+
+    public function test_alert_renders_link_when_enabled(): void
+    {
+        $view = $this->blade('<x-ui.alert variant="warning" title="T" :showLink="true" linkHref="/docs" linkText="Learn more" />');
+        $view->assertSee('Learn more');
+        $view->assertSee('href="/docs"', false);
+    }
+
+    public function test_alert_success_uses_green_container(): void
+    {
+        $view = $this->blade('<x-ui.alert variant="success" title="OK" />');
+        $view->assertSee('bg-green-50', false);
+    }
+
+    public function test_alert_merges_extra_classes(): void
+    {
+        $view = $this->blade('<x-ui.alert variant="error" class="mb-4">Oops</x-ui.alert>');
+        $view->assertSee('mb-4', false);
+        $view->assertSee('Oops');
+    }
+
     // --- Separator ---
 
     public function test_separator_renders(): void
@@ -499,6 +526,203 @@ class UiComponentsTest extends TestCase
             ],
         ]);
         $view->assertSee('Users');
+    }
+
+    // --- Ecommerce widgets ---
+
+    public function test_ecommerce_metrics_renders(): void
+    {
+        $view = $this->blade('<x-ecommerce.ecommerce-metrics />');
+        $view->assertSee('Customers');
+    }
+
+    public function test_monthly_sale_renders_chart_target(): void
+    {
+        $view = $this->blade('<x-ecommerce.monthly-sale />');
+        $view->assertSee('chartOne', false);
+    }
+
+    public function test_monthly_target_renders_chart_target(): void
+    {
+        $view = $this->blade('<x-ecommerce.monthly-target />');
+        $view->assertSee('chartTwo', false);
+    }
+
+    public function test_statistics_chart_renders(): void
+    {
+        $view = $this->blade('<x-ecommerce.statistics-chart />');
+        $view->assertSee('chartThree', false);
+    }
+
+    public function test_recent_orders_renders(): void
+    {
+        $view = $this->blade('<x-ecommerce.recent-orders />');
+        $view->assertSee('Recent Orders');
+    }
+
+    public function test_customer_demographic_renders_map_target(): void
+    {
+        $view = $this->blade('<x-ecommerce.customer-demographic />');
+        $view->assertSee('mapOne', false);
+    }
+
+    // --- Tables: basic-tables 1-5 ---
+
+    public function test_basic_table_one_renders(): void
+    {
+        $view = $this->blade('<x-tables.basic-tables.basic-tables-one />');
+        $view->assertSee('Agency Website');
+    }
+
+    public function test_basic_table_two_renders(): void
+    {
+        $view = $this->blade('<x-tables.basic-tables.basic-tables-two />');
+        $view->assertSee('table', false);
+    }
+
+    public function test_basic_table_three_renders(): void
+    {
+        $view = $this->blade('<x-tables.basic-tables.basic-tables-three />');
+        $view->assertSee('table', false);
+    }
+
+    public function test_basic_table_four_renders(): void
+    {
+        $view = $this->blade('<x-tables.basic-tables.basic-tables-four />');
+        $view->assertSee('table', false);
+    }
+
+    public function test_basic_table_five_renders(): void
+    {
+        $view = $this->blade('<x-tables.basic-tables.basic-tables-five />');
+        $view->assertSee('table', false);
+    }
+
+    // --- Form: date-picker ---
+
+    public function test_date_picker_renders_input_and_label(): void
+    {
+        $view = $this->blade('<x-form.date-picker name="due" label="Due date" />');
+        $view->assertSee('Due date');
+        $view->assertSee('flatpickr', false);
+        $view->assertSee('name="due"', false);
+    }
+
+    // --- Form-elements showcase partials ---
+
+    public function test_form_default_inputs_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.default-inputs />');
+        $view->assertSee('Default Inputs');
+    }
+
+    public function test_form_select_inputs_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.select-inputs />');
+        $view->assertSee('select', false);
+    }
+
+    public function test_form_checkbox_component_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.checkbox-component />');
+        $view->assertSee('Checkboxes');
+    }
+
+    public function test_form_toggle_switch_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.toggle-switch />');
+        $view->assertSee('checkbox', false);
+    }
+
+    public function test_form_textarea_inputs_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.text-area-inputs />');
+        $view->assertSee('textarea', false);
+    }
+
+    public function test_form_radio_buttons_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.radio-buttons />');
+        $view->assertSee('Radio', false);
+    }
+
+    public function test_form_file_input_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.file-input-example />');
+        $view->assertSee('type="file"', false);
+    }
+
+    public function test_form_dropzone_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.dropzone />');
+        $view->assertSee('Dropzone');
+    }
+
+    public function test_form_input_group_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.input-group />');
+        $view->assertSee('Input Group');
+    }
+
+    public function test_form_input_states_renders(): void
+    {
+        $view = $this->blade('<x-form.form-elements.input-states />');
+        $view->assertSee('input', false);
+    }
+
+    // --- Modal (TailAdmin) ---
+
+    public function test_modal_renders_slot(): void
+    {
+        $view = $this->blade('<x-ui.modal>Modal body here</x-ui.modal>');
+        $view->assertSee('Modal body here');
+    }
+
+    public function test_modal_has_close_button_by_default(): void
+    {
+        $view = $this->blade('<x-ui.modal>X</x-ui.modal>');
+        $view->assertSee('open = false', false);
+    }
+
+    public function test_modal_can_hide_close_button(): void
+    {
+        $view = $this->blade('<x-ui.modal :showCloseButton="false">Y</x-ui.modal>');
+        $view->assertSee('Y');
+    }
+
+    // --- Common: component-card ---
+
+    public function test_component_card_renders_title_and_slot(): void
+    {
+        $view = $this->blade('<x-common.component-card title="Settings">Inside</x-common.component-card>');
+        $view->assertSee('Settings');
+        $view->assertSee('Inside');
+    }
+
+    public function test_component_card_renders_desc(): void
+    {
+        $view = $this->blade('<x-common.component-card title="T" desc="A description">B</x-common.component-card>');
+        $view->assertSee('A description');
+    }
+
+    // --- Common: page-breadcrumb ---
+
+    public function test_page_breadcrumb_renders_title(): void
+    {
+        $view = $this->blade('<x-common.page-breadcrumb pageTitle="Users" />');
+        $view->assertSee('Users');
+        $view->assertSee('Home');
+    }
+
+    // --- Common: dropdown-menu ---
+
+    public function test_dropdown_menu_renders_items(): void
+    {
+        $view = $this->blade('<x-common.dropdown-menu :items="$items" />', [
+            'items' => ['Edit', 'Remove'],
+        ]);
+        $view->assertSee('Edit');
+        $view->assertSee('Remove');
     }
 
     // --- Context Menu ---

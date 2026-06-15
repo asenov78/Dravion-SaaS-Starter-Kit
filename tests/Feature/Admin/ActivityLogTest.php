@@ -1,0 +1,198 @@
+<?php
+
+namespace Tests\Feature\Admin;
+
+use App\Models\Setting;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Activitylog\Models\Activity;
+use Tests\TestCase;
+
+class ActivityLogTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private function admin(): User
+    {
+        $u = User::factory()->create(['name' => 'Admin', 'email' => 'admin@test.test']);
+        $u->assignRole('admin');
+        return $u;
+    }
+
+    private function enableAll(): void
+    {
+        Setting::setMany([
+            'activity_log_auth'     => '1',
+            'activity_log_users'    => '1',
+            'activity_log_profile'  => '1',
+            'activity_log_settings' => '1',
+        ]);
+    }
+
+    // --- Auth events ---
+
+    public function test_login_creates_activity_when_enabled(): void
+    {
+        $this->enableAll();
+        $admin = $this->admin();
+
+        $this->post('/login', ['email' => 'admin@test.test', 'password' => 'password']);
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'auth',
+            'event'     => 'login',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    public function test_login_no_activity_when_disabled(): void
+    {
+        Setting::set('activity_log_auth', '0');
+        $this->admin();
+
+        $this->post('/login', ['email' => 'admin@test.test', 'password' => 'password']);
+
+        $this->assertDatabaseMissing('activity_log', ['log_name' => 'auth', 'event' => 'login']);
+    }
+
+    public function test_logout_creates_activity_when_enabled(): void
+    {
+        $this->enableAll();
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->post('/logout');
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'auth',
+            'event'     => 'logout',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    // --- User events ---
+
+    public function test_user_created_logs_activity(): void
+    {
+        $this->enableAll();
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->post('/admin/users', [
+            'name'     => 'New User',
+            'email'    => 'newuser@test.test',
+            'password' => 'password123',
+            'role'     => 'user',
+        ]);
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'    => 'users',
+            'event'       => 'created',
+            'causer_id'   => $admin->id,
+        ]);
+    }
+
+    public function test_user_updated_logs_activity(): void
+    {
+        $this->enableAll();
+        $admin = $this->admin();
+        $target = User::factory()->create();
+        $target->assignRole('user');
+
+        $this->actingAs($admin)->put("/admin/users/{$target->id}", [
+            'name'  => 'Changed Name',
+            'email' => $target->email,
+            'role'  => 'user',
+        ]);
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'users',
+            'event'     => 'updated',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    public function test_user_suspended_logs_activity(): void
+    {
+        $this->enableAll();
+        $admin = $this->admin();
+        $target = User::factory()->create();
+        $target->assignRole('user');
+
+        $this->actingAs($admin)->patch("/admin/users/{$target->id}/suspend");
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'users',
+            'event'     => 'suspended',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    public function test_user_events_skipped_when_disabled(): void
+    {
+        Setting::set('activity_log_users', '0');
+        $admin = $this->admin();
+        $target = User::factory()->create();
+        $target->assignRole('user');
+
+        $this->actingAs($admin)->put("/admin/users/{$target->id}", [
+            'name'  => 'X',
+            'email' => $target->email,
+            'role'  => 'user',
+        ]);
+
+        $this->assertDatabaseMissing('activity_log', ['log_name' => 'users']);
+    }
+
+    // --- Profile events ---
+
+    public function test_profile_update_logs_activity(): void
+    {
+        $this->enableAll();
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->put('/admin/ui/profile', [
+            'name'  => 'Admin New',
+            'email' => 'admin@test.test',
+            'bio'   => 'Team Lead',
+        ]);
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'profile',
+            'event'     => 'updated',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    // --- Settings events ---
+
+    public function test_settings_update_logs_activity(): void
+    {
+        $this->enableAll();
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->put('/admin/settings', [
+            'app_name' => 'My App',
+            'app_url'  => 'https://example.com',
+        ]);
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'settings',
+            'event'     => 'updated',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    // --- Activity log page ---
+
+    public function test_activity_page_shows_entries(): void
+    {
+        $this->enableAll();
+        $admin = $this->admin();
+
+        activity('auth')->causedBy($admin)->event('login')->log('User logged in');
+
+        $this->actingAs($admin)
+            ->get('/admin/activity')
+            ->assertStatus(200)
+            ->assertSee('login');
+    }
+}

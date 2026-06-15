@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 
 class InstallController extends Controller
 {
@@ -154,10 +155,21 @@ class InstallController extends Controller
         $admin   = session('install_admin');
         $license = session('install_license', []);
 
+        if (empty($license)) {
+            return redirect()->route('install.step', 'license')
+                ->withErrors(['purchase_code' => 'Please complete the license step.']);
+        }
+
         // 1. Write .env and hot-swap DB (skip in test env — uses existing DB)
         if (!empty($db)) {
             $this->writeEnv($db, $license);
             $this->hotSwapDb($db);
+            $appUrl = rtrim($db['app_url'], '/');
+            config(['app.url' => $appUrl]);
+            URL::forceRootUrl($appUrl);
+            if (str_starts_with($appUrl, 'https://')) {
+                URL::forceScheme('https');
+            }
         }
 
         // 2. Migrate
@@ -180,12 +192,20 @@ class InstallController extends Controller
         );
         $user->syncRoles(['admin']);
 
-        // 5. Write install lock
+        // 5. Ensure storage dirs exist (shared hosting often lacks them)
+        foreach (['framework/sessions', 'framework/cache/data', 'framework/views', 'logs'] as $dir) {
+            $path = storage_path($dir);
+            if (!is_dir($path)) {
+                mkdir($path, 0755, true);
+            }
+        }
+
+        // 6. Write install lock
         file_put_contents(storage_path('install.lock'), now()->toDateTimeString());
 
         session()->forget(['install_db', 'install_admin', 'install_license']);
 
-        return redirect()->route('login')->with('success', 'Installation complete! Please sign in.');
+        return redirect()->route('login')->with('success', __('flash.install_complete'));
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────

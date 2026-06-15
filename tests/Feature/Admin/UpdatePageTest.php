@@ -1,0 +1,133 @@
+<?php
+
+namespace Tests\Feature\Admin;
+
+use App\Models\User;
+use App\Services\UpdaterService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
+
+class UpdatePageTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function tearDown(): void
+    {
+        @unlink(storage_path('license.cache'));
+        parent::tearDown();
+    }
+
+    private function admin(): User
+    {
+        $u = User::factory()->create();
+        $u->assignRole('admin');
+        return $u;
+    }
+
+    private function licensed(): void
+    {
+        config(['dravion.license_key' => 'DRV-VALID']);
+        @unlink(storage_path('license.cache'));
+    }
+
+    private function unlicensed(): void
+    {
+        config(['dravion.license_key' => '']);
+    }
+
+    private function fakeRelease(string $tag): void
+    {
+        Http::fake([
+            'api.github.com/*' => Http::response([
+                'tag_name'    => $tag,
+                'body'        => 'Release notes here',
+                'zipball_url' => 'https://api.github.com/zip/' . $tag,
+            ], 200),
+        ]);
+        config(['updater.owner' => 'o', 'updater.repo' => 'r']);
+    }
+
+    public function test_unlicensed_page_is_locked_and_skips_github(): void
+    {
+        Http::fake();
+        $this->unlicensed();
+
+        $this->actingAs($this->admin())
+            ->get('/admin/updates')
+            ->assertStatus(200)
+            ->assertSee('license', false);
+
+        Http::assertNothingSent();
+    }
+
+    public function test_licensed_page_shows_available_update(): void
+    {
+        config(['dravion.version' => '1.2.29']);
+        $this->licensed();
+        $this->fakeRelease('v1.3.0');
+
+        $this->actingAs($this->admin())
+            ->get('/admin/updates')
+            ->assertStatus(200)
+            ->assertSee('1.3.0');
+    }
+
+    public function test_licensed_page_shows_up_to_date(): void
+    {
+        config(['dravion.version' => '1.3.0']);
+        $this->licensed();
+        $this->fakeRelease('v1.3.0');
+
+        $this->actingAs($this->admin())
+            ->get('/admin/updates')
+            ->assertStatus(200)
+            ->assertSee('1.3.0');
+    }
+
+    public function test_check_endpoint_returns_json(): void
+    {
+        config(['dravion.version' => '1.2.29']);
+        $this->licensed();
+        $this->fakeRelease('v1.3.0');
+
+        $this->actingAs($this->admin())
+            ->getJson('/admin/updates/check')
+            ->assertOk()
+            ->assertJson(['has_update' => true, 'latest' => '1.3.0']);
+    }
+
+    public function test_install_blocked_without_license(): void
+    {
+        $this->unlicensed();
+
+        $this->actingAs($this->admin())
+            ->postJson('/admin/updates/install', ['zip_url' => 'https://x/zip'])
+            ->assertStatus(403);
+    }
+
+    public function test_install_runs_service_when_licensed(): void
+    {
+        $this->licensed();
+
+        $mock = $this->mock(UpdaterService::class);
+        $mock->shouldReceive('downloadAndInstall')
+            ->once()
+            ->andReturn(['ok' => true, 'message' => 'done']);
+
+        $this->actingAs($this->admin())
+            ->postJson('/admin/updates/install', ['zip_url' => 'https://x/zip'])
+            ->assertOk()
+            ->assertJson(['ok' => true]);
+    }
+
+    public function test_non_admin_cannot_access_updates(): void
+    {
+        $manager = User::factory()->create();
+        $manager->assignRole('manager');
+
+        $this->actingAs($manager)
+            ->get('/admin/updates')
+            ->assertStatus(403);
+    }
+}
