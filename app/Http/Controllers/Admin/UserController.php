@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\AccountActivatedNotification;
 use App\Notifications\AccountSuspendedNotification;
+use App\Notifications\NewUserRegisteredNotification;
 use App\Services\ActivityLogger;
 use App\Services\AvatarService;
 use Illuminate\Http\Request;
@@ -144,6 +145,11 @@ class UserController extends Controller
                 Mail::to($user->email)->send(new WelcomeMail($user, $setPasswordUrl));
             } catch (\Throwable) {}
         }
+
+        try {
+            $notification = new NewUserRegisteredNotification($user);
+            User::role('admin')->get()->each->notify($notification);
+        } catch (\Throwable) {}
 
         return redirect()->route('admin.users.edit', $user)->with('success', __('flash.user_created'));
     }

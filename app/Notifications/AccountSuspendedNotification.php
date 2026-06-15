@@ -12,7 +12,7 @@ class AccountSuspendedNotification extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
@@ -23,5 +23,14 @@ class AccountSuspendedNotification extends Notification
             ->line(__('mail.suspended_line1'))
             ->line(__('mail.suspended_line2'))
             ->salutation(config('app.name') . ' Team');
+    }
+
+    public function toArray($notifiable): array
+    {
+        return [
+            'title' => __('notifications.suspended_title'),
+            'body'  => __('notifications.suspended_body'),
+            'url'   => '/dashboard',
+        ];
     }
 }

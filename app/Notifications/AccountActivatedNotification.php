@@ -12,7 +12,7 @@ class AccountActivatedNotification extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
@@ -23,5 +23,14 @@ class AccountActivatedNotification extends Notification
             ->line(__('mail.activated_line1'))
             ->action('Log In', config('app.url') . '/login')
             ->salutation(config('app.name') . ' Team');
+    }
+
+    public function toArray($notifiable): array
+    {
+        return [
+            'title' => __('notifications.activated_title'),
+            'body'  => __('notifications.activated_body'),
+            'url'   => '/dashboard',
+        ];
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Notifications\UpdateInstalledNotification;
 use App\Rules\GitHubZipUrl;
 use App\Services\LicenseService;
 use App\Services\UpdaterService;
@@ -61,6 +63,13 @@ class UpdateController extends Controller
         ]);
 
         $result = $updater->downloadAndInstall($data['zip_url']);
+
+        if ($result['ok'] ?? false) {
+            try {
+                $version = $result['version'] ?? 'unknown';
+                User::role('admin')->get()->each->notify(new UpdateInstalledNotification($version));
+            } catch (\Throwable) {}
+        }
 
         return response()->json($result, $result['ok'] ? 200 : 500);
     }
