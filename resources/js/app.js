@@ -33,6 +33,7 @@ document.addEventListener('alpine:init', () => {
         return {
             content: options.content ?? '',
             showPreview: false,
+            showHtml: false,
 
             init() {
                 _editor = new Editor({
@@ -46,10 +47,21 @@ document.addEventListener('alpine:init', () => {
                     content: this.content,
                     onUpdate: ({ editor }) => {
                         this.content = editor.getHTML();
-                        const ta = this.$el.querySelector('textarea[data-tiptap-target]');
-                        if (ta) ta.value = this.content;
                     },
                 });
+                // Always keep data-tiptap-target in sync with content
+                this.$watch('content', (val) => {
+                    const ta = this.$el.querySelector('textarea[data-tiptap-target]');
+                    if (ta) ta.value = val;
+                });
+            },
+
+            toggleHtml() {
+                this.showHtml = !this.showHtml;
+                if (!this.showHtml && _editor) {
+                    // Switching back to WYSIWYG — push HTML into editor
+                    _editor.commands.setContent(this.content, false);
+                }
             },
 
             destroy() {

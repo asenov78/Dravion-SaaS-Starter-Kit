@@ -113,28 +113,33 @@
                         <div class="tiptap-toolbar">
                             <button type="button" @click="execCmd('bold')" :class="{active: isActive('bold')}" class="tiptap-btn" title="Bold"><b>B</b></button>
                             <button type="button" @click="execCmd('italic')" :class="{active: isActive('italic')}" class="tiptap-btn" title="Italic"><i>I</i></button>
-                            <button type="button" @click="execCmd('strike')" :class="{active: isActive('strike')}" class="tiptap-btn" title="Strike"><s>S</s></button>
+                            <button type="button" @click="execCmd('strike')" :class="{active: isActive('strike')}" class="tiptap-btn" title="Strikethrough"><s>S</s></button>
                             <div class="tiptap-sep"></div>
-                            <button type="button" @click="execCmd('h2')" :class="{active: isActive('heading',{level:2})}" class="tiptap-btn">H2</button>
-                            <button type="button" @click="execCmd('h3')" :class="{active: isActive('heading',{level:3})}" class="tiptap-btn">H3</button>
+                            <button type="button" @click="execCmd('h2')" :class="{active: isActive('heading',{level:2})}" class="tiptap-btn" title="Heading 2">H2</button>
+                            <button type="button" @click="execCmd('h3')" :class="{active: isActive('heading',{level:3})}" class="tiptap-btn" title="Heading 3">H3</button>
                             <div class="tiptap-sep"></div>
-                            <button type="button" @click="execCmd('ul')" :class="{active: isActive('bulletList')}" class="tiptap-btn">&#8226; UL</button>
-                            <button type="button" @click="execCmd('ol')" :class="{active: isActive('orderedList')}" class="tiptap-btn">1. OL</button>
+                            <button type="button" @click="execCmd('ul')" :class="{active: isActive('bulletList')}" class="tiptap-btn" title="Bullet list">UL</button>
+                            <button type="button" @click="execCmd('ol')" :class="{active: isActive('orderedList')}" class="tiptap-btn" title="Ordered list">OL</button>
                             <div class="tiptap-sep"></div>
-                            <button type="button" @click="execCmd('blockquote')" :class="{active: isActive('blockquote')}" class="tiptap-btn">&ldquo;</button>
-                            <button type="button" @click="execCmd('code')" :class="{active: isActive('code')}" class="tiptap-btn">`</button>
-                            <button type="button" @click="execCmd('codeBlock')" :class="{active: isActive('codeBlock')}" class="tiptap-btn">&lt;/&gt;</button>
+                            <button type="button" @click="execCmd('blockquote')" :class="{active: isActive('blockquote')}" class="tiptap-btn" title="Blockquote">&#10077;</button>
+                            <button type="button" @click="execCmd('code')" :class="{active: isActive('code')}" class="tiptap-btn" title="Inline code">`&nbsp;`</button>
+                            <button type="button" @click="execCmd('codeBlock')" :class="{active: isActive('codeBlock')}" class="tiptap-btn" title="Code block">{ }</button>
+                            <button type="button" @click="execCmd('hr')" class="tiptap-btn" title="Horizontal rule">HR</button>
                             <div class="tiptap-sep"></div>
-                            <button type="button" @click="execCmd('link')" :class="{active: isActive('link')}" class="tiptap-btn">&#128279;</button>
-                            <button type="button" @click="execCmd('unlink')" class="tiptap-btn">&#128279;&#xFE0F;&#x20E3;</button>
-                            <button type="button" @click="execCmd('hr')" class="tiptap-btn">&#8212;</button>
+                            <button type="button" @click="execCmd('link')" :class="{active: isActive('link')}" class="tiptap-btn" title="Add link">URL</button>
+                            <button type="button" @click="execCmd('unlink')" class="tiptap-btn" title="Remove link">&#10006; URL</button>
                             <div class="tiptap-sep"></div>
-                            <button type="button" @click="execCmd('undo')" class="tiptap-btn">&#8630;</button>
-                            <button type="button" @click="execCmd('redo')" class="tiptap-btn">&#8631;</button>
+                            <button type="button" @click="execCmd('undo')" class="tiptap-btn" title="Undo">&#8630;</button>
+                            <button type="button" @click="execCmd('redo')" class="tiptap-btn" title="Redo">&#8631;</button>
                             <div class="tiptap-sep"></div>
-                            <button type="button" @click="showPreview = !showPreview" :class="{active: showPreview}" class="tiptap-btn" style="margin-left:auto;">👁 {{ __('app.preview') }}</button>
+                            <button type="button" @click="toggleHtml()" :class="{active: showHtml}" class="tiptap-btn" title="HTML source">&lt;/&gt;</button>
+                            <button type="button" @click="showPreview = !showPreview" :class="{active: showPreview}" class="tiptap-btn" style="margin-left:auto;" title="{{ __('app.preview') }}">&#128065; {{ __('app.preview') }}</button>
                         </div>
-                        <div x-ref="editorEl"></div>
+                        <div x-show="!showHtml">
+                            <div x-ref="editorEl"></div>
+                        </div>
+                        <textarea x-show="showHtml" x-model="content"
+                            class="tiptap-html-source" spellcheck="false"></textarea>
                         <textarea data-tiptap-target name="translations[{{ $lang->code }}][content]"
                             class="hidden">{{ old('translations.'.$lang->code.'.content', $t?->content ?? ($lang->is_default ? $page->content : '')) }}</textarea>
                     </div>
