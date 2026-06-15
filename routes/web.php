@@ -148,7 +148,16 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     Route::get('/languages/{language}/meta',        [LanguageController::class, 'meta'])->name('languages.meta');
     Route::patch('/languages/{language}/meta',      [LanguageController::class, 'updateMeta'])->name('languages.meta.update');
 
-    Route::resource('pages', \App\Http\Controllers\Admin\PagesController::class);
+    Route::resource('pages', \App\Http\Controllers\Admin\PagesController::class)
+        ->middleware([
+            'index'   => 'can:view pages',
+            'create'  => 'can:create pages',
+            'store'   => 'can:create pages',
+            'show'    => 'can:view pages',
+            'edit'    => 'can:edit pages',
+            'update'  => 'can:edit pages',
+            'destroy' => 'can:delete pages',
+        ]);
 
     Route::get('/search',     [GlobalSearchController::class, 'search'])->name('search');
 

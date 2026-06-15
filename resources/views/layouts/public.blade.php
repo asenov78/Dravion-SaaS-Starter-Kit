@@ -302,7 +302,7 @@
             </nav>
             @php $footerCopyright = \App\Models\Setting::get('footer_copyright', ''); @endphp
             <p class="text-sm text-gray-400 dark:text-gray-500">
-                {!! $footerCopyright ?: ('&copy; ' . date('Y') . ' ' . $appName . '. ' . __('app.all_rights_reserved')) !!}
+                {{ $footerCopyright ?: ('© ' . date('Y') . ' ' . $appName . '. ' . __('app.all_rights_reserved')) }}
             </p>
         </div>
     </div>
