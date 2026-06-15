@@ -366,6 +366,71 @@
                 @endif
             </div>
 
+            <!-- Notification Bell -->
+            <div class="relative"
+                x-data="{
+                    open: false,
+                    unread: 0,
+                    items: [],
+                    async load() {
+                        const r = await fetch('{{ route('notifications.index') }}', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                        const d = await r.json();
+                        this.unread = d.unread_count;
+                        this.items  = d.notifications;
+                    },
+                    async markRead(id) {
+                        await fetch(`/notifications/${id}/read`, { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' } });
+                        this.items = this.items.map(n => n.id === id ? {...n, read: true} : n);
+                        this.unread = this.items.filter(n => !n.read).length;
+                    },
+                    async markAll() {
+                        await fetch('/notifications/read-all', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' } });
+                        this.items = this.items.map(n => ({...n, read: true}));
+                        this.unread = 0;
+                    }
+                }"
+                x-init="load()"
+                @click.outside="open = false">
+
+                <button @click="open = !open"
+                    class="relative flex items-center justify-center w-10 h-10 text-gray-500 border border-gray-200 rounded-lg dark:border-gray-800 dark:text-gray-400 lg:h-11 lg:w-11"
+                    :class="{ 'bg-gray-100 dark:bg-white/[0.03]': open }">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                    <span x-show="unread > 0" x-cloak x-text="unread > 9 ? '9+' : unread"
+                        class="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-brand-500 text-white text-[10px] font-bold leading-none"></span>
+                </button>
+
+                <div x-show="open" x-cloak @click.stop
+                    class="absolute right-0 mt-2 w-80 rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900 z-50">
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+                        <span class="text-sm font-semibold text-gray-800 dark:text-white">{{ __('nav.notifications') }}</span>
+                        <button x-show="unread > 0" x-cloak @click="markAll()"
+                            class="text-xs text-brand-600 dark:text-brand-400 hover:underline">{{ __('nav.mark_all_read') }}</button>
+                    </div>
+
+                    <div class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
+                        <template x-if="items.length === 0">
+                            <div class="px-4 py-6 text-center text-sm text-gray-400">{{ __('nav.no_notifications') }}</div>
+                        </template>
+                        <template x-for="n in items" :key="n.id">
+                            <div class="flex gap-3 px-4 py-3 transition-colors"
+                                :class="n.read ? 'opacity-60' : 'bg-brand-50/50 dark:bg-brand-900/20'">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-800 dark:text-white truncate" x-text="n.title"></p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5" x-text="n.body"></p>
+                                    <p class="text-xs text-gray-400 mt-1" x-text="n.created"></p>
+                                </div>
+                                <button x-show="!n.read" @click="markRead(n.id)"
+                                    class="flex-shrink-0 w-2 h-2 mt-1.5 rounded-full bg-brand-500 hover:bg-brand-600 cursor-pointer" title="{{ __('nav.mark_read') }}"></button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
             <!-- User Dropdown -->
             <x-header.user-dropdown />
         </div>

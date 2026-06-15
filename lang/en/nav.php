@@ -10,6 +10,10 @@ return [
     'license'    => 'License',
     'updates'    => 'Updates',
     'profile'    => 'Profile',
-    'main'       => 'Main',
-    'system'     => 'System',
+    'main'             => 'Main',
+    'system'           => 'System',
+    'notifications'    => 'Notifications',
+    'mark_all_read'    => 'Mark all read',
+    'mark_read'        => 'Mark as read',
+    'no_notifications' => 'No notifications yet',
 ];
