@@ -45,4 +45,5 @@ return [
     'light_mode'          => 'Светъл режим',
     'dark_mode'           => 'Тъмен режим',
     'switch_language'     => 'Смяна на език',
+    'preview'             => 'Преглед',
 ];

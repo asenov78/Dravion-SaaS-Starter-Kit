@@ -21,6 +21,7 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('tiptap', (options = {}) => ({
         editor: null,
         content: options.content ?? '',
+        showPreview: false,
         _textarea: null,
 
         init() {

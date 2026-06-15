@@ -23,6 +23,21 @@
 .dark .tiptap-editor .ProseMirror code { background:#1f2937; }
 .tiptap-editor .ProseMirror pre { background:#1e1e2e; color:#cdd6f4; border-radius:8px; padding:12px 16px; overflow-x:auto; }
 .tiptap-editor .ProseMirror a { color:#6366f1; text-decoration:underline; }
+/* cms-content preview panel */
+.cms-content h1,.cms-content h2,.cms-content h3,.cms-content h4 { font-weight:700; margin:.75em 0 .4em; line-height:1.3; color:#111827; }
+.cms-content h2 { font-size:1.4em; }
+.cms-content h3 { font-size:1.15em; }
+.cms-content p { margin:.6em 0; color:#374151; line-height:1.7; }
+.cms-content ul,.cms-content ol { padding-left:1.5em; margin:.5em 0; }
+.cms-content ul { list-style:disc; }
+.cms-content ol { list-style:decimal; }
+.cms-content li { margin:.25em 0; color:#374151; }
+.cms-content a { color:#6366f1; text-decoration:underline; }
+.cms-content blockquote { border-left:3px solid #6366f1; padding-left:12px; color:#6b7280; margin:.75em 0; }
+.cms-content code { background:#f3f4f6; border-radius:4px; padding:1px 4px; font-size:.875em; }
+.cms-content pre { background:#1e1e2e; color:#cdd6f4; border-radius:8px; padding:12px 16px; overflow-x:auto; margin:.75em 0; }
+.cms-content hr { border:none; border-top:1px solid #e5e7eb; margin:1.5em 0; }
+.cms-content strong { font-weight:700; }
 </style>
 
 @php $defaultLang = $languages->firstWhere('is_default', true) ?? $languages->first(); @endphp
@@ -90,33 +105,44 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.content') }}</label>
                 <div x-data="tiptap({ content: {{ json_encode(old('translations.'.$lang->code.'.content', $t?->content ?? ($lang->is_default ? $page->content : ''))) }}, placeholder: '{{ __('pages.content') }}...' })"
                      class="tiptap-editor rounded-lg border border-gray-300 dark:border-gray-700 overflow-hidden"
+                     :style="showPreview ? 'display:flex;align-items:stretch;' : ''"
                      @destroy.window="destroy()">
-                    {{-- Toolbar --}}
-                    <div class="tiptap-toolbar">
-                        <button type="button" @click="execCmd('bold')" :class="{active: isActive('bold')}" class="tiptap-btn" title="Bold"><b>B</b></button>
-                        <button type="button" @click="execCmd('italic')" :class="{active: isActive('italic')}" class="tiptap-btn" title="Italic"><i>I</i></button>
-                        <button type="button" @click="execCmd('strike')" :class="{active: isActive('strike')}" class="tiptap-btn" title="Strike"><s>S</s></button>
-                        <div class="tiptap-sep"></div>
-                        <button type="button" @click="execCmd('h2')" :class="{active: isActive('heading',{level:2})}" class="tiptap-btn">H2</button>
-                        <button type="button" @click="execCmd('h3')" :class="{active: isActive('heading',{level:3})}" class="tiptap-btn">H3</button>
-                        <div class="tiptap-sep"></div>
-                        <button type="button" @click="execCmd('ul')" :class="{active: isActive('bulletList')}" class="tiptap-btn">&#8226; UL</button>
-                        <button type="button" @click="execCmd('ol')" :class="{active: isActive('orderedList')}" class="tiptap-btn">1. OL</button>
-                        <div class="tiptap-sep"></div>
-                        <button type="button" @click="execCmd('blockquote')" :class="{active: isActive('blockquote')}" class="tiptap-btn">&ldquo;</button>
-                        <button type="button" @click="execCmd('code')" :class="{active: isActive('code')}" class="tiptap-btn">`</button>
-                        <button type="button" @click="execCmd('codeBlock')" :class="{active: isActive('codeBlock')}" class="tiptap-btn">&lt;/&gt;</button>
-                        <div class="tiptap-sep"></div>
-                        <button type="button" @click="execCmd('link')" :class="{active: isActive('link')}" class="tiptap-btn">&#128279;</button>
-                        <button type="button" @click="execCmd('unlink')" class="tiptap-btn">&#128279;&#xFE0F;&#x20E3;</button>
-                        <button type="button" @click="execCmd('hr')" class="tiptap-btn">&#8212;</button>
-                        <div class="tiptap-sep"></div>
-                        <button type="button" @click="execCmd('undo')" class="tiptap-btn">&#8630;</button>
-                        <button type="button" @click="execCmd('redo')" class="tiptap-btn">&#8631;</button>
+                    {{-- Left: toolbar + editor --}}
+                    <div :style="showPreview ? 'width:50%;min-width:0;flex-shrink:0;' : 'width:100%;'">
+                        {{-- Toolbar --}}
+                        <div class="tiptap-toolbar">
+                            <button type="button" @click="execCmd('bold')" :class="{active: isActive('bold')}" class="tiptap-btn" title="Bold"><b>B</b></button>
+                            <button type="button" @click="execCmd('italic')" :class="{active: isActive('italic')}" class="tiptap-btn" title="Italic"><i>I</i></button>
+                            <button type="button" @click="execCmd('strike')" :class="{active: isActive('strike')}" class="tiptap-btn" title="Strike"><s>S</s></button>
+                            <div class="tiptap-sep"></div>
+                            <button type="button" @click="execCmd('h2')" :class="{active: isActive('heading',{level:2})}" class="tiptap-btn">H2</button>
+                            <button type="button" @click="execCmd('h3')" :class="{active: isActive('heading',{level:3})}" class="tiptap-btn">H3</button>
+                            <div class="tiptap-sep"></div>
+                            <button type="button" @click="execCmd('ul')" :class="{active: isActive('bulletList')}" class="tiptap-btn">&#8226; UL</button>
+                            <button type="button" @click="execCmd('ol')" :class="{active: isActive('orderedList')}" class="tiptap-btn">1. OL</button>
+                            <div class="tiptap-sep"></div>
+                            <button type="button" @click="execCmd('blockquote')" :class="{active: isActive('blockquote')}" class="tiptap-btn">&ldquo;</button>
+                            <button type="button" @click="execCmd('code')" :class="{active: isActive('code')}" class="tiptap-btn">`</button>
+                            <button type="button" @click="execCmd('codeBlock')" :class="{active: isActive('codeBlock')}" class="tiptap-btn">&lt;/&gt;</button>
+                            <div class="tiptap-sep"></div>
+                            <button type="button" @click="execCmd('link')" :class="{active: isActive('link')}" class="tiptap-btn">&#128279;</button>
+                            <button type="button" @click="execCmd('unlink')" class="tiptap-btn">&#128279;&#xFE0F;&#x20E3;</button>
+                            <button type="button" @click="execCmd('hr')" class="tiptap-btn">&#8212;</button>
+                            <div class="tiptap-sep"></div>
+                            <button type="button" @click="execCmd('undo')" class="tiptap-btn">&#8630;</button>
+                            <button type="button" @click="execCmd('redo')" class="tiptap-btn">&#8631;</button>
+                            <div class="tiptap-sep"></div>
+                            <button type="button" @click="showPreview = !showPreview" :class="{active: showPreview}" class="tiptap-btn" style="margin-left:auto;">👁 {{ __('app.preview') }}</button>
+                        </div>
+                        <div x-ref="editorEl"></div>
+                        <textarea data-tiptap-target name="translations[{{ $lang->code }}][content]"
+                            class="hidden">{{ old('translations.'.$lang->code.'.content', $t?->content ?? ($lang->is_default ? $page->content : '')) }}</textarea>
                     </div>
-                    <div x-ref="editorEl"></div>
-                    <textarea data-tiptap-target name="translations[{{ $lang->code }}][content]"
-                        class="hidden">{{ old('translations.'.$lang->code.'.content', $t?->content ?? ($lang->is_default ? $page->content : '')) }}</textarea>
+                    {{-- Right: preview panel --}}
+                    <div x-show="showPreview" class="cms-content"
+                         style="width:50%;border-left:1px solid #e5e7eb;overflow-y:auto;max-height:450px;padding:16px 20px;background:#fff;"
+                         x-html="content">
+                    </div>
                 </div>
             </div>
 

@@ -45,4 +45,5 @@ return [
     'light_mode'          => 'Light mode',
     'dark_mode'           => 'Dark mode',
     'switch_language'     => 'Switch language',
+    'preview'             => 'Preview',
 ];
