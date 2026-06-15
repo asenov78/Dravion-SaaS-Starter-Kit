@@ -9,4 +9,8 @@ return [
     'view settings'     => 'View Settings',
     'edit settings'     => 'Edit Settings',
     'view activity log' => 'View Activity Log',
+    'view pages'        => 'View Pages',
+    'create pages'      => 'Create Pages',
+    'edit pages'        => 'Edit Pages',
+    'delete pages'      => 'Delete Pages',
 ];

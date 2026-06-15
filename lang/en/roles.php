@@ -16,6 +16,7 @@ return [
     'confirm_delete_msg'   => 'This will remove the role from all users. Cannot be undone.',
     'groups' => [
         'users'        => 'Users',
+        'pages'        => 'Pages',
         'settings'     => 'Settings',
         'activity log' => 'Activity Log',
     ],
