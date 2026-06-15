@@ -42,4 +42,7 @@ return [
     'pages'             => 'Pages',
     'all_rights_reserved' => 'All rights reserved.',
     'toggle_dark_mode'    => 'Toggle dark mode',
+    'light_mode'          => 'Light mode',
+    'dark_mode'           => 'Dark mode',
+    'switch_language'     => 'Switch language',
 ];

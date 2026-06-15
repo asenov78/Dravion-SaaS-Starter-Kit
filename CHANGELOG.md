@@ -2,6 +2,26 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.4.0] — 2026-06-15
+### Added
+- Public website: full marketing landing page at `/` with hero, features grid, security section, stack section, CMS pages
+- Contact page (`/contact`): form saved to DB + optional email, info cards
+- Gallery page (`/gallery`): component showcase with CSS mockups
+- CMS pages: admin CRUD for public pages with hero image, title, subtitle, CTA fields (editable per page from admin)
+- Hero background images (Unsplash) on home, contact, gallery — dark overlay + grid pattern
+- Public layout: matches admin header design — same theme toggle (sun/moon SVGs), language switcher, logo from Settings, user dropdown with avatar
+- Admin sidebar: logo from Settings, app name from Settings (no more hardcoded "DRAVION")
+- Admin header: logo + app name dynamic on mobile header
+- Settings: new "Public Site" section — header tagline, footer text, footer copyright editable from admin
+- Footer: uses app_name from Settings, shows footer_text + footer_copyright settings
+- Sessions and API tokens pages: smart layout (admin vs portal) + dark mode fixes
+- `View Site` globe button in admin header → opens public site in new tab
+
+### Changed
+- Root `/` serves public home page (not redirect to dashboard); install check preserved
+- All public pages use `app_name` from Settings (not hardcoded config)
+- Pages migration: added `hero_image`, `hero_title`, `hero_subtitle`, `hero_cta_label`, `hero_cta_url` fields
+
 ## [1.3.1] — 2026-06-15
 ### Added
 - Updates page: per-version changelog — every release newer than the current version is listed with its notes, newest first, with a "latest" badge

@@ -42,4 +42,7 @@ return [
     'pages'             => 'Страници',
     'all_rights_reserved' => 'Всички права запазени.',
     'toggle_dark_mode'    => 'Превключи тъмен режим',
+    'light_mode'          => 'Светъл режим',
+    'dark_mode'           => 'Тъмен режим',
+    'switch_language'     => 'Смяна на език',
 ];

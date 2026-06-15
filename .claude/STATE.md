@@ -1,12 +1,12 @@
 # Session State — Dravion SaaS Starter Kit
 
-> Updated: 2026-06-15 (session 2) | Version: 1.3.1
+> Updated: 2026-06-15 (session 3) | Version: 1.4.0
 
 ## Current State
 
 - **Tests:** 414/414 passing, 6 risky (acceptable)
 - **Branch:** main, up to date with origin
-- **Last commit:** `9e8555d` — feat: hero background images + admin-editable hero fields for public pages
+- **Last commit:** (v1.4.0 release tag) — feat: public layout polish — logo/theme/lang/user-dropdown/settings
 
 ## Completed This Session
 
@@ -16,6 +16,10 @@
 15. **#26/#27** — Notifications bell + Sanctum tokens ✓ (already existed)
 16. **Public website** — HomeController, public layout, CMS Pages admin CRUD, seed pages
 17. **Hero images** — pages table hero_image/title/subtitle/cta; admin edit/create forms; home/contact/gallery heroes with Unsplash bg + dark overlay; PageHeroSeeder
+18. **Public layout polish** — theme icons (CSS hidden dark:block, exact admin SVGs), lang switcher (@auth), logo from Settings, user dropdown with avatar, app_name from Settings everywhere
+19. **Admin sidebar/header** — logo + app name from Settings (no hardcoded DRAVION)
+20. **Settings: Public Site section** — header_tagline, footer_text, footer_copyright editable from admin
+21. **v1.4.0 release** — CHANGELOG + config/dravion.php + git tag v1.4.0
 
 ## Pending / Next Steps (ordered)
 
@@ -33,6 +37,12 @@ CMS:      pages table (title,slug,content,excerpt,is_published,show_in_nav,sort_
           hero_image,hero_title,hero_subtitle,hero_cta_label,hero_cta_url)
           App\Models\Page; Admin\PagesController resource; seeded: Home,About,Pricing,Contact
           Hero fields editable from admin pages edit/create; PageHeroSeeder sets Unsplash defaults
+Public:   layouts/public.blade.php — logo from Settings, app_name from Settings,
+          theme toggle (CSS hidden/dark:block, exact admin SVGs), lang switcher (@auth),
+          user dropdown with avatar, footer_text + footer_copyright from Settings
+Settings: app_name, logo, header_tagline, footer_text, footer_copyright, broadcast_banner
+          Stored via Setting::get/setMany; SettingsController handles upload + all keys
+Sidebar:  logo + app_name from Settings; no hardcoded strings
 Auth:     LoginController (manual) + MustVerifyEmail + VerificationController
 Sanctum:  HasApiTokens on User; GET/POST/DELETE /api-tokens
 Bell:     NotificationController JSON feed; Alpine.js dropdown in app-header
