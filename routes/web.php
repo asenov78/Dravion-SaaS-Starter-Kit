@@ -36,14 +36,17 @@ Route::middleware(\App\Http\Middleware\InstallGuard::class)
 
 // Auth
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'show'])->name('login');
-    Route::post('/login', [LoginController::class, 'store']);
-    Route::get('/register', [RegisterController::class, 'show'])->name('register');
-    Route::post('/register', [RegisterController::class, 'store']);
-    Route::get('/forgot-password', [ForgotPasswordController::class, 'show'])->name('password.request');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email');
+    Route::get('/login',  [LoginController::class, 'show'])->name('login');
+    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1');
+
+    Route::get('/register',  [RegisterController::class, 'show'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store'])->middleware('throttle:3,1');
+
+    Route::get('/forgot-password',  [ForgotPasswordController::class, 'show'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('password.email')->middleware('throttle:3,1');
+
     Route::get('/reset-password/{token}', [ResetPasswordController::class, 'show'])->name('password.reset');
-    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
+    Route::post('/reset-password',        [ResetPasswordController::class, 'store'])->name('password.update')->middleware('throttle:5,1');
 });
 
 Route::middleware('auth')->group(function () {

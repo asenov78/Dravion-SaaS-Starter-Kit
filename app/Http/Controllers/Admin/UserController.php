@@ -13,6 +13,7 @@ use App\Services\AvatarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
@@ -128,8 +129,7 @@ class UserController extends Controller
 
         $role = $data['role'];
         unset($data['role']);
-        $plainPassword    = $data['password'];
-        $data['password'] = Hash::make($plainPassword);
+        $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
         $user->assignRole($role);
@@ -137,7 +137,12 @@ class UserController extends Controller
         ActivityLogger::log('users', 'created', "Created user {$user->name} ({$user->email})", $user, null, 'activity.log.user_created', ['name' => $user->name, 'email' => $user->email]);
 
         if (Setting::get('mail_welcome', '1') !== '0') {
-            try { Mail::to($user->email)->send(new WelcomeMail($user, $plainPassword)); } catch (\Throwable) {}
+            try {
+                // Generate a password-reset token so the user sets their own password.
+                $token          = Password::createToken($user);
+                $setPasswordUrl = url(route('password.reset', ['token' => $token, 'email' => $user->email], false));
+                Mail::to($user->email)->send(new WelcomeMail($user, $setPasswordUrl));
+            } catch (\Throwable) {}
         }
 
         return redirect()->route('admin.users.edit', $user)->with('success', __('flash.user_created'));

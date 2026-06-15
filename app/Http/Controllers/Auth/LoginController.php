@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -21,24 +23,30 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            if (Auth::user()->status === 'suspended') {
-                Auth::logout();
-                return back()->withErrors(['email' => 'Your account has been suspended.']);
-            }
+        // Find user and verify password BEFORE creating a session.
+        $user = User::where('email', $credentials['email'])->first();
 
-            $request->session()->regenerate();
-
-            ActivityLogger::log('auth', 'login', Auth::user()->name . ' logged in', Auth::user(), Auth::user(), 'activity.log.user_logged_in', ['name' => Auth::user()->name]);
-
-            $home = Auth::user()->hasAnyRole(['admin', 'manager'])
-                ? route('admin.dashboard')
-                : route('dashboard');
-            return redirect()->intended($home);
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            return back()->withErrors(['email' => 'These credentials do not match our records.'])
+                ->onlyInput('email');
         }
 
-        return back()->withErrors(['email' => 'These credentials do not match our records.'])
-            ->onlyInput('email');
+        // Reject suspended accounts before any session is written.
+        if ($user->status === 'suspended') {
+            return back()->withErrors(['email' => 'Your account has been suspended.'])
+                ->onlyInput('email');
+        }
+
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+
+        ActivityLogger::log('auth', 'login', $user->name . ' logged in', $user, $user, 'activity.log.user_logged_in', ['name' => $user->name]);
+
+        $home = $user->hasAnyRole(['admin', 'manager'])
+            ? route('admin.dashboard')
+            : route('dashboard');
+
+        return redirect()->intended($home);
     }
 
     public function destroy(Request $request)

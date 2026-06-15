@@ -13,7 +13,7 @@ class WelcomeMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public User $user, public string $plainPassword) {}
+    public function __construct(public User $user, public string $setPasswordUrl) {}
 
     public function envelope(): Envelope
     {
