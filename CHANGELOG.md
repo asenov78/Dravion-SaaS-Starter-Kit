@@ -2,6 +2,20 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.3.0] — 2026-06-15
+### Added
+- Self-updater: admin-only `/admin/updates` — checks GitHub releases, license-gated, one-click install (maintenance mode, file copy, migrate, cache clear)
+- `LicenseService` + `UpdaterService`; `config/updater.php`; release workflow on `v*.*.*` tags
+- Avatar upload for users & profile (GD resize to 200px), shown in dashboard/user lists
+- Settings: logo upload, SMTP test button, welcome-email toggle
+- Dashboard: system health widget (PHP, Laravel, disk, DB size, cache driver)
+- Notifications: welcome mail on user create, account suspended/activated mails
+### Changed
+- Users: soft-delete restore, role/status filters, CSV export, trash tab
+- Roles & Permissions: grouped permission matrix, per-permission route guards, confirm modal
+- Global session flash → Alpine store bridge for all controllers
+- Full EN/BG i18n coverage for new UI
+
 ## [1.1.8] — 2026-06-11
 ### Changed
 - Admin sidebar: Quantix-style redesign — glass bg, section labels (GENERAL/TOOLS/SUPPORT), collapse in header, promo card, version footer, gradient avatar
