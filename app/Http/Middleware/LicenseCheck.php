@@ -2,26 +2,26 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\LicenseService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class LicenseCheck
 {
-    private const CACHE_FILE = 'license.cache';
-    private const TTL        = 86400; // 24 hours
+    private const TTL = 86400; // 24 hours
 
     public function handle(Request $request, Closure $next): Response
     {
         $licenseKey = config('dravion.license_key');
 
-        // No license key written → warn but don't block
+        // No license key → warn but don't block
         if (empty($licenseKey)) {
             session()->flash('license_warning', 'No license key configured.');
             return $next($request);
         }
 
-        // Dev key: valid on dev domains, prompt re-activation on production
+        // Dev key: valid on dev domains only
         if (str_starts_with($licenseKey, 'DEV-')) {
             if (! $this->isDevDomain(parse_url(config('app.url'), PHP_URL_HOST) ?? '')) {
                 session()->flash('license_warning', 'You are using a development license key. Please re-activate with your purchase code.');
@@ -29,12 +29,13 @@ class LicenseCheck
             return $next($request);
         }
 
-        $cache = $this->readCache();
+        // Read the HMAC-signed cache via LicenseService
+        $cache = LicenseService::readCachePublic();
 
         // Revalidate if cache is stale or missing
         if ($cache === null || (time() - ($cache['checked_at'] ?? 0)) > self::TTL) {
             $cache = $this->pingServer($licenseKey);
-            $this->writeCache($cache);
+            LicenseService::writeCache($cache);
         }
 
         if (! ($cache['valid'] ?? false)) {
@@ -82,18 +83,5 @@ class LicenseCheck
             || str_ends_with($domain, '.local')
             || str_ends_with($domain, '.test')
             || str_ends_with($domain, '.dev');
-    }
-
-    private function readCache(): ?array
-    {
-        $path = storage_path(self::CACHE_FILE);
-        if (! file_exists($path)) return null;
-        $data = json_decode(file_get_contents($path), true);
-        return is_array($data) ? $data : null;
-    }
-
-    private function writeCache(array $data): void
-    {
-        file_put_contents(storage_path(self::CACHE_FILE), json_encode($data));
     }
 }

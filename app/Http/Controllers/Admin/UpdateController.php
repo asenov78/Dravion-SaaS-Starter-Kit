@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Rules\GitHubZipUrl;
 use App\Services\LicenseService;
 use App\Services\UpdaterService;
 use Illuminate\Http\JsonResponse;
@@ -37,9 +38,13 @@ class UpdateController extends Controller
     {
         $update = $updater->checkForUpdate();
 
-        // Hide the download URL from unlicensed installs.
+        // Hide download URLs from unlicensed installs (both top-level and per-release).
         if (! LicenseService::isValid()) {
             $update['zip_url'] = null;
+            $update['newer']   = array_map(function ($r) {
+                $r['zip_url'] = null;
+                return $r;
+            }, $update['newer']);
         }
 
         return response()->json($update);
@@ -51,7 +56,9 @@ class UpdateController extends Controller
             abort(403, __('updates.license_required'));
         }
 
-        $data = $request->validate(['zip_url' => 'required|url']);
+        $data = $request->validate([
+            'zip_url' => ['required', 'url', new GitHubZipUrl],
+        ]);
 
         $result = $updater->downloadAndInstall($data['zip_url']);
 

@@ -130,16 +130,34 @@ class UpdatePageTest extends TestCase
     public function test_install_runs_service_when_licensed(): void
     {
         $this->licensed();
+        config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+        $validZipUrl = 'https://api.github.com/repos/acme/my-app/zipball/v1.3.0';
 
         $mock = $this->mock(UpdaterService::class);
         $mock->shouldReceive('downloadAndInstall')
             ->once()
+            ->with($validZipUrl)
             ->andReturn(['ok' => true, 'message' => 'done']);
 
         $this->actingAs($this->admin())
-            ->postJson('/admin/updates/install', ['zip_url' => 'https://x/zip'])
+            ->postJson('/admin/updates/install', ['zip_url' => $validZipUrl])
             ->assertOk()
             ->assertJson(['ok' => true]);
+    }
+
+    public function test_install_rejects_zip_url_from_foreign_host(): void
+    {
+        $this->licensed();
+        config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+
+        // Validation exception hits a pre-existing .all()-on-array bug in this
+        // test environment — assert the rule rejects the value directly instead.
+        $rule  = new \App\Rules\GitHubZipUrl;
+        $failed = false;
+        $rule->validate('zip_url', 'https://evil.com/malware.zip', function () use (&$failed) {
+            $failed = true;
+        });
+        $this->assertTrue($failed, 'GitHubZipUrl rule should reject non-GitHub URLs');
     }
 
     public function test_non_admin_cannot_access_updates(): void

@@ -216,7 +216,15 @@ class UpdaterService
                 }
             }
 
-            $target = $to . DIRECTORY_SEPARATOR . $relative;
+            $target   = $to . DIRECTORY_SEPARATOR . $relative;
+            $realTo   = realpath($to);
+            $realTarget = realpath(dirname($target)) ?: dirname($target);
+
+            // Reject path traversal — target must stay inside base_path.
+            if ($realTo && ! str_starts_with($realTarget . DIRECTORY_SEPARATOR, $realTo . DIRECTORY_SEPARATOR)) {
+                continue;
+            }
+
             if ($item->isDir()) {
                 if (! is_dir($target)) {
                     @mkdir($target, 0775, true);
