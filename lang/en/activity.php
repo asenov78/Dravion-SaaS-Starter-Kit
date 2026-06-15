@@ -9,6 +9,7 @@ return [
     'filter_user'        => 'All users',
     'filter_date_from'   => 'From date',
     'filter_date_to'     => 'To date',
+    'export_csv'         => 'Export CSV',
     'event'       => 'Event',
     'description' => 'Description',
     'user'        => 'User',

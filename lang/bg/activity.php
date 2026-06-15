@@ -9,6 +9,7 @@ return [
     'filter_user'        => 'Всички потребители',
     'filter_date_from'   => 'От дата',
     'filter_date_to'     => 'До дата',
+    'export_csv'         => 'Експортирай CSV',
     'event'       => 'Събитие',
     'description' => 'Описание',
     'user'        => 'Потребител',

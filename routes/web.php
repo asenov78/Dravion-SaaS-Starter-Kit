@@ -88,7 +88,8 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     Route::get('/settings',              [SettingsController::class, 'index'])->name('settings')->middleware('can:view settings');
     Route::put('/settings',              [SettingsController::class, 'update'])->name('settings.update')->middleware('can:edit settings');
     Route::post('/settings/smtp-test',   [SettingsController::class, 'smtpTest'])->name('settings.smtp-test')->middleware('can:edit settings');
-    Route::get('/activity',  [ActivityController::class, 'index'])->name('activity')->middleware('can:view activity log');
+    Route::get('/activity',         [ActivityController::class, 'index'])->name('activity')->middleware('can:view activity log');
+    Route::get('/activity/export',  [ActivityController::class, 'export'])->name('activity.export')->middleware('can:view activity log');
     Route::post('/cache/clear', [DashboardController::class, 'clearCache'])->name('cache.clear')->middleware('can:edit settings');
 
     Route::get('/languages',                        [LanguageController::class, 'index'])->name('languages.index');

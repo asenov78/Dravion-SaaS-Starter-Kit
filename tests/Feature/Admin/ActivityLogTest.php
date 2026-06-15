@@ -243,6 +243,36 @@ class ActivityLogTest extends TestCase
             ->assertDontSee('old entry');
     }
 
+    // --- Export CSV ---
+
+    public function test_admin_can_export_activity_csv(): void
+    {
+        $admin = $this->admin();
+        activity('auth')->causedBy($admin)->log('exported entry');
+
+        $response = $this->actingAs($admin)
+            ->get('/admin/activity/export')
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+
+        $this->assertStringContainsString('exported entry', $response->streamedContent());
+    }
+
+    public function test_export_respects_filters(): void
+    {
+        $admin = $this->admin();
+        activity('auth')->causedBy($admin)->log('auth event');
+        activity('users')->causedBy($admin)->log('users event');
+
+        $response = $this->actingAs($admin)
+            ->get('/admin/activity/export?log_name=auth')
+            ->assertOk();
+
+        $content = $response->streamedContent();
+        $this->assertStringContainsString('auth event', $content);
+        $this->assertStringNotContainsString('users event', $content);
+    }
+
     public function test_filter_by_date_to(): void
     {
         $admin = $this->admin();

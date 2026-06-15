@@ -5,6 +5,11 @@
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ __('activity.title') }}</h2>
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('activity.subtitle') }}</p>
     </div>
+    <a href="{{ route('admin.activity.export', request()->only('search','log_name','causer_id','date_from','date_to')) }}"
+        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        {{ __('activity.export_csv') }}
+    </a>
 </div>
 
 {{-- Filters --}}
