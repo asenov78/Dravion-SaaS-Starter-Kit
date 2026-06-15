@@ -52,7 +52,24 @@ PUT    /profile/password     profile.password
 PATCH  /profile/locale       profile.locale
 POST   /logout               logout
 GET    /locale/{code}        locale.switch
+GET    /notifications                    notifications.index       (JSON bell feed)
+POST   /notifications/read-all           notifications.read-all
+POST   /notifications/{id}/read          notifications.read
+
+GET    /email/verify                     verification.notice
+GET    /email/verify/{id}/{hash}         verification.verify      (signed)
+POST   /email/verification-notification  verification.send
+```
+
+### Auth + Verified
+```
+middleware: auth, verified
+
 GET    /dashboard            dashboard
+GET    /api-tokens           api-tokens.index
+POST   /api-tokens           api-tokens.store
+DELETE /api-tokens           api-tokens.destroy-all
+DELETE /api-tokens/{id}      api-tokens.destroy
 ```
 
 ### Admin

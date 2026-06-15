@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\InstallController;
@@ -65,6 +66,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
     Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
+});
+
+// API Tokens (Sanctum)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/api-tokens',       [ApiTokenController::class, 'index'])->name('api-tokens.index');
+    Route::post('/api-tokens',      [ApiTokenController::class, 'store'])->name('api-tokens.store');
+    Route::delete('/api-tokens',    [ApiTokenController::class, 'destroyAll'])->name('api-tokens.destroy-all');
+    Route::delete('/api-tokens/{id}', [ApiTokenController::class, 'destroy'])->name('api-tokens.destroy');
 });
 
 // Notifications

@@ -30,4 +30,6 @@ return [
     'install_complete'         => 'Installation complete! Please sign in.',
     'bulk_done'                => 'Bulk :action applied to :count user(s).',
     'role_renamed'             => 'Role renamed.',
+    'token_revoked'            => 'API token revoked.',
+    'tokens_revoked_all'       => 'All API tokens revoked.',
 ];

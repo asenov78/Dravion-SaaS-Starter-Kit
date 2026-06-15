@@ -23,6 +23,8 @@ Both `en/` and `bg/` contain identical file sets:
 | `updates.php` | `updates.*` | Self-updater UI |
 | `mail.php` | `mail.*` | Transactional email subjects and body copy |
 | `permissions.php` | `permissions.*` | Human-readable permission labels |
+| `tokens.php` | `tokens.*` | API tokens page (title, create, revoke, copy, etc.) |
+| `notifications.php` | `notifications.*` | In-app notification text (title + body per event type) |
 
 ## Usage in Blade
 

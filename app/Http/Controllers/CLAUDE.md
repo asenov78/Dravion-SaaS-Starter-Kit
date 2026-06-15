@@ -7,7 +7,9 @@ HTTP layer only. Controllers validate input, call services/models, and return vi
 ```
 Controllers/
 ├── Controller.php              # Base class (extends Laravel's base)
+├── ApiTokenController.php      # Sanctum personal access tokens (list/create/revoke)
 ├── LocaleController.php        # Switches session locale
+├── NotificationController.php  # In-app notification bell feed + mark read/all
 ├── InstallController.php       # Multi-step installer wizard
 ├── Admin/
 │   ├── ActivityController.php  # Activity log viewer
@@ -67,6 +69,20 @@ Controllers/
 ### Admin/UpdateController
 - Uses `UpdaterService` to fetch GitHub releases and apply updates.
 - ZIP URL validated with `GitHubZipUrl` rule before download.
+
+### ApiTokenController
+- `index()` passes `$tokens` (user's tokens) + `$new_token` (session flash — plaintext shown once).
+- `store()` validates name, calls `createToken()`, flashes plaintext to session, redirects.
+- `destroy($id)` loads `PersonalAccessToken::findOrFail()`, checks `tokenable_id === auth()->id()`, deletes.
+- `destroyAll()` calls `$user->tokens()->delete()`.
+- Route: `GET/POST/DELETE /api-tokens` — accessible to all `auth + verified` users, NOT admin-only.
+
+### NotificationController
+- `index()` returns JSON: `{unread_count, notifications[]}` — consumed by Alpine.js bell in header.
+- Each notification item: `{id, title, body, url, read, created}` — keys come from `toArray()` on each Notification class.
+- `markRead($id)` — checks `notifiable_id === auth()->id()` before marking.
+- `markAllRead()` — calls `$user->unreadNotifications->markAsRead()`.
+- Routes at `/notifications/*` — `auth` only (no `verified` — bell visible before email verification).
 
 ## Conventions
 

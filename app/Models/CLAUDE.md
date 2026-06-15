@@ -6,7 +6,7 @@ Eloquent models. Thin by design — no business logic, only relationships, casts
 
 | File | Purpose |
 |---|---|
-| `User.php` | Core auth model. Uses `HasRoles` (Spatie), `SoftDeletes`, `Notifiable`, `HasFactory`. Fillable and hidden fields declared via PHP 8 attributes (`#[Fillable]`, `#[Hidden]`). `locale` column drives `SetLocale` middleware. `avatar` holds a relative path on the `public` disk. |
+| `User.php` | Core auth model. Uses `HasApiTokens` (Sanctum), `HasRoles` (Spatie), `SoftDeletes`, `Notifiable`, `HasFactory`. Implements `MustVerifyEmail`. Fillable and hidden fields declared via PHP 8 attributes (`#[Fillable]`, `#[Hidden]`). `locale` column drives `SetLocale` middleware. `avatar` holds a relative path on the `public` disk. |
 | `Setting.php` | Key-value store for app-wide configuration. Three static helpers: `get(key, default)`, `set(key, value)`, `setMany([key => value])`. All settings are strings stored in the `settings` table. |
 | `Language.php` | Represents a UI language (code, name, flag emoji, is_default). Has many `LanguageLine`. |
 | `LanguageLine.php` | A single translation line: `language_id`, `key` (dot-notation, e.g. `auth.failed`), `value`. Belongs to `Language`. |
