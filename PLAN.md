@@ -1,52 +1,162 @@
-# Dravion SaaS — Plan
-✓=done ~=partial ○=todo
+# Dravion SaaS — System Plan
 
-## 1. Users ✓
-✓ List/paginate ✓ Create ✓ Edit all fields ✓ Suspend/Activate ✓ Assign role
-○ Delete(soft)+restore ○ Bulk actions ○ Filter/search ○ Export CSV
+Legend: ✓ done  ○ todo
 
-## 2. Roles & Permissions ○
-✓ Roles seeded(admin/manager/editor/user) ✓ Role on create/edit
-○ Roles page ○ Create/rename/delete role ○ Permissions matrix(role×permission checkboxes) ○ Permission groups ○ Guard middleware
+---
 
-## 3. Auth & Profile ~
-✓ Login/Logout ✓ Register ✓ Profile(bio,social,address)
-○ Change password ○ Avatar upload ○ Forgot/reset password ○ Email verify ○ 2FA(TOTP)
+## 1. Users ✓ DONE
+- ✓ List + paginate
+- ✓ Create user
+- ✓ Edit all fields (profile + social + address)
+- ✓ Suspend / Activate
+- ✓ Assign role
+- ○ Delete (soft) + restore
+- ○ Bulk actions (suspend / delete)
+- ○ Filter / search by role, status
+- ○ Export CSV
 
-## 4. Alert System ✓
-✓ x-ui.alert(4 variants) ✓ Flash on profile/user edit ✓ Flash on settings
-○ Toast/auto-dismiss ○ Broadcast banner ○ Dismissible per-user ○ Inline validation errors
+---
 
-## 5. Activity Log ✓
-✓ Log: login/logout ✓ Log: user create/update/suspend/activate ✓ Log: profile update ✓ Log: settings change ✓ Toggle per category
-○ Filter by user/event/date ○ Export CSV
+## 2. Roles & Permissions ○ TODO
+- ✓ Roles seeded (admin / manager / editor / user)
+- ✓ Role assigned on user create / edit
+- ○ Roles page — list all roles
+- ○ Create / rename / delete role
+- ○ Permissions matrix (role × permission checkboxes)
+- ○ Permission groups (users, settings, …)
+- ○ Guard middleware per permission
 
-## 6. License ✓
-✓ Key input+validate ✓ Remote server(activate) ✓ Weekly ping ✓ Warning banner ✓ Admin page
-○ Grace period(offline X days) ○ License tier/feature flags
+---
 
-## 7. System Settings ~
-✓ App name/URL ✓ Mail from/name ✓ Registration on/off ✓ Activity log toggles
-○ Timezone ○ Default language ○ Date format/currency ○ Logo/favicon upload ○ Maintenance mode ○ SMTP test send
+## 3. Auth & Profile ~ PARTIAL
+- ✓ Login / Logout
+- ✓ Register
+- ✓ Profile page (bio, social, address)
+- ○ Change password from profile
+- ○ Avatar upload
+- ○ Forgot password / reset
+- ○ Email verify
+- ○ 2FA (TOTP)
 
-## 8. Language Manager ○
-○ Languages list(code,name,flag) ○ Add language ○ Set default ○ Phrase editor(inline edit per lang) ○ Fallback to EN ○ Import/export JSON ○ User lang preference ○ Locale middleware
+---
 
-## 9. Installer ✓
-✓ Step wizard ✓ DB config+migrate ✓ Admin create ✓ License step ✓ install.lock
-○ Re-install wizard ○ Update wizard
+## 4. Alert System ✓ DONE
+- ✓ x-ui.alert component (4 variants: success / error / warning / info)
+- ✓ Flash alerts on profile / user edit
+- ✓ Flash alerts on settings save
+- ○ Toast / auto-dismiss JS notifications
+- ○ Admin broadcast banner (site-wide)
+- ○ Dismissible per-user
+- ○ Validation inline errors on form fields
 
-## 10. Dashboard ~
-✓ Metrics cards ✓ Charts(ApexCharts)
-○ Real KPIs ○ Recent activity widget ○ Quick actions ○ System health ○ License widget
+---
 
-## 11. Notifications & Mail ○
-○ In-app bell ○ Mark read ○ Email: new user/reset ○ Blade templates ○ SMTP test send ○ Queue config
+## 5. Activity Log ✓ DONE
+- ✓ Log: login / logout
+- ✓ Log: user create / update / suspend / activate
+- ✓ Log: profile update
+- ✓ Log: settings change
+- ✓ Settings — toggle per category (auth / users / profile / settings)
+- ○ Filter by user / event type / date range
+- ○ Export log (CSV)
 
-## 12. API & Security ○
-○ REST API(Sanctum) ○ API tokens page ○ Rate limiting ○ Login throttle ○ Blocked IPs ○ Kill sessions
+---
 
-## Build Order
-NEXT: 1.Roles+Permissions matrix 2.System Settings(tz,lang,logo,maintenance) 3.Language Manager
-THEN: 4.Change password+forgot/reset 5.Dashboard real KPIs 6.Notifications+email
-LATER: 7.API tokens 8.2FA 9.Bulk actions 10.CSV export 11.Avatar 12.Login throttle/IPs
+## 6. License ✓ DONE
+- ✓ License key input + validate
+- ✓ Remote license server (activate)
+- ✓ Weekly ping / check
+- ✓ Warning banner when invalid
+- ✓ Admin license page
+- ○ Grace period (offline X days)
+- ○ License tier / feature flags
+
+---
+
+## 7. System Settings ~ PARTIAL
+- ✓ App name, URL
+- ✓ Mail from / name
+- ✓ Registration on/off
+- ✓ Activity log toggles
+- ○ Timezone (PHP + JS display)
+- ○ Default language
+- ○ Date format / currency symbol
+- ○ Logo / favicon upload
+- ○ Maintenance mode toggle
+- ○ SMTP test send
+
+---
+
+## 8. Language Manager ○ TODO
+- ○ Languages list (code, name, flag emoji)
+- ○ Add language
+- ○ Set default language
+- ○ Phrase editor — table of all keys, inline edit per lang
+- ○ Fallback to EN if key missing
+- ○ Import / export JSON
+- ○ User language preference (stored on profile)
+- ○ Middleware: set locale per request
+
+---
+
+## 9. Installer ✓ DONE
+- ✓ Step wizard (requirements check)
+- ✓ DB config + migrate
+- ✓ Admin account create
+- ✓ License key step
+- ✓ install.lock guard
+- ○ Re-install / reset wizard
+- ○ Update wizard (run new migrations only)
+
+---
+
+## 10. Dashboard ~ PARTIAL
+- ✓ Basic metrics cards
+- ✓ Charts (ApexCharts)
+- ○ Real KPIs (users count, active, suspended, …)
+- ○ Recent activity widget
+- ○ Quick actions panel
+- ○ System health (disk usage, cache, queue)
+- ○ License status widget
+
+---
+
+## 11. Notifications & Mail ○ TODO
+- ○ In-app notification bell
+- ○ Mark read / mark all read
+- ○ Email on: new user registered, password reset
+- ○ Email templates (Blade mailable)
+- ○ SMTP settings + test send button
+- ○ Queue driver config
+
+---
+
+## 12. API & Security ○ TODO
+- ○ REST API (Laravel Sanctum tokens)
+- ○ API tokens page (create / revoke)
+- ○ Rate limiting config
+- ○ Login attempt throttle
+- ○ Blocked IPs list
+- ○ Session management (kill active sessions)
+
+---
+
+## Suggested Build Order
+
+### NEXT — high impact, natural fit
+1. **Roles & Permissions page** — matrix UI (checkboxes per role × permission). Spatie middleware already in place.
+2. **System Settings** — timezone, default lang, date format, logo upload, maintenance mode.
+3. **Language Manager** — DB-backed translations table, phrase editor UI, locale middleware.
+
+### THEN — completes the core
+4. Change password from profile + forgot password / reset flow.
+5. Dashboard real KPIs + recent activity widget.
+6. In-app notifications bell + email on key events (welcome, reset).
+
+### LATER — enterprise / SaaS extras
+7. API tokens (Sanctum)
+8. 2FA (TOTP)
+9. Bulk user actions
+10. CSV export (users + activity log)
+11. Avatar upload
+12. Login throttle / blocked IPs
