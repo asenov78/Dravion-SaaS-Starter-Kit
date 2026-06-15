@@ -1,12 +1,12 @@
 # Session State — Dravion SaaS Starter Kit
 
-> Updated: 2026-06-15 | Version: 1.3.1
+> Updated: 2026-06-15 (session 2) | Version: 1.3.1
 
 ## Current State
 
 - **Tests:** 414/414 passing, 6 risky (acceptable)
 - **Branch:** main, up to date with origin
-- **Last commit:** `a4e170a` — feat: public website with CMS pages
+- **Last commit:** `9e8555d` — feat: hero background images + admin-editable hero fields for public pages
 
 ## Completed This Session
 
@@ -15,6 +15,7 @@
 14. **#29** — Users Export CSV ✓ (already existed)
 15. **#26/#27** — Notifications bell + Sanctum tokens ✓ (already existed)
 16. **Public website** — HomeController, public layout, CMS Pages admin CRUD, seed pages
+17. **Hero images** — pages table hero_image/title/subtitle/cta; admin edit/create forms; home/contact/gallery heroes with Unsplash bg + dark overlay; PageHeroSeeder
 
 ## Pending / Next Steps (ordered)
 
@@ -28,8 +29,10 @@
 Laravel 13 / PHP 8.3 / Tailwind v4 / Alpine.js v3 / Sanctum
 Public:   GET / → HomeController@index; GET /p/{slug} → HomeController@show
           layouts/public.blade.php — responsive header + nav from DB + auth buttons
-CMS:      pages table (title,slug,content,excerpt,is_published,show_in_nav,sort_order)
+CMS:      pages table (title,slug,content,excerpt,is_published,show_in_nav,sort_order,
+          hero_image,hero_title,hero_subtitle,hero_cta_label,hero_cta_url)
           App\Models\Page; Admin\PagesController resource; seeded: Home,About,Pricing,Contact
+          Hero fields editable from admin pages edit/create; PageHeroSeeder sets Unsplash defaults
 Auth:     LoginController (manual) + MustVerifyEmail + VerificationController
 Sanctum:  HasApiTokens on User; GET/POST/DELETE /api-tokens
 Bell:     NotificationController JSON feed; Alpine.js dropdown in app-header
