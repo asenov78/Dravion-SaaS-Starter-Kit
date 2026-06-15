@@ -84,6 +84,17 @@
     </div>
 </section>
 
+{{-- ══════════════════ CMS CONTENT ══════════════════ --}}
+@if(!empty(trim(strip_tags($_t?->content ?? $homePage?->content ?? ''))))
+<section class="py-16 bg-white dark:bg-gray-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="cms-content">
+            {!! $_t?->content ?? $homePage?->content !!}
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- ══════════════════ FEATURES GRID ══════════════════ --}}
 <section class="py-20 bg-gray-50 dark:bg-gray-900/50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

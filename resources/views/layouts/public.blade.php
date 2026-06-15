@@ -8,7 +8,32 @@
     <title>@yield('meta_title', $appName . ' — SaaS Starter Kit')</title>
     <meta name="description" content="@yield('meta_desc', 'Complete Laravel SaaS Starter Kit')">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>[x-cloak] { display: none !important; }</style>
+    <style>
+        [x-cloak] { display: none !important; }
+        .cms-content h1,.cms-content h2,.cms-content h3,.cms-content h4 { font-weight:700; margin:.75em 0 .4em; color:#111827; }
+        .dark .cms-content h1,.dark .cms-content h2,.dark .cms-content h3,.dark .cms-content h4 { color:#f3f4f6; }
+        .cms-content h1 { font-size:2em; }
+        .cms-content h2 { font-size:1.5em; }
+        .cms-content h3 { font-size:1.25em; }
+        .cms-content p { margin:.6em 0; color:#4b5563; line-height:1.8; font-size:1.0625rem; }
+        .dark .cms-content p { color:#9ca3af; }
+        .cms-content ul,.cms-content ol { padding-left:1.5em; margin:.6em 0; }
+        .cms-content ul { list-style:disc; }
+        .cms-content ol { list-style:decimal; }
+        .cms-content li { color:#4b5563; margin:.3em 0; line-height:1.7; }
+        .dark .cms-content li { color:#9ca3af; }
+        .cms-content a { color:#6366f1; text-decoration:underline; }
+        .cms-content a:hover { color:#4f46e5; }
+        .cms-content blockquote { border-left:3px solid #6366f1; padding-left:1em; margin:1em 0; color:#6b7280; font-style:italic; }
+        .cms-content code { background:#f3f4f6; border-radius:4px; padding:2px 6px; font-size:.875em; color:#6366f1; font-family:monospace; }
+        .dark .cms-content code { background:#1f2937; color:#a5b4fc; }
+        .cms-content pre { background:#1e1e2e; color:#cdd6f4; border-radius:10px; padding:1em 1.25em; overflow-x:auto; margin:1em 0; }
+        .cms-content pre code { background:none; color:inherit; padding:0; }
+        .cms-content strong { font-weight:700; color:#111827; }
+        .dark .cms-content strong { color:#f3f4f6; }
+        .cms-content hr { border:none; border-top:1px solid #e5e7eb; margin:1.5em 0; }
+        .dark .cms-content hr { border-color:#374151; }
+    </style>
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('theme', {
