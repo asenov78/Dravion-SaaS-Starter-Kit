@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\InstallController;
 use Illuminate\Support\Facades\Route;
@@ -58,8 +59,15 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')-
 
 Route::get('/locale/{code}', [LocaleController::class, 'switch'])->middleware('auth')->name('locale.switch');
 
+// Email verification
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
+    Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
+});
+
 // User dashboard
-Route::get('/dashboard', fn () => view('dashboard'))->middleware('auth')->name('dashboard');
+Route::get('/dashboard', fn () => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 // Admin
 Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefix('admin')->name('admin.')->group(function () {

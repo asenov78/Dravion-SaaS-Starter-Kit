@@ -28,4 +28,9 @@ return [
     'full_name'        => 'Full Name',
     'new_password'     => 'New Password',
     'confirm_password' => 'Confirm Password',
+    'verify_title'        => 'Verify your email',
+    'verify_subtitle'     => 'One more step before you continue',
+    'verify_instructions' => 'Thanks for signing up! Before getting started, please verify your email address by clicking the link we sent to your email.',
+    'verify_resend'       => 'Resend Verification Email',
+    'verify_resent'       => 'A new verification link has been sent to your email.',
 ];
