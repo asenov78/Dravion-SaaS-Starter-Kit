@@ -10,6 +10,13 @@ import { Calendar } from '@fullcalendar/core';
 // Popper (for table dropdowns)
 import { createPopper } from '@popperjs/core';
 
+// TipTap — static imports (no async complexity)
+import { Editor } from '@tiptap/core';
+import { StarterKit } from '@tiptap/starter-kit';
+import { Link } from '@tiptap/extension-link';
+import { Placeholder } from '@tiptap/extension-placeholder';
+import { Typography } from '@tiptap/extension-typography';
+
 window.Alpine = Alpine;
 window.ApexCharts = ApexCharts;
 window.flatpickr = flatpickr;
@@ -24,27 +31,9 @@ document.addEventListener('alpine:init', () => {
         showPreview: false,
         _textarea: null,
 
-        async init() {
-            // Capture $refs/$el BEFORE async — unavailable inside promise callbacks
-            const el = this.$refs.editorEl;
-            const textarea = this.$el.querySelector('textarea[data-tiptap-target]');
-
-            const [
-                { Editor },
-                { default: StarterKit },
-                { default: Link },
-                { default: Placeholder },
-                { default: Typography },
-            ] = await Promise.all([
-                import('@tiptap/core'),
-                import('@tiptap/starter-kit'),
-                import('@tiptap/extension-link'),
-                import('@tiptap/extension-placeholder'),
-                import('@tiptap/extension-typography'),
-            ]);
-
+        init() {
             this.editor = new Editor({
-                element: el,
+                element: this.$refs.editorEl,
                 extensions: [
                     StarterKit,
                     Link.configure({ openOnClick: false }),
@@ -57,7 +46,7 @@ document.addEventListener('alpine:init', () => {
                     if (this._textarea) this._textarea.value = this.content;
                 },
             });
-            this._textarea = textarea;
+            this._textarea = this.$el.querySelector('textarea[data-tiptap-target]');
         },
 
         destroy() {
