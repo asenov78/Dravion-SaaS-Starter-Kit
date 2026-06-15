@@ -2,8 +2,8 @@
 
 return [
     // GitHub repository that publishes releases (tags like v1.2.30).
-    'owner' => env('GITHUB_OWNER', ''),
-    'repo'  => env('GITHUB_REPO', ''),
+    'owner' => env('GITHUB_OWNER', 'asenov78'),
+    'repo'  => env('GITHUB_REPO', 'Dravion-SaaS-Starter-Kit'),
 
     // Personal access token — required only for private repos / higher rate limits.
     'token' => env('GITHUB_TOKEN', ''),

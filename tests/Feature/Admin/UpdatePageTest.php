@@ -48,17 +48,18 @@ class UpdatePageTest extends TestCase
         config(['updater.owner' => 'o', 'updater.repo' => 'r']);
     }
 
-    public function test_unlicensed_page_is_locked_and_skips_github(): void
+    public function test_unlicensed_sees_latest_version_but_cannot_install(): void
     {
-        Http::fake();
+        config(['dravion.version' => '1.2.29']);
         $this->unlicensed();
+        $this->fakeRelease('v1.3.0');
 
         $this->actingAs($this->admin())
             ->get('/admin/updates')
             ->assertStatus(200)
-            ->assertSee('license', false);
-
-        Http::assertNothingSent();
+            ->assertSee('1.3.0')                       // sees new version exists
+            ->assertSee(route('admin.license'), false) // pointed to license page
+            ->assertDontSee(route('admin.updates.install'), false); // no install button
     }
 
     public function test_licensed_page_shows_available_update(): void
@@ -95,6 +96,18 @@ class UpdatePageTest extends TestCase
             ->getJson('/admin/updates/check')
             ->assertOk()
             ->assertJson(['has_update' => true, 'latest' => '1.3.0']);
+    }
+
+    public function test_unlicensed_check_hides_zip_url(): void
+    {
+        config(['dravion.version' => '1.2.29']);
+        $this->unlicensed();
+        $this->fakeRelease('v1.3.0');
+
+        $this->actingAs($this->admin())
+            ->getJson('/admin/updates/check')
+            ->assertOk()
+            ->assertJson(['has_update' => true, 'latest' => '1.3.0', 'zip_url' => null]);
     }
 
     public function test_install_blocked_without_license(): void

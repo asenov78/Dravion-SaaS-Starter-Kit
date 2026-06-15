@@ -15,8 +15,12 @@ class UpdateController extends Controller
     {
         $licensed = LicenseService::isValid();
 
-        // Never call the update server without a valid license.
-        $update = $licensed ? $updater->checkForUpdate() : null;
+        // Always check for the latest version so the user can SEE a new release
+        // exists — but downloading/installing is gated by a valid license.
+        $update = $updater->checkForUpdate();
+        if (! $licensed) {
+            $update['zip_url'] = null;
+        }
 
         return view('admin.updates.index', [
             'licensed' => $licensed,
@@ -27,11 +31,14 @@ class UpdateController extends Controller
 
     public function check(UpdaterService $updater): JsonResponse
     {
+        $update = $updater->checkForUpdate();
+
+        // Hide the download URL from unlicensed installs.
         if (! LicenseService::isValid()) {
-            return response()->json(['error' => __('updates.license_required')], 403);
+            $update['zip_url'] = null;
         }
 
-        return response()->json($updater->checkForUpdate());
+        return response()->json($update);
     }
 
     public function install(Request $request, UpdaterService $updater): JsonResponse
