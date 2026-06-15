@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 
 class InstallController extends Controller
@@ -132,21 +133,12 @@ class InstallController extends Controller
     {
         $url = rtrim(config('dravion.license_server', 'https://apsbg.com/dravion-server'), '/') . '/api/router.php?endpoint=' . $endpoint;
 
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => json_encode($body),
-            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-            CURLOPT_TIMEOUT        => 10,
-            CURLOPT_SSL_VERIFYPEER => true,
-        ]);
-        $raw  = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($raw === false) return null;
-        return json_decode($raw, true);
+        try {
+            $response = Http::timeout(10)->post($url, $body);
+            return $response->json();
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     private function handleFinish(Request $request)

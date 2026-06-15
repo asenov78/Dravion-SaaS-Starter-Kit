@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class InstallTest extends TestCase
@@ -125,10 +126,15 @@ class InstallTest extends TestCase
 
     public function test_license_valid_stores_in_session_and_redirects(): void
     {
+        Http::fake([
+            '*' => Http::response(['license_key' => 'LK-TEST-KEY-9999'], 200),
+        ]);
+
         $this->post('/install/license', ['purchase_code' => 'TEST-1234-ABCD'])
             ->assertRedirect('/install/finish');
 
         $this->assertEquals('TEST-1234-ABCD', session('install_license.purchase_code'));
+        $this->assertEquals('LK-TEST-KEY-9999', session('install_license.license_key'));
     }
 
     // ── Finish ────────────────────────────────────────────────────────────
