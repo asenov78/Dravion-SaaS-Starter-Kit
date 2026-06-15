@@ -66,6 +66,8 @@ POST   /email/verification-notification  verification.send
 middleware: auth, verified
 
 GET    /dashboard            dashboard
+GET    /sessions                    sessions.index
+POST   /sessions/logout-others      sessions.logout-others
 GET    /api-tokens           api-tokens.index
 POST   /api-tokens           api-tokens.store
 DELETE /api-tokens           api-tokens.destroy-all

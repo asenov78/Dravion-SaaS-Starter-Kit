@@ -32,4 +32,5 @@ return [
     'role_renamed'             => 'Role renamed.',
     'token_revoked'            => 'API token revoked.',
     'tokens_revoked_all'       => 'All API tokens revoked.',
+    'sessions_cleared'         => 'All other sessions have been signed out.',
 ];

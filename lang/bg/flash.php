@@ -32,4 +32,5 @@ return [
     'role_renamed'             => 'Ролята е преименувана.',
     'token_revoked'            => 'API токенът е анулиран.',
     'tokens_revoked_all'       => 'Всички API токени са анулирани.',
+    'sessions_cleared'         => 'Всички останали сесии са затворени.',
 ];

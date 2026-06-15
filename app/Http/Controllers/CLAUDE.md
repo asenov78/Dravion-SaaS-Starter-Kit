@@ -8,6 +8,7 @@ HTTP layer only. Controllers validate input, call services/models, and return vi
 Controllers/
 ├── Controller.php              # Base class (extends Laravel's base)
 ├── ApiTokenController.php      # Sanctum personal access tokens (list/create/revoke)
+├── SessionController.php       # Active sessions list + logout other devices (password confirm)
 ├── LocaleController.php        # Switches session locale
 ├── NotificationController.php  # In-app notification bell feed + mark read/all
 ├── InstallController.php       # Multi-step installer wizard

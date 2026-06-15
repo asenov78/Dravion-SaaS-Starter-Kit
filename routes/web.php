@@ -17,6 +17,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\ApiTokenController;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\InstallController;
@@ -66,6 +67,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
     Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
+});
+
+// Session management
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/sessions',              [SessionController::class, 'index'])->name('sessions.index');
+    Route::post('/sessions/logout-others', [SessionController::class, 'logoutOthers'])->name('sessions.logout-others');
 });
 
 // API Tokens (Sanctum)
