@@ -14,17 +14,17 @@ class UpdaterService
     }
 
     /**
-     * Fetch the latest GitHub release metadata, or null on failure.
+     * Fetch all published GitHub releases (newest first).
      *
-     * @return array{tag:string,version:string,changelog:string,zip_url:string}|null
+     * @return array<int,array{tag:string,version:string,changelog:string,zip_url:string}>
      */
-    public function getLatestRelease(): ?array
+    public function getReleases(): array
     {
         $owner = config('updater.owner');
         $repo  = config('updater.repo');
 
         if (empty($owner) || empty($repo)) {
-            return null;
+            return [];
         }
 
         $headers = ['Accept' => 'application/vnd.github+json', 'User-Agent' => 'Dravion-Updater'];
@@ -35,54 +35,80 @@ class UpdaterService
         try {
             $response = Http::withHeaders($headers)
                 ->timeout(15)
-                ->get("https://api.github.com/repos/{$owner}/{$repo}/releases/latest");
+                ->get("https://api.github.com/repos/{$owner}/{$repo}/releases?per_page=100");
         } catch (\Throwable) {
-            return null;
+            return [];
         }
 
-        if (! $response->successful()) {
-            return null;
+        if (! $response->successful() || ! is_array($response->json())) {
+            return [];
         }
 
-        $tag = (string) $response->json('tag_name', '');
-        if ($tag === '') {
-            return null;
+        $releases = [];
+        foreach ($response->json() as $item) {
+            if (! empty($item['draft'])) {
+                continue;
+            }
+            $tag = (string) ($item['tag_name'] ?? '');
+            if ($tag === '') {
+                continue;
+            }
+            $releases[] = [
+                'tag'       => $tag,
+                'version'   => ltrim($tag, 'vV'),
+                'changelog' => (string) ($item['body'] ?? ''),
+                'zip_url'   => (string) ($item['zipball_url'] ?? ''),
+            ];
         }
 
-        return [
-            'tag'       => $tag,
-            'version'   => ltrim($tag, 'vV'),
-            'changelog' => (string) $response->json('body', ''),
-            'zip_url'   => (string) $response->json('zipball_url', ''),
-        ];
+        return $releases;
     }
 
     /**
-     * Compare current version against the latest release.
+     * Latest published release, or null.
      *
-     * @return array{current:string,latest:?string,has_update:bool,changelog:?string,zip_url:?string}
+     * @return array{tag:string,version:string,changelog:string,zip_url:string}|null
+     */
+    public function getLatestRelease(): ?array
+    {
+        return $this->getReleases()[0] ?? null;
+    }
+
+    /**
+     * Compare current version against published releases. `newer` holds every
+     * release newer than the current version (newest first) with its changelog.
+     *
+     * @return array{current:string,latest:?string,has_update:bool,changelog:?string,zip_url:?string,newer:array<int,array{version:string,tag:string,changelog:string,zip_url:string}>}
      */
     public function checkForUpdate(): array
     {
-        $current = $this->getCurrentVersion();
-        $release = $this->getLatestRelease();
+        $current  = $this->getCurrentVersion();
+        $releases = $this->getReleases();
 
-        if ($release === null) {
+        if ($releases === []) {
             return [
                 'current'    => $current,
                 'latest'     => null,
                 'has_update' => false,
                 'changelog'  => null,
                 'zip_url'    => null,
+                'newer'      => [],
             ];
         }
 
+        $latest = $releases[0];
+        $newer  = array_values(array_filter(
+            $releases,
+            fn ($r) => version_compare($r['version'], $current, '>')
+        ));
+
         return [
             'current'    => $current,
-            'latest'     => $release['version'],
-            'has_update' => version_compare($release['version'], $current, '>'),
-            'changelog'  => $release['changelog'],
-            'zip_url'    => $release['zip_url'],
+            'latest'     => $latest['version'],
+            'has_update' => version_compare($latest['version'], $current, '>'),
+            'changelog'  => $latest['changelog'],
+            'zip_url'    => $latest['zip_url'],
+            'newer'      => $newer,
         ];
     }
 

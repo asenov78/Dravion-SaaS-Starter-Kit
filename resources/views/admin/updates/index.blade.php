@@ -64,10 +64,22 @@
                 </div>
             </div>
 
-            @if($update['changelog'])
+            @if(!empty($update['newer']))
             <div class="rounded-lg bg-white/60 dark:bg-gray-900/40 border border-gray-200 dark:border-gray-800 p-4 mb-4">
-                <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{{ __('updates.whats_new') }}</p>
-                <pre class="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 font-sans">{{ $update['changelog'] }}</pre>
+                <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{{ __('updates.whats_new') }}</p>
+                <div class="flex flex-col divide-y divide-gray-200 dark:divide-gray-800">
+                    @foreach($update['newer'] as $rel)
+                    <div class="py-3 first:pt-0 last:pb-0">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90">v{{ $rel['version'] }}</span>
+                            @if($rel['version'] === $update['latest'])
+                            <span class="px-1.5 py-0.5 text-[10px] font-semibold uppercase rounded bg-brand-500 text-white">{{ __('updates.latest_version') }}</span>
+                            @endif
+                        </div>
+                        <pre class="whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-300 font-sans">{{ trim($rel['changelog']) ?: '—' }}</pre>
+                    </div>
+                    @endforeach
+                </div>
             </div>
             @endif
 

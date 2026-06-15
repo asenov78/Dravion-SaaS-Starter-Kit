@@ -20,6 +20,10 @@ class UpdateController extends Controller
         $update = $updater->checkForUpdate();
         if (! $licensed) {
             $update['zip_url'] = null;
+            $update['newer']   = array_map(function ($r) {
+                $r['zip_url'] = null;
+                return $r;
+            }, $update['newer']);
         }
 
         return view('admin.updates.index', [

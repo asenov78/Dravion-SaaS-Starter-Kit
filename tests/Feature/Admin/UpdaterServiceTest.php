@@ -13,12 +13,20 @@ class UpdaterServiceTest extends TestCase
 
     private function fakeRelease(string $tag): void
     {
+        $this->fakeReleases([$tag]);
+    }
+
+    /** @param string[] $tags newest first */
+    private function fakeReleases(array $tags): void
+    {
         Http::fake([
-            'api.github.com/*' => Http::response([
+            'api.github.com/*' => Http::response(array_map(fn ($tag) => [
                 'tag_name'    => $tag,
-                'body'        => "## What's new\n- Stuff",
+                'body'        => "## What's new in {$tag}\n- Stuff",
                 'zipball_url' => 'https://api.github.com/repos/o/r/zipball/' . $tag,
-            ], 200),
+                'draft'       => false,
+                'prerelease'  => false,
+            ], $tags), 200),
         ]);
         config(['updater.owner' => 'o', 'updater.repo' => 'r', 'updater.token' => '']);
     }
@@ -41,6 +49,31 @@ class UpdaterServiceTest extends TestCase
         $this->assertSame('1.2.29', $result['current']);
         $this->assertStringContainsString('What', $result['changelog']);
         $this->assertNotEmpty($result['zip_url']);
+    }
+
+    public function test_check_returns_changelog_for_each_newer_version(): void
+    {
+        config(['dravion.version' => '1.2.29']);
+        $this->fakeReleases(['v1.4.0', 'v1.3.0', 'v1.2.0']);
+
+        $result = (new UpdaterService)->checkForUpdate();
+
+        // Only versions newer than current, newest first.
+        $versions = array_column($result['newer'], 'version');
+        $this->assertSame(['1.4.0', '1.3.0'], $versions);
+
+        $this->assertStringContainsString('v1.4.0', $result['newer'][0]['changelog']);
+        $this->assertStringContainsString('v1.3.0', $result['newer'][1]['changelog']);
+        $this->assertSame('1.4.0', $result['latest']);
+        $this->assertTrue($result['has_update']);
+    }
+
+    public function test_newer_is_empty_when_up_to_date(): void
+    {
+        config(['dravion.version' => '1.4.0']);
+        $this->fakeReleases(['v1.4.0', 'v1.3.0']);
+
+        $this->assertSame([], (new UpdaterService)->checkForUpdate()['newer']);
     }
 
     public function test_check_no_update_when_same_version(): void

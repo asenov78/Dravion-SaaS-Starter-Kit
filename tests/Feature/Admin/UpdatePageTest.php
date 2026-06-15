@@ -38,12 +38,20 @@ class UpdatePageTest extends TestCase
 
     private function fakeRelease(string $tag): void
     {
+        $this->fakeReleases([$tag]);
+    }
+
+    /** @param string[] $tags newest first */
+    private function fakeReleases(array $tags): void
+    {
         Http::fake([
-            'api.github.com/*' => Http::response([
+            'api.github.com/*' => Http::response(array_map(fn ($tag) => [
                 'tag_name'    => $tag,
-                'body'        => 'Release notes here',
+                'body'        => "Release notes for {$tag}",
                 'zipball_url' => 'https://api.github.com/zip/' . $tag,
-            ], 200),
+                'draft'       => false,
+                'prerelease'  => false,
+            ], $tags), 200),
         ]);
         config(['updater.owner' => 'o', 'updater.repo' => 'r']);
     }
