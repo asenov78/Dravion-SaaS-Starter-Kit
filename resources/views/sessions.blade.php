@@ -1,13 +1,10 @@
 @php
     $isAdmin = auth()->user()?->hasAnyRole(['admin','manager','editor']);
+    $layout = $isAdmin ? 'layouts.admin' : 'layouts.portal';
     $backRoute = $isAdmin ? route('admin.dashboard') : route('dashboard');
 @endphp
 
-@if($isAdmin)
-<x-layouts.admin :title="__('sessions.title')">
-@else
-<x-layouts.portal :title="__('sessions.title')">
-@endif
+<x-dynamic-component :component="$layout" :title="__('sessions.title')">
 
 <div class="mb-6 flex items-center justify-between">
     <div>
@@ -89,8 +86,4 @@
     </div>
 </div>
 
-@if($isAdmin)
-</x-layouts.admin>
-@else
-</x-layouts.portal>
-@endif
+</x-dynamic-component>
