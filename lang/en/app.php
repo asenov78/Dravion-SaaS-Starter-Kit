@@ -40,4 +40,6 @@ return [
     'deselect_all'      => 'Deselect all',
     'roles'             => 'Roles',
     'pages'             => 'Pages',
+    'all_rights_reserved' => 'All rights reserved.',
+    'toggle_dark_mode'    => 'Toggle dark mode',
 ];

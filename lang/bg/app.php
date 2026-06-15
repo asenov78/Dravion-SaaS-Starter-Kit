@@ -40,4 +40,6 @@ return [
     'deselect_all'      => 'Премахни всички',
     'roles'             => 'Роли',
     'pages'             => 'Страници',
+    'all_rights_reserved' => 'Всички права запазени.',
+    'toggle_dark_mode'    => 'Превключи тъмен режим',
 ];

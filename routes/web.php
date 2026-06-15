@@ -27,8 +27,10 @@ Route::get('/', function () {
     if (! file_exists(storage_path('install.lock'))) {
         return redirect()->route('install.index');
     }
-    return redirect()->route('dashboard');
+    return app(\App\Http\Controllers\HomeController::class)->index();
 })->name('home');
+
+Route::get('/p/{slug}', [\App\Http\Controllers\HomeController::class, 'show'])->name('page.show');
 
 // Installer — disabled after install.lock exists
 Route::middleware(\App\Http\Middleware\InstallGuard::class)
@@ -137,7 +139,7 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     Route::get('/languages/{language}/meta',        [LanguageController::class, 'meta'])->name('languages.meta');
     Route::patch('/languages/{language}/meta',      [LanguageController::class, 'updateMeta'])->name('languages.meta.update');
 
-    Route::resource('pages', \App\Http\Controllers\Admin\PagesController::class)->names('admin.pages');
+    Route::resource('pages', \App\Http\Controllers\Admin\PagesController::class);
 
     Route::get('/search',     [GlobalSearchController::class, 'search'])->name('search');
 
