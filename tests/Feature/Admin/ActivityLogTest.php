@@ -195,4 +195,67 @@ class ActivityLogTest extends TestCase
             ->assertStatus(200)
             ->assertSee('login');
     }
+
+    // --- Filters ---
+
+    public function test_filter_by_log_name(): void
+    {
+        $admin = $this->admin();
+        activity('auth')->causedBy($admin)->log('login event');
+        activity('users')->causedBy($admin)->log('user created');
+
+        $this->actingAs($admin)
+            ->get('/admin/activity?log_name=auth')
+            ->assertStatus(200)
+            ->assertSee('login event')
+            ->assertDontSee('user created');
+    }
+
+    public function test_filter_by_causer(): void
+    {
+        $admin = $this->admin();
+        $other = User::factory()->create(); $other->assignRole('user');
+
+        activity('auth')->causedBy($admin)->log('admin action');
+        activity('auth')->causedBy($other)->log('other action');
+
+        $this->actingAs($admin)
+            ->get('/admin/activity?causer_id=' . $other->id)
+            ->assertStatus(200)
+            ->assertSee('other action')
+            ->assertDontSee('admin action');
+    }
+
+    public function test_filter_by_date_from(): void
+    {
+        $admin = $this->admin();
+        activity('auth')->causedBy($admin)->log('old entry');
+
+        \Spatie\Activitylog\Models\Activity::latest()->first()
+            ->update(['created_at' => now()->subDays(10)]);
+
+        activity('auth')->causedBy($admin)->log('new entry');
+
+        $this->actingAs($admin)
+            ->get('/admin/activity?date_from=' . now()->subDays(1)->format('Y-m-d'))
+            ->assertStatus(200)
+            ->assertSee('new entry')
+            ->assertDontSee('old entry');
+    }
+
+    public function test_filter_by_date_to(): void
+    {
+        $admin = $this->admin();
+        activity('auth')->causedBy($admin)->log('recent entry');
+        activity('auth')->causedBy($admin)->log('old entry');
+
+        \Spatie\Activitylog\Models\Activity::where('description', 'old entry')
+            ->update(['created_at' => now()->subDays(10)]);
+
+        $this->actingAs($admin)
+            ->get('/admin/activity?date_to=' . now()->subDays(5)->format('Y-m-d'))
+            ->assertStatus(200)
+            ->assertSee('old entry')
+            ->assertDontSee('recent entry');
+    }
 }

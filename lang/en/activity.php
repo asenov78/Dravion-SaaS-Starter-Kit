@@ -1,9 +1,14 @@
 <?php
 
 return [
-    'title'       => 'Activity Log',
-    'subtitle'    => 'System and user activity history',
-    'empty'       => 'No activity recorded yet.',
+    'title'              => 'Activity Log',
+    'subtitle'           => 'System and user activity history',
+    'empty'              => 'No activity recorded yet.',
+    'search_placeholder' => 'Search descriptions…',
+    'filter_event'       => 'All event types',
+    'filter_user'        => 'All users',
+    'filter_date_from'   => 'From date',
+    'filter_date_to'     => 'To date',
     'event'       => 'Event',
     'description' => 'Description',
     'user'        => 'User',

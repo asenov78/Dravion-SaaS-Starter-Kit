@@ -1,11 +1,54 @@
 <x-layouts.admin :title="__('activity.title')">
 
-<div class="mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ __('activity.title') }}</h2>
-    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('activity.subtitle') }}</p>
+<div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ __('activity.title') }}</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('activity.subtitle') }}</p>
+    </div>
 </div>
 
-<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+{{-- Filters --}}
+<form method="GET" action="{{ route('admin.activity') }}" class="mb-4 flex flex-wrap gap-3">
+    <input type="text" name="search" value="{{ $search }}" placeholder="{{ __('activity.search_placeholder') }}"
+        class="h-10 flex-1 min-w-48 rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
+
+    <select name="log_name" onchange="this.form.submit()"
+        class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+        <option value="">{{ __('activity.filter_event') }}</option>
+        @foreach($logNames as $ln)
+        <option value="{{ $ln }}" {{ $logName === $ln ? 'selected' : '' }}>{{ $ln }}</option>
+        @endforeach
+    </select>
+
+    <select name="causer_id" onchange="this.form.submit()"
+        class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+        <option value="">{{ __('activity.filter_user') }}</option>
+        @foreach($users as $u)
+        <option value="{{ $u->id }}" {{ $causerId == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
+        @endforeach
+    </select>
+
+    <input type="date" name="date_from" value="{{ $dateFrom }}"
+        title="{{ __('activity.filter_date_from') }}"
+        class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+
+    <input type="date" name="date_to" value="{{ $dateTo }}"
+        title="{{ __('activity.filter_date_to') }}"
+        class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+
+    <button type="submit" class="h-10 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600 transition-colors">
+        {{ __('app.search') }}
+    </button>
+
+    @if($search || $logName || $causerId || $dateFrom || $dateTo)
+    <a href="{{ route('admin.activity') }}"
+        class="h-10 inline-flex items-center rounded-lg border border-gray-300 px-4 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
+        {{ __('app.cancel') }}
+    </a>
+    @endif
+</form>
+
+<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
     @if($activities->isEmpty())
     <div class="px-6 py-16 text-center text-sm text-gray-400 dark:text-gray-500">
         {{ __('activity.empty') }}
