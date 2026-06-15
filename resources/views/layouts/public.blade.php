@@ -1,18 +1,13 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('meta_title', config('app.name') . ' — SaaS Starter Kit')</title>
-    <meta name="description" content="@yield('meta_desc', 'Complete Laravel SaaS Starter Kit with roles, permissions, licensing, self-updater and more.')">
+    <meta name="description" content="@yield('meta_desc', 'Complete Laravel SaaS Starter Kit')">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        [x-cloak] { display: none !important; }
-        .hero-gradient { background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,.18), transparent); }
-        .feature-card:hover { transform: translateY(-2px); }
-        .feature-card { transition: transform .2s ease, box-shadow .2s ease; }
-    </style>
+    <style>[x-cloak] { display: none !important; }</style>
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('theme', {
@@ -20,17 +15,23 @@
                     const saved = localStorage.getItem('theme');
                     const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                     this.theme = saved || sys;
-                    this.applyTheme();
+                    this.updateTheme();
                 },
                 theme: 'light',
                 get dark() { return this.theme === 'dark'; },
                 toggle() {
                     this.theme = this.theme === 'light' ? 'dark' : 'light';
                     localStorage.setItem('theme', this.theme);
-                    this.applyTheme();
+                    this.updateTheme();
                 },
-                applyTheme() {
-                    document.documentElement.classList.toggle('dark', this.theme === 'dark');
+                updateTheme() {
+                    if (this.theme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        document.body.classList.add('dark', 'bg-gray-900');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        document.body.classList.remove('dark', 'bg-gray-900');
+                    }
                 }
             });
         });
@@ -38,120 +39,130 @@
     <script>
         (function(){
             var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-            if(t==='dark') document.documentElement.classList.add('dark');
+            if(t==='dark'){document.documentElement.classList.add('dark');document.body&&document.body.classList.add('dark','bg-gray-900');}
         })();
     </script>
 </head>
-<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-white antialiased" x-data>
+<body class="min-h-screen bg-white dark:bg-gray-dark text-gray-900 dark:text-white antialiased flex flex-col" x-data>
 
-{{-- ══════════════════ HEADER ══════════════════ --}}
-<header class="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md"
+{{-- ══ HEADER — same visual style as admin app-header ══ --}}
+<header class="sticky top-0 flex w-full bg-white border-b border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900"
         x-data="{ open: false }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
+    <div class="flex items-center justify-between w-full px-4 sm:px-6 lg:px-8 py-3 lg:py-4">
 
-            {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-sm">
-                    {{ strtoupper(substr(config('app.name', 'D'), 0, 1)) }}
-                </div>
-                <span class="text-base font-bold text-gray-900 dark:text-white tracking-tight">{{ config('app.name') }}</span>
-            </a>
-
-            {{-- Desktop nav --}}
-            @php $navPages = $navPages ?? []; @endphp
-            <nav class="hidden md:flex items-center gap-1">
-                <a href="{{ route('home') }}"
-                   class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    {{ __('nav.home') }}
-                </a>
-                @foreach ($navPages as $navPage)
-                <a href="{{ route('page.show', $navPage->slug) }}"
-                   class="px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    {{ $navPage->title }}
-                </a>
-                @endforeach
-            </nav>
-
-            {{-- Right side --}}
-            <div class="hidden md:flex items-center gap-2">
-                {{-- Dark mode toggle --}}
-                <button @click="$store.theme.toggle()"
-                        class="flex items-center justify-center w-9 h-9 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <svg x-show="!$store.theme.dark" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-                    <svg x-show="$store.theme.dark" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                </button>
-
-                @auth
-                    @if(auth()->user()->hasAnyRole(['admin', 'manager', 'editor']))
-                        <a href="{{ route('admin.dashboard') }}"
-                           class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 transition-colors shadow-sm">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
-                            {{ __('nav.dashboard') }}
-                        </a>
-                    @else
-                        <a href="{{ route('dashboard') }}"
-                           class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 transition-colors shadow-sm">
-                            {{ __('nav.portal') }}
-                        </a>
-                    @endif
-                @else
-                    <a href="{{ route('login') }}"
-                       class="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                        {{ __('auth.login') }}
-                    </a>
-                    <a href="{{ route('register') }}"
-                       class="inline-flex items-center px-4 py-2 rounded-lg bg-brand-500 text-white text-sm font-semibold hover:bg-brand-600 transition-colors shadow-sm">
-                        {{ __('auth.register') }}
-                    </a>
-                @endauth
+        {{-- Logo --}}
+        <a href="{{ route('home') }}" class="flex items-center gap-2.5">
+            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white font-bold text-sm shadow-sm">
+                {{ strtoupper(substr(config('app.name', 'D'), 0, 1)) }}
             </div>
+            <span class="text-base font-bold text-gray-800 dark:text-white/90 tracking-tight">{{ config('app.name') }}</span>
+        </a>
+
+        {{-- Desktop nav --}}
+        @php $navPages = $navPages ?? []; @endphp
+        <nav class="hidden lg:flex items-center gap-1">
+            <a href="{{ route('home') }}"
+               class="flex items-center gap-2 px-3 py-2 rounded-lg text-theme-sm font-medium text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">
+                {{ __('nav.home') }}
+            </a>
+            @foreach ($navPages as $navPage)
+            <a href="{{ route('page.show', $navPage->slug) }}"
+               class="flex items-center gap-2 px-3 py-2 rounded-lg text-theme-sm font-medium text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">
+                {{ $navPage->title }}
+            </a>
+            @endforeach
+        </nav>
+
+        {{-- Right side actions --}}
+        <div class="flex items-center gap-2 2xsm:gap-3">
+
+            {{-- Theme toggle — same as admin --}}
+            <button @click="$store.theme.toggle()"
+                class="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-gray-700 h-11 w-11 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
+                :title="$store.theme.dark ? 'Light mode' : 'Dark mode'">
+                <svg x-show="$store.theme.dark" class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M9.99998 1.5415C10.4142 1.5415 10.75 1.87729 10.75 2.2915V3.5415C10.75 3.95572 10.4142 4.2915 9.99998 4.2915C9.58577 4.2915 9.24998 3.95572 9.24998 3.5415V2.2915C9.24998 1.87729 9.58577 1.5415 9.99998 1.5415ZM10.0009 6.79327C8.22978 6.79327 6.79402 8.22904 6.79402 10.0001C6.79402 11.7712 8.22978 13.207 10.0009 13.207C11.772 13.207 13.2078 11.7712 13.2078 10.0001C13.2078 8.22904 11.772 6.79327 10.0009 6.79327ZM5.29402 10.0001C5.29402 7.40061 7.40135 5.29327 10.0009 5.29327C12.6004 5.29327 14.7078 7.40061 14.7078 10.0001C14.7078 12.5997 12.6004 14.707 10.0009 14.707C7.40135 14.707 5.29402 12.5997 5.29402 10.0001Z" fill="currentColor"/>
+                </svg>
+                <svg x-show="!$store.theme.dark" x-cloak class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.4547 11.97L18.1799 12.1611C18.265 11.8383 18.1265 11.4982 17.8401 11.3266C17.5538 11.1551 17.1885 11.1934 16.944 11.4207L17.4547 11.97ZM8.0306 2.5459L8.57989 3.05657C8.80718 2.81209 8.84554 2.44682 8.67398 2.16046C8.50243 1.8741 8.16227 1.73559 7.83948 1.82066L8.0306 2.5459ZM12.9154 13.0035C9.64678 13.0035 6.99707 10.3538 6.99707 7.08524H5.49707C5.49707 11.1823 8.81835 14.5035 12.9154 14.5035V13.0035ZM16.944 11.4207C15.8869 12.4035 14.4721 13.0035 12.9154 13.0035V14.5035C14.8657 14.5035 16.6418 13.7499 17.9654 12.5193L16.944 11.4207ZM16.7295 11.7789C15.9437 14.7607 13.2277 16.9586 10.0003 16.9586V18.4586C13.9257 18.4586 17.2249 15.7853 18.1799 12.1611L16.7295 11.7789ZM10.0003 16.9586C6.15734 16.9586 3.04199 13.8433 3.04199 10.0003H1.54199C1.54199 14.6717 5.32892 18.4586 10.0003 18.4586V16.9586ZM3.04199 10.0003C3.04199 6.77289 5.23988 4.05695 8.22173 3.27114L7.83948 1.82066C4.21532 2.77574 1.54199 6.07486 1.54199 10.0003H3.04199ZM6.99707 7.08524C6.99707 5.52854 7.5971 4.11366 8.57989 3.05657L7.48132 2.03522C6.25073 3.35885 5.49707 5.13487 5.49707 7.08524H6.99707Z" fill="currentColor"/>
+                </svg>
+            </button>
+
+            {{-- Auth buttons --}}
+            @auth
+                @if(auth()->user()->hasAnyRole(['admin', 'manager', 'editor']))
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="hidden sm:inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                        {{ __('nav.dashboard') }}
+                    </a>
+                @else
+                    <a href="{{ route('dashboard') }}"
+                       class="hidden sm:inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 transition-colors">
+                        {{ __('nav.portal') }}
+                    </a>
+                @endif
+                {{-- User avatar --}}
+                <div class="flex items-center justify-center w-9 h-9 rounded-full bg-brand-500 text-white font-semibold text-sm">
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                </div>
+            @else
+                <a href="{{ route('login') }}"
+                   class="hidden sm:flex items-center rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    {{ __('auth.login') }}
+                </a>
+                <a href="{{ route('register') }}"
+                   class="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 transition-colors">
+                    {{ __('auth.register') }}
+                </a>
+            @endauth
 
             {{-- Mobile hamburger --}}
-            <button @click="open = !open" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">
-                <svg x-show="!open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                <svg x-show="open" x-cloak class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button @click="open = !open"
+                    class="flex lg:hidden items-center justify-center w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <svg x-show="!open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <svg x-show="open" x-cloak class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
     </div>
 
     {{-- Mobile menu --}}
-    <div x-show="open" x-cloak x-transition class="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+    <div x-show="open" x-cloak x-transition
+         class="absolute top-full left-0 right-0 lg:hidden border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg">
         <div class="px-4 py-3 space-y-1">
-            <a href="{{ route('home') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">{{ __('nav.home') }}</a>
+            <a href="{{ route('home') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5">{{ __('nav.home') }}</a>
             @foreach ($navPages as $navPage)
-            <a href="{{ route('page.show', $navPage->slug) }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">{{ $navPage->title }}</a>
+            <a href="{{ route('page.show', $navPage->slug) }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5">{{ $navPage->title }}</a>
             @endforeach
-            <div class="pt-2 border-t border-gray-200 dark:border-gray-700 space-y-1">
+            <div class="pt-2 mt-2 border-t border-gray-200 dark:border-gray-800 space-y-1">
                 @auth
-                    @if(auth()->user()->hasAnyRole(['admin', 'manager', 'editor']))
-                        <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold text-brand-500">{{ __('nav.dashboard') }}</a>
-                    @else
-                        <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold text-brand-500">{{ __('nav.portal') }}</a>
-                    @endif
+                    <a href="{{ auth()->user()->hasAnyRole(['admin','manager','editor']) ? route('admin.dashboard') : route('dashboard') }}"
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-brand-500 hover:bg-gray-100 dark:hover:bg-white/5">
+                        {{ auth()->user()->hasAnyRole(['admin','manager','editor']) ? __('nav.dashboard') : __('nav.portal') }}
+                    </a>
                 @else
-                    <a href="{{ route('login') }}" class="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">{{ __('auth.login') }}</a>
-                    <a href="{{ route('register') }}" class="block px-3 py-2 rounded-lg text-sm font-semibold text-brand-500 hover:bg-gray-100 dark:hover:bg-gray-800">{{ __('auth.register') }}</a>
+                    <a href="{{ route('login') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5">{{ __('auth.login') }}</a>
+                    <a href="{{ route('register') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-brand-500 hover:bg-gray-100 dark:hover:bg-white/5">{{ __('auth.register') }}</a>
                 @endauth
             </div>
         </div>
     </div>
 </header>
 
-{{-- Page content --}}
-<main>
+{{-- Content --}}
+<main class="flex-1">
     @yield('content')
 </main>
 
-{{-- ══════════════════ FOOTER ══════════════════ --}}
-<footer class="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 mt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+{{-- Footer --}}
+<footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-8 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-xs">
+                <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-xs">
                     {{ strtoupper(substr(config('app.name', 'D'), 0, 1)) }}
                 </div>
-                <span class="text-sm font-bold text-gray-900 dark:text-white">{{ config('app.name') }}</span>
+                <span class="text-sm font-bold text-gray-800 dark:text-white/90">{{ config('app.name') }}</span>
             </div>
             <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2">
                 @foreach ($navPages as $navPage)
