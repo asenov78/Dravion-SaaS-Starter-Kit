@@ -4,29 +4,43 @@
 
 ## Current State
 
-- **Tests:** 409/409 passing, 6 risky (acceptable)
+- **Tests:** 414/414 passing, 6 risky (acceptable)
 - **Branch:** main, up to date with origin
-- **Last commit:** `536b3f1` — feat: Sanctum API tokens page
+- **Last commit:** `a4e170a` — feat: public website with CMS pages
 
 ## Completed This Session
 
-1-6. [earlier] security audit, CLAUDE.md files, STATE.md, bulk actions, rename role, activity log
-7. **#25** — Global default language
-8. **#22** — Admin broadcast banner
-9. **#20** — Email verification (MustVerifyEmail + signed URL)
-10. **#26** — In-app notification bell (JSON feed, mark read/all, Alpine.js dropdown)
-11. **Notifications wired** — AccountSuspended/Activated → DB channel; NewUserRegistered + UpdateInstalled → admins
-12. **#27** — Sanctum API tokens page (create/revoke/copy-once, lang en+bg)
+1-12. [previous sessions] security, UI, auth, notifications, API tokens, sessions
+13. **#28** — Session management (SessionController + sessions.blade.php) ✓
+14. **#29** — Users Export CSV ✓ (already existed)
+15. **#26/#27** — Notifications bell + Sanctum tokens ✓ (already existed)
+16. **Public website** — HomeController, public layout, CMS Pages admin CRUD, seed pages
 
 ## Pending / Next Steps (ordered)
 
-- [ ] **#28** Security — Session management (kill active sessions)
-- [ ] **#29** Users — Export CSV (verify linked in UI)
-- [ ] **#21** Auth — 2FA / TOTP (complex, later)
+- [ ] **#21** Auth — 2FA / TOTP
+- [ ] Public site styling — polish hero, nav, dark mode toggle on public pages
+- [ ] CMS Pages — rich text editor (TipTap/Quill) instead of raw HTML textarea
 
 ## Architecture Snapshot
 
-```\nLaravel 13 / PHP 8.3 / Tailwind v4 / Alpine.js v3 / Sanctum\nAuth:     LoginController (manual) + MustVerifyEmail + VerificationController\nSanctum:  HasApiTokens on User; GET/POST/DELETE /api-tokens\nBell:     NotificationController JSON feed; Alpine.js dropdown in app-header\nNotifs:   DB channel on suspend/activate (→user) + new-user/update (→admins)\nLicense:  LicenseService → HMAC cache → license server\nUpdater:  UpdaterService → GitHub API → copyTree()\nRoles:    Spatie (admin/manager/editor/user)\ni18n:     lang/en/ + lang/bg/ — 15 files including tokens.php + notifications.php\nTests:    SQLite in-memory, Http::fake() for external calls\n```\n
+```
+Laravel 13 / PHP 8.3 / Tailwind v4 / Alpine.js v3 / Sanctum
+Public:   GET / → HomeController@index; GET /p/{slug} → HomeController@show
+          layouts/public.blade.php — responsive header + nav from DB + auth buttons
+CMS:      pages table (title,slug,content,excerpt,is_published,show_in_nav,sort_order)
+          App\Models\Page; Admin\PagesController resource; seeded: Home,About,Pricing,Contact
+Auth:     LoginController (manual) + MustVerifyEmail + VerificationController
+Sanctum:  HasApiTokens on User; GET/POST/DELETE /api-tokens
+Bell:     NotificationController JSON feed; Alpine.js dropdown in app-header
+Notifs:   DB channel on suspend/activate (→user) + new-user/update (→admins)
+License:  LicenseService → HMAC cache → license server
+Updater:  UpdaterService → GitHub API → copyTree()
+Roles:    Spatie (admin/manager/editor/user)
+i18n:     lang/en/ + lang/bg/ — 17 files including pages.php
+Tests:    SQLite in-memory, Http::fake() for external calls
+```
+
 ## Standing Instructions (always active)
 
 - caveman + tdd — active every prompt

@@ -13,7 +13,8 @@ Dravion SaaS Starter Kit · Laravel 13 route definitions.
 
 ### Public
 ```
-GET /          → redirect to /install or /dashboard
+GET /          → HomeController@index (public website home, checks install.lock)
+GET /p/{slug}  → HomeController@show  (dynamic CMS page by slug)
 ```
 
 ### Installer
