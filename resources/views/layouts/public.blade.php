@@ -83,8 +83,7 @@
         {{-- Right side actions --}}
         <div class="flex items-center gap-2 2xsm:gap-3">
 
-            {{-- Language switcher — only for authenticated users (locale.switch requires auth) --}}
-            @auth
+            {{-- Language switcher --}}
             @php $allLangs = \App\Models\Language::orderByDesc('is_default')->orderBy('name')->get(); @endphp
             @if($allLangs->count() > 1)
             <div class="relative" x-data="{ open: false }" @click.outside="open = false">
@@ -105,7 +104,6 @@
                 </div>
             </div>
             @endif
-            @endauth
 
             {{-- Theme toggle — CSS class approach, no Alpine x-show --}}
             <button @click="$store.theme.toggle()"

@@ -71,7 +71,7 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::get('/locale/{code}', [LocaleController::class, 'switch'])->middleware('auth')->name('locale.switch');
+Route::get('/locale/{code}', [LocaleController::class, 'switch'])->name('locale.switch');
 
 // Email verification
 Route::middleware('auth')->group(function () {
