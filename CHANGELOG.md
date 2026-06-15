@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.3.1] — 2026-06-15
+### Added
+- Updates page: per-version changelog — every release newer than the current version is listed with its notes, newest first, with a "latest" badge
+### Changed
+- Updater integrates with license: latest version is always visible (even unlicensed), but download/install stays license-gated
+- `UpdaterService` now reads the full GitHub releases list instead of only the latest release
+
 ## [1.3.0] — 2026-06-15
 ### Added
 - Self-updater: admin-only `/admin/updates` — checks GitHub releases, license-gated, one-click install (maintenance mode, file copy, migrate, cache clear)
