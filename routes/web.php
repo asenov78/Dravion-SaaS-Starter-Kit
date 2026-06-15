@@ -81,8 +81,9 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     // Roles — admin only
     Route::get('/roles',              [RoleController::class, 'index'])->name('roles.index')->middleware('role:admin');
     Route::post('/roles',             [RoleController::class, 'store'])->name('roles.store')->middleware('role:admin');
-    Route::delete('/roles/{role}',    [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('role:admin');
     Route::put('/roles/permissions',  [RoleController::class, 'syncPermissions'])->name('roles.permissions')->middleware('role:admin');
+    Route::put('/roles/{role}',       [RoleController::class, 'update'])->name('roles.update')->middleware('role:admin');
+    Route::delete('/roles/{role}',    [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('role:admin');
 
     Route::get('/settings',              [SettingsController::class, 'index'])->name('settings')->middleware('can:view settings');
     Route::put('/settings',              [SettingsController::class, 'update'])->name('settings.update')->middleware('can:edit settings');

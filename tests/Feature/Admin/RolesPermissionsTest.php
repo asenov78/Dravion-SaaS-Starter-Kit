@@ -181,4 +181,35 @@ class RolesPermissionsTest extends TestCase
             ->get('/admin/settings')
             ->assertStatus(200);
     }
+
+    // --- Rename role ---
+
+    public function test_admin_can_rename_role(): void
+    {
+        $role = Role::create(['name' => 'tester', 'guard_name' => 'web']);
+
+        $this->actingAs($this->admin())
+            ->put("/admin/roles/{$role->id}", ['name' => 'qa-engineer'])
+            ->assertRedirect(route('admin.roles.index'));
+
+        $this->assertEquals('qa-engineer', $role->fresh()->name);
+    }
+
+    public function test_rename_prevents_duplicate_name(): void
+    {
+        $role = Role::create(['name' => 'tester', 'guard_name' => 'web']);
+
+        $this->actingAs($this->admin())
+            ->put("/admin/roles/{$role->id}", ['name' => 'editor'])
+            ->assertSessionHasErrors('name');
+    }
+
+    public function test_cannot_rename_admin_role(): void
+    {
+        $admin = Role::where('name', 'admin')->first();
+
+        $this->actingAs($this->admin())
+            ->put("/admin/roles/{$admin->id}", ['name' => 'superuser'])
+            ->assertStatus(403);
+    }
 }

@@ -31,6 +31,24 @@ class RoleController extends Controller
         return redirect()->route('admin.roles.index')->with('success', __('flash.role_created'));
     }
 
+    public function update(Request $request, Role $role)
+    {
+        if ($role->name === 'admin') {
+            abort(403, 'Cannot rename admin role.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:64|unique:roles,name,' . $role->id,
+        ]);
+
+        $old = $role->name;
+        $role->update(['name' => $request->name]);
+
+        ActivityLogger::log('users', 'updated', "Role '{$old}' renamed to '{$role->name}'", null, null, 'activity.log.role_renamed', ['old' => $old, 'new' => $role->name]);
+
+        return redirect()->route('admin.roles.index')->with('success', __('flash.role_renamed'));
+    }
+
     public function destroy(Role $role)
     {
         if ($role->name === 'admin') {

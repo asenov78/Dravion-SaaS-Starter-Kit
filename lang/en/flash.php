@@ -29,4 +29,5 @@ return [
     'reset_link_sent'          => 'If that email exists, a reset link has been sent.',
     'install_complete'         => 'Installation complete! Please sign in.',
     'bulk_done'                => 'Bulk :action applied to :count user(s).',
+    'role_renamed'             => 'Role renamed.',
 ];

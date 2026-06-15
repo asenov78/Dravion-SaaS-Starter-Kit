@@ -29,14 +29,38 @@
 
         <div class="flex flex-wrap gap-3">
             @foreach($roles as $role)
-            <div class="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $role->name }}</span>
+            <div x-data="{ editing: false, name: '{{ addslashes($role->name) }}' }"
+                class="flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-800">
+
+                {{-- View mode --}}
+                <span x-show="!editing" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $role->name }}</span>
+
+                {{-- Edit mode --}}
                 @if($role->name !== 'admin')
-                <button type="button" x-data
-                    @click="$dispatch('confirm-action', { title: '{{ addslashes(__('roles.confirm_delete_title', ['name' => $role->name])) }}', message: '{{ addslashes(__('roles.confirm_delete_msg', ['name' => $role->name])) }}', btnLabel: '{{ addslashes(__('app.delete')) }}', btnColor: '#dc2626', url: '{{ route('admin.roles.destroy', $role) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.roles.index') }}', toastMessage: '{{ addslashes(__('flash.role_deleted')) }}', toastVariant: 'error' })"
-                    class="ml-1 text-gray-400 hover:text-red-500 transition-colors" title="{{ __('app.delete') }}">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+                <form x-show="editing" method="POST" action="{{ route('admin.roles.update', $role) }}" class="flex items-center gap-1.5" @submit.prevent="$el.submit()">
+                    @csrf @method('PUT')
+                    <input type="text" name="name" x-model="name" x-ref="input"
+                        class="h-7 w-36 rounded-md border border-brand-300 bg-white px-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-brand-700 dark:bg-gray-900 dark:text-white/90">
+                    <button type="submit" class="text-success-600 hover:text-success-700" title="{{ __('app.save') }}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                    <button type="button" @click="editing = false; name = '{{ addslashes($role->name) }}'" class="text-gray-400 hover:text-gray-600" title="{{ __('app.cancel') }}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </form>
+
+                {{-- Action buttons (view mode) --}}
+                <div x-show="!editing" class="flex items-center gap-1">
+                    <button type="button" @click="editing = true; $nextTick(() => $refs.input.focus())"
+                        class="text-gray-400 hover:text-brand-500 transition-colors" title="{{ __('roles.rename') }}">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button type="button"
+                        @click="$dispatch('confirm-action', { title: '{{ addslashes(__('roles.confirm_delete_title', ['name' => $role->name])) }}', message: '{{ addslashes(__('roles.confirm_delete_msg', ['name' => $role->name])) }}', btnLabel: '{{ addslashes(__('app.delete')) }}', btnColor: '#dc2626', url: '{{ route('admin.roles.destroy', $role) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.roles.index') }}', toastMessage: '{{ addslashes(__('flash.role_deleted')) }}', toastVariant: 'error' })"
+                        class="text-gray-400 hover:text-error-500 transition-colors" title="{{ __('app.delete') }}">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
+                </div>
                 @else
                 <span class="ml-1 text-xs text-gray-400">{{ __('roles.protected') }}</span>
                 @endif

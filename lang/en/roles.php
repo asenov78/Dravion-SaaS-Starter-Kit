@@ -7,6 +7,7 @@ return [
     'new_placeholder' => 'New role name…',
     'add'             => 'Add Role',
     'protected'       => '(protected)',
+    'rename'          => 'Rename',
     'matrix'          => 'Permissions Matrix',
     'matrix_desc'     => 'Admin always has all permissions. Changes here apply to all other roles.',
     'save'            => 'Save Permissions',
