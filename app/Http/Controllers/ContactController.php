@@ -11,7 +11,8 @@ class ContactController extends Controller
     public function show(): \Illuminate\View\View
     {
         $navPages = Page::published()->inNav()->get();
-        return view('public.contact', compact('navPages'));
+        $contactPage = Page::published()->where('slug', 'contact')->first();
+        return view('public.contact', compact('navPages', 'contactPage'));
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse

@@ -23,6 +23,7 @@ class HomeController extends Controller
     public function gallery(): View
     {
         $navPages = Page::published()->inNav()->get();
-        return view('public.gallery', compact('navPages'));
+        $galleryPage = Page::published()->where('slug', 'gallery')->first();
+        return view('public.gallery', compact('navPages', 'galleryPage'));
     }
 }

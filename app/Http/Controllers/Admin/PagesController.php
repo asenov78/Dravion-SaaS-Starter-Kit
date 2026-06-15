@@ -32,6 +32,11 @@ class PagesController extends Controller
             'sort_order'       => 'nullable|integer',
             'meta_title'       => 'nullable|string|max:191',
             'meta_description' => 'nullable|string|max:500',
+            'hero_image'       => 'nullable|url|max:500',
+            'hero_title'       => 'nullable|string|max:191',
+            'hero_subtitle'    => 'nullable|string|max:500',
+            'hero_cta_label'   => 'nullable|string|max:191',
+            'hero_cta_url'     => 'nullable|string|max:500',
         ]);
 
         $data['is_published'] = $request->boolean('is_published');
@@ -59,6 +64,11 @@ class PagesController extends Controller
             'sort_order'       => 'nullable|integer',
             'meta_title'       => 'nullable|string|max:191',
             'meta_description' => 'nullable|string|max:500',
+            'hero_image'       => 'nullable|url|max:500',
+            'hero_title'       => 'nullable|string|max:191',
+            'hero_subtitle'    => 'nullable|string|max:500',
+            'hero_cta_label'   => 'nullable|string|max:191',
+            'hero_cta_url'     => 'nullable|string|max:500',
         ]);
 
         $data['is_published'] = $request->boolean('is_published');

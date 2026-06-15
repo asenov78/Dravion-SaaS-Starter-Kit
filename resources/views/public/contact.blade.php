@@ -2,16 +2,25 @@
 @section('meta_title', __('contact.title') . ' — ' . config('app.name'))
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-
-    {{-- Header --}}
-    <div class="text-center mb-16">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-500/10 text-brand-500 mb-6">
+@php
+    $contactBg = $contactPage?->hero_image ?? 'https://images.unsplash.com/photo-1516387938699-a93567ec168e?auto=format&fit=crop&w=1920&q=80';
+    $contactTitle = $contactPage?->hero_title ?? __('contact.title');
+    $contactSubtitle = $contactPage?->hero_subtitle ?? __('contact.subtitle');
+@endphp
+{{-- Hero --}}
+<section class="relative overflow-hidden py-20 sm:py-24 flex items-center"
+    style="background-image: url('{{ $contactBg }}'); background-size: cover; background-position: center;">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-950/85 via-gray-900/75 to-brand-900/60" aria-hidden="true"></div>
+    <div class="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-8">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 text-white mb-6 backdrop-blur-sm">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
         </div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">{{ __('contact.title') }}</h1>
-        <p class="text-lg text-gray-500 dark:text-gray-400 max-w-xl mx-auto">{{ __('contact.subtitle') }}</p>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-4 drop-shadow-lg">{{ $contactTitle }}</h1>
+        <p class="text-lg text-white/70 max-w-xl mx-auto">{{ $contactSubtitle }}</p>
     </div>
+</section>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
 
     <div class="grid lg:grid-cols-3 gap-10">
 

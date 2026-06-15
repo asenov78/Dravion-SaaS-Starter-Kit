@@ -84,6 +84,46 @@
         </div>
     </div>
 
+    {{-- Hero Section --}}
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('pages.hero_section') }}</h3>
+            <p class="text-xs text-gray-400 mt-0.5">{{ __('pages.hero_hint') }}</p>
+        </div>
+        <div class="p-6 flex flex-col gap-5">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.hero_image') }}</label>
+                <input type="url" name="hero_image" value="{{ old('hero_image') }}"
+                    placeholder="https://images.unsplash.com/photo-..."
+                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 {{ $errors->has('hero_image') ? 'border-error-400' : '' }}" />
+                @error('hero_image') <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p> @enderror
+            </div>
+            <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.hero_title') }}</label>
+                    <input type="text" name="hero_title" value="{{ old('hero_title') }}"
+                        class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.hero_cta_label') }}</label>
+                    <input type="text" name="hero_cta_label" value="{{ old('hero_cta_label') }}"
+                        class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.hero_subtitle') }}</label>
+                <textarea name="hero_subtitle" rows="2"
+                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800">{{ old('hero_subtitle') }}</textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.hero_cta_url') }}</label>
+                <input type="text" name="hero_cta_url" value="{{ old('hero_cta_url') }}"
+                    placeholder="/register"
+                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
+            </div>
+        </div>
+    </div>
+
     {{-- SEO --}}
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
