@@ -100,10 +100,10 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.content') }}</label>
                 <div x-data="tiptap({ content: {{ json_encode(old('translations.'.$lang->code.'.content', '')) }}, placeholder: '{{ __('pages.content') }}...' })"
                      class="tiptap-editor rounded-lg border border-gray-300 dark:border-gray-700 overflow-hidden"
-                     :style="showPreview ? 'display:flex;align-items:stretch;' : ''"
+                     style="display:flex; align-items:stretch;"
                      @destroy.window="destroy()">
                     {{-- Left: toolbar + editor --}}
-                    <div :style="showPreview ? 'width:50%;min-width:0;flex-shrink:0;' : 'width:100%;'">
+                    <div style="min-width:0; flex:1; display:flex; flex-direction:column;">
                         <div class="tiptap-toolbar">
                             <button type="button" @click="execCmd('bold')" :class="{active: isActive('bold')}" class="tiptap-btn" title="Bold"><b>B</b></button>
                             <button type="button" @click="execCmd('italic')" :class="{active: isActive('italic')}" class="tiptap-btn" title="Italic"><i>I</i></button>
@@ -127,9 +127,9 @@
                             <button type="button" @click="execCmd('redo')" class="tiptap-btn" title="Redo">&#8631;</button>
                             <div class="tiptap-sep"></div>
                             <button type="button" @click="toggleHtml()" :class="{active: showHtml}" class="tiptap-btn" title="HTML source">&lt;/&gt;</button>
-                            <button type="button" @click="showPreview = !showPreview" :class="{active: showPreview}" class="tiptap-btn" style="margin-left:auto;" title="{{ __('app.preview') }}">&#128065; {{ __('app.preview') }}</button>
+                            <button type="button" @click="showPreview = !showPreview" :class="{active: showPreview}" class="tiptap-btn" style="margin-left:auto;" title="Toggle live preview">&#128065;</button>
                         </div>
-                        <div x-show="!showHtml">
+                        <div x-show="!showHtml" style="flex:1;">
                             <div x-ref="editorEl"></div>
                         </div>
                         <textarea x-show="showHtml" x-model="content"
@@ -137,10 +137,17 @@
                         <textarea data-tiptap-target name="translations[{{ $lang->code }}][content]"
                             class="hidden">{{ old('translations.'.$lang->code.'.content') }}</textarea>
                     </div>
-                    {{-- Right: preview panel --}}
-                    <div x-show="showPreview" class="cms-content"
-                         class="tiptap-preview cms-content"
-                         x-html="content">
+                    {{-- Right: live preview panel --}}
+                    <div x-show="showPreview"
+                         x-cloak
+                         style="width:50%; flex-shrink:0; border-left:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden;"
+                         class="dark:border-gray-700">
+                        <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; border-bottom:1px solid #e5e7eb; background:#f9fafb; font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; flex-shrink:0;"
+                             class="dark:bg-gray-900 dark:border-gray-700 dark:text-gray-500">
+                            <span class="tiptap-live-dot"></span>
+                            Live Preview
+                        </div>
+                        <div class="cms-content" style="padding:20px 24px; overflow-y:auto; flex:1;" x-html="content"></div>
                     </div>
                 </div>
             </div>

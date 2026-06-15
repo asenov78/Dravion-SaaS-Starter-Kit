@@ -453,15 +453,15 @@
 }
 .dark .tiptap-html-source { color: #e4e7ec; background: #1a2231; }
 
-.tiptap-preview {
-  width: 50%;
-  border-left: 1px solid #e4e7ec;
-  overflow-y: auto;
-  min-height: 500px;
-  padding: 20px 24px;
-  background: #fff;
+.tiptap-live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e; flex-shrink: 0;
+  animation: tiptap-pulse 2s ease-in-out infinite;
 }
-.dark .tiptap-preview { background: #1a2231; border-left-color: #344054; }
+@keyframes tiptap-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.85); }
+}
 
 /* Row flash animations */
 @keyframes row-flash-success {

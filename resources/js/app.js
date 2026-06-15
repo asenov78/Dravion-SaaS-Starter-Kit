@@ -35,7 +35,7 @@ document.addEventListener('alpine:init', () => {
 
         return {
             content: options.content ?? '',
-            showPreview: false,
+            showPreview: options.preview ?? true,
             showHtml: false,
 
             init() {
