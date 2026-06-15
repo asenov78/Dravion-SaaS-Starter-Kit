@@ -41,6 +41,8 @@ Controllers/
 
 ### Admin/UserController
 - Full CRUD + soft-delete restore + suspend/activate lifecycle.
+- `bulk()` handles bulk suspend/activate/delete — self-exclusion built in, ids come from checkbox form.
+- Bulk delete uses `->get()->each->delete()` (not `->each->delete()` directly on builder — SoftDeletes requires model instances).
 - Every mutating action calls `ActivityLogger::log()` with a translatable `descKey`.
 - Avatar upload delegates to `AvatarService::store()`.
 - `store()` sends a `WelcomeMail` with a password-reset link when `Setting::get('mail_welcome') === '1'`.
@@ -48,8 +50,9 @@ Controllers/
 - `suspend()` / `activate()` check `wantsJson()` for AJAX compatibility (Alpine.js inline actions).
 
 ### Admin/RoleController
-- `admin` role cannot be deleted (hard-coded guard).
+- `admin` role cannot be deleted or renamed (hard-coded 403 guard in both `destroy()` and `update()`).
 - `syncPermissions()` accepts a matrix `[role_id => [permission_id, ...]]` — replaces all non-admin role permissions in one POST.
+- `update()` renames a role — route `/roles/{role}` must come AFTER `/roles/permissions` in web.php to avoid route collision.
 
 ### Admin/SettingsController
 - All settings stored via `Setting::setMany()`.

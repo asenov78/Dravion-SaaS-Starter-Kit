@@ -4,36 +4,33 @@
 
 ## Current State
 
-- **Tests:** 356/356 passing, 6 risky (acceptable)
+- **Tests:** 370/370 passing, 6 risky (acceptable)
 - **Branch:** main, up to date with origin
-- **Last commit:** `38b32d8` — docs: CLAUDE.md per directory + AGENTS.md + architecture/security docs
+- **Last commit:** `1d1473b` — feat: activity log export CSV + filter by all params
 
-## What Was Done This Session
+## Completed This Session
 
-1. Fixed 3 pre-existing test failures:
-   - `test_user_can_logout` → assertRedirect `/login` (not `/`)
-   - `ExampleTest` → assertStatus 302 (/ requires auth)
-   - `InstallTest license` → curl → Http facade + `Http::fake()`
-2. GitHub Actions SHA pinning (`release.yml`) — supply chain hardening
-3. Full security audit + fixes:
-   - SSRF protection via `GitHubZipUrl` rule
-   - HMAC-signed `license.cache` (tamper-proof)
-   - Pessimistic `LicenseService::isValid()` (no cache = false)
-   - Rate limiting on all auth routes
-   - No plain password in welcome email → password reset link
-   - Suspended check before session creation
-   - Session hardening (`SESSION_ENCRYPT`, `SESSION_SAME_SITE`)
-4. Updates page: 2-column layout, changelogs, installed versions accordion
-5. Generated CLAUDE.md in every major directory + AGENTS.md + docs/
+1. Test suite fixed — 356/356 → 370/370
+2. Security audit: SSRF, HMAC cache, path traversal, rate limiting, session hardening
+3. GitHub Actions SHA pinning
+4. CLAUDE.md files generated in all major directories
+5. AGENTS.md + docs/architecture.md + docs/security.md created
+6. STATE.md system established
+7. **#18** — Bulk user actions (suspend/activate/delete) with Alpine checkboxes
+8. **#19** — Rename role (PUT route, inline Alpine edit, admin guard)
+9. **#23** — Activity log filter UI (user, event type, date_from, date_to)
+10. **#24** — Activity log export CSV (respects active filters)
 
-## Pending / Next Steps
+## Pending / Next Steps (ordered)
 
-- [ ] Configure `GITHUB_TOKEN` in `.env` — generate new fine-grained PAT (old one was exposed in chat, must rotate)
-  - Repository: `Dravion-SaaS-Starter-Kit` only
-  - Permission: `Contents: Read-only`
-  - Add to `.env`: `GITHUB_TOKEN=<new_token>`
-- [ ] ionCube obfuscation build script (optional, deferred)
-- [ ] Consider `SESSION_SECURE_COOKIE=true` check in tests
+- [ ] **#25** Settings — Global default language (settings form + locale middleware)
+- [ ] **#20** Auth — Email verification (MustVerifyEmail + routes)
+- [ ] **#22** Alert — Admin broadcast banner (site-wide, dismissible)
+- [ ] **#26** Notifications — In-app bell + read/unread feed
+- [ ] **#29** Users — Verify CSV export is linked in UI (✓ already in header)
+- [ ] **#27** API — Laravel Sanctum tokens page
+- [ ] **#28** Security — Session management (kill active sessions)
+- [ ] **#21** Auth — 2FA / TOTP (complex, later)
 
 ## Architecture Snapshot
 
@@ -42,16 +39,18 @@ Laravel 13 / PHP 8.3 / Tailwind v4 / Alpine.js v3
 Auth:     LoginController (manual, no Breeze)
 License:  LicenseService → HMAC cache → license server (apsbg.com)
 Updater:  UpdaterService → GitHub API → GitHubZipUrl rule → copyTree()
-Roles:    Spatie (admin, manager, user)
+Roles:    Spatie (admin, manager, user, editor) — rename now supported
 i18n:     lang/en/ + lang/bg/ — ALL strings via __()
 Tests:    SQLite in-memory, Http::fake() for external calls
+Bulk:     POST /admin/users/bulk (suspend/activate/delete)
+Activity: Filters: log_name, causer_id, date_from, date_to, search + CSV export
 ```
 
 ## Standing Instructions (always active)
 
-- `/caveman` — terse responses, no filler
-- `/tdd` — test first, vertical slices
-- Multi-agent — use Explore/Plan/CSO agents per task type
-- Push after every completed change, no confirmation needed
+- `/caveman` + `/tdd` — active every prompt
+- Multi-agent — use Explore/Plan/CSO per task type
+- Push after every completed change
 - End every task with "Готов съм!"
 - All UI strings via `__()`, never hardcoded in Blade
+- Update STATE.md at session end
