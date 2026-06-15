@@ -101,6 +101,10 @@ class UpdaterService
             $releases,
             fn ($r) => version_compare($r['version'], $current, '>')
         ));
+        $older = array_values(array_filter(
+            $releases,
+            fn ($r) => version_compare($r['version'], $current, '<=')
+        ));
 
         return [
             'current'    => $current,
@@ -109,6 +113,7 @@ class UpdaterService
             'changelog'  => $latest['changelog'],
             'zip_url'    => $latest['zip_url'],
             'newer'      => $newer,
+            'older'      => $older,
         ];
     }
 
