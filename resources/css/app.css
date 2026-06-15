@@ -389,31 +389,19 @@
 }
 .dark .tiptap-sep { background: #344054; }
 
-.ProseMirror {
-  min-height: 200px;
-  padding: 12px 16px;
-  outline: none;
-  font-size: 14px;
-  line-height: 1.6;
+/* Shared base for editor and preview — same font/size/line-height */
+.ProseMirror,
+.cms-content {
+  font-family: Onest, sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
   color: #1d2939;
 }
-.dark .ProseMirror { color: #e4e7ec; }
-.ProseMirror p { margin: 0 0 8px; }
-.ProseMirror h2 { font-size: 20px; font-weight: 700; margin: 16px 0 8px; }
-.ProseMirror h3 { font-size: 16px; font-weight: 700; margin: 12px 0 6px; }
-.ProseMirror ul, .ProseMirror ol { padding-left: 20px; margin: 8px 0; }
-.ProseMirror li { margin: 2px 0; }
-.ProseMirror blockquote { border-left: 3px solid #465fff; margin: 10px 0; padding: 4px 12px; color: #667085; }
-.dark .ProseMirror blockquote { color: #98a2b3; }
-.ProseMirror code { background: #f2f4f7; border-radius: 3px; padding: 1px 5px; font-family: monospace; font-size: 13px; }
-.dark .ProseMirror code { background: #344054; color: #e4e7ec; }
-.ProseMirror pre { background: #1d2939; color: #e4e7ec; border-radius: 6px; padding: 12px 16px; overflow-x: auto; }
-.dark .ProseMirror pre { background: #0c111d; }
-.ProseMirror pre code { background: none; padding: 0; color: inherit; }
-.ProseMirror a { color: #465fff; text-decoration: underline; }
-.dark .ProseMirror a { color: #7592ff; }
-.ProseMirror hr { border: none; border-top: 2px solid #e4e7ec; margin: 16px 0; }
-.dark .ProseMirror hr { border-top-color: #344054; }
+.dark .ProseMirror,
+.dark .cms-content { color: #e4e7ec; }
+
+/* ProseMirror editor specifics */
+.ProseMirror { min-height: 200px; padding: 12px 16px; outline: none; }
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   color: #98a2b3;
@@ -421,6 +409,33 @@
   float: left;
   height: 0;
 }
+
+/* Shared content styles — apply to both editor and preview */
+.ProseMirror p, .cms-content p { margin: 0 0 10px; }
+.ProseMirror h1, .cms-content h1 { font-size: 2em; font-weight: 700; margin: 20px 0 10px; color: #111827; }
+.ProseMirror h2, .cms-content h2 { font-size: 1.5em; font-weight: 700; margin: 18px 0 8px; color: #111827; }
+.ProseMirror h3, .cms-content h3 { font-size: 1.25em; font-weight: 700; margin: 14px 0 6px; color: #111827; }
+.ProseMirror h4, .cms-content h4 { font-size: 1.1em; font-weight: 700; margin: 12px 0 4px; color: #111827; }
+.dark .ProseMirror h1, .dark .ProseMirror h2, .dark .ProseMirror h3, .dark .ProseMirror h4,
+.dark .cms-content h1, .dark .cms-content h2, .dark .cms-content h3, .dark .cms-content h4 { color: #f3f4f6; }
+.ProseMirror ul, .ProseMirror ol, .cms-content ul, .cms-content ol { padding-left: 1.5em; margin: 8px 0; }
+.ProseMirror ul, .cms-content ul { list-style: disc; }
+.ProseMirror ol, .cms-content ol { list-style: decimal; }
+.ProseMirror li, .cms-content li { margin: 3px 0; }
+.ProseMirror strong, .cms-content strong { font-weight: 700; color: #111827; }
+.dark .ProseMirror strong, .dark .cms-content strong { color: #f3f4f6; }
+.ProseMirror a, .cms-content a { color: #465fff; text-decoration: underline; }
+.dark .ProseMirror a, .dark .cms-content a { color: #7592ff; }
+.ProseMirror a:hover, .cms-content a:hover { color: #2a31d8; }
+.ProseMirror blockquote, .cms-content blockquote { border-left: 3px solid #465fff; margin: 10px 0; padding: 4px 12px; color: #667085; font-style: italic; }
+.dark .ProseMirror blockquote, .dark .cms-content blockquote { color: #98a2b3; }
+.ProseMirror code, .cms-content code { background: #f2f4f7; border-radius: 4px; padding: 2px 6px; font-family: monospace; font-size: .875em; color: #465fff; }
+.dark .ProseMirror code, .dark .cms-content code { background: #344054; color: #9cb9ff; }
+.ProseMirror pre, .cms-content pre { background: #1e1e2e; color: #cdd6f4; border-radius: 8px; padding: 12px 16px; overflow-x: auto; margin: 10px 0; }
+.dark .ProseMirror pre, .dark .cms-content pre { background: #0c111d; }
+.ProseMirror pre code, .cms-content pre code { background: none; padding: 0; color: inherit; }
+.ProseMirror hr, .cms-content hr { border: none; border-top: 1px solid #e4e7ec; margin: 16px 0; }
+.dark .ProseMirror hr, .dark .cms-content hr { border-top-color: #344054; }
 
 .tiptap-html-source {
   display: block;
