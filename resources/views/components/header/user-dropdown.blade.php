@@ -13,9 +13,15 @@
         @click.prevent="toggleDropdown()"
         type="button"
     >
-        <span class="mr-3 overflow-hidden rounded-full h-11 w-11 flex items-center justify-center bg-brand-500 text-white font-semibold text-sm">
-            {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
-        </span>
+        @if(auth()->user()->avatar)
+            <img src="{{ Storage::url(auth()->user()->avatar) }}"
+                 alt="{{ auth()->user()->name }}"
+                 class="mr-3 h-11 w-11 rounded-full object-cover">
+        @else
+            <span class="mr-3 overflow-hidden rounded-full h-11 w-11 flex items-center justify-center bg-brand-500 text-white font-semibold text-sm">
+                {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+            </span>
+        @endif
 
         <span class="block mr-1 font-medium text-theme-sm">{{ auth()->user()->name ?? 'User' }}</span>
 
