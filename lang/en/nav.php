@@ -18,4 +18,5 @@ return [
     'mark_read'        => 'Mark as read',
     'no_notifications' => 'No notifications yet',
     'portal'           => 'Portal',
+    'view_site'        => 'View site',
 ];

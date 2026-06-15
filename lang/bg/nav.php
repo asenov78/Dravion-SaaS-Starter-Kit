@@ -18,4 +18,5 @@ return [
     'mark_read'        => 'Маркирай като прочетено',
     'no_notifications' => 'Няма известия',
     'portal'           => 'Портал',
+    'view_site'        => 'Виж сайта',
 ];
