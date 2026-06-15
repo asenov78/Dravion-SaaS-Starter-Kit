@@ -3,6 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\User;
+use App\Services\LicenseService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -32,9 +33,16 @@ class LicenseCheckMiddlewareTest extends TestCase
         return $user;
     }
 
+    /** Write a properly HMAC-signed cache entry. */
     private function writeCache(array $data): void
     {
-        file_put_contents($this->cacheFile, json_encode($data));
+        LicenseService::writeCache($data);
+    }
+
+    /** Read the signed cache and return the inner payload array. */
+    private function readCache(): ?array
+    {
+        return LicenseService::readCachePublic();
     }
 
     // ── No key ────────────────────────────────────────────────────────────
@@ -88,35 +96,29 @@ class LicenseCheckMiddlewareTest extends TestCase
     public function test_stale_cache_repings_server_and_updates_cache_when_valid(): void
     {
         config(['dravion.license_key' => 'DRV-VALID']);
-        // Cache older than 24h
         $this->writeCache(['valid' => true, 'checked_at' => time() - 90000, 'message' => null]);
 
-        // Middleware will curl the real server — we mock curl by faking
-        // the response via a subclass. For integration we just verify
-        // that the cache file gets a new checked_at timestamp.
         $before = time();
 
-        // Since we can't mock curl easily, just assert cache gets refreshed
-        // (the real server call happens; result depends on env)
         $this->actingAs($this->admin())
             ->get(route('admin.dashboard'));
 
-        $cached = json_decode(file_get_contents($this->cacheFile), true);
+        $cached = $this->readCache();
+        $this->assertNotNull($cached);
         $this->assertGreaterThanOrEqual($before, $cached['checked_at']);
     }
 
     public function test_stale_cache_repings_and_shows_warning_when_server_revokes(): void
     {
         config(['dravion.license_key' => 'DRV-REVOKED']);
-        // Stale cache that was previously valid
         $this->writeCache(['valid' => true, 'checked_at' => time() - 90000, 'message' => null]);
 
         $this->actingAs($this->admin())
             ->get(route('admin.dashboard'))
             ->assertStatus(200);
 
-        // Cache updated with new result from server (invalid key → invalid)
-        $cached = json_decode(file_get_contents($this->cacheFile), true);
+        $cached = $this->readCache();
+        $this->assertNotNull($cached);
         $this->assertArrayHasKey('valid', $cached);
         $this->assertArrayHasKey('checked_at', $cached);
     }
@@ -132,7 +134,8 @@ class LicenseCheckMiddlewareTest extends TestCase
             ->get(route('admin.dashboard'));
 
         $this->assertFileExists($this->cacheFile);
-        $cached = json_decode(file_get_contents($this->cacheFile), true);
+        $cached = $this->readCache();
+        $this->assertNotNull($cached);
         $this->assertArrayHasKey('valid', $cached);
         $this->assertArrayHasKey('checked_at', $cached);
     }
@@ -142,7 +145,6 @@ class LicenseCheckMiddlewareTest extends TestCase
     public function test_after_remove_license_next_request_shows_warning(): void
     {
         config(['dravion.license_key' => '']);
-        // Cache was valid before removal
         $this->writeCache(['valid' => true, 'checked_at' => time(), 'message' => null]);
 
         $this->actingAs($this->admin())
@@ -163,7 +165,7 @@ class LicenseCheckMiddlewareTest extends TestCase
             ->assertSessionMissing('license_warning');
 
         // checked_at must NOT have changed (no re-ping)
-        $cached = json_decode(file_get_contents($this->cacheFile), true);
+        $cached = $this->readCache();
         $this->assertEquals($checkedAt, $cached['checked_at']);
     }
 
@@ -176,8 +178,21 @@ class LicenseCheckMiddlewareTest extends TestCase
         $this->actingAs($this->admin())
             ->get(route('admin.dashboard'));
 
-        $cached = json_decode(file_get_contents($this->cacheFile), true);
+        $cached = $this->readCache();
         $this->assertGreaterThanOrEqual($checkedAt + 1, $cached['checked_at']);
+    }
+
+    // ── Tampered cache is rejected ────────────────────────────────────────
+
+    public function test_tampered_cache_is_treated_as_missing(): void
+    {
+        config(['dravion.license_key' => 'DRV-VALID']);
+
+        // Write a tampered (unsigned) cache file — should be rejected
+        file_put_contents($this->cacheFile, json_encode(['valid' => true, 'checked_at' => time()]));
+
+        // readCachePublic() should return null → middleware pings server
+        $this->assertNull(LicenseService::readCachePublic());
     }
 
     // ── Dev key on production ─────────────────────────────────────────────

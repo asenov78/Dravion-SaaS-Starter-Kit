@@ -100,7 +100,7 @@ class LanguageManagerTest extends TestCase
     {
         Language::create(['code' => 'bg', 'name' => 'Bulgarian', 'flag' => '🇧🇬', 'is_default' => false]);
 
-        $this->get('/locale/bg')->assertRedirect();
+        $this->actingAs($this->admin())->get('/locale/bg')->assertRedirect();
 
         $this->assertSame('bg', session('locale'));
     }

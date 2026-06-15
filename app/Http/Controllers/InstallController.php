@@ -260,6 +260,7 @@ class InstallController extends Controller
         $appKey = !empty($m[1]) ? trim($m[1]) : 'base64:' . base64_encode(random_bytes(32));
         $pass       = addslashes($db['db_password'] ?? '');
         $appUrl     = rtrim($db['app_url'] ?? $this->detectAppUrl(), '/');
+        $secureCookie = str_starts_with($appUrl, 'https://') ? 'true' : 'false';
         $licenseKey = $license['license_key'] ?? '';
         $purchaseCode = $license['purchase_code'] ?? '';
 
@@ -284,7 +285,7 @@ CACHE_STORE=file
 QUEUE_CONNECTION=sync
 SESSION_DRIVER=file
 SESSION_LIFETIME=120
-SESSION_SECURE_COOKIE=false
+SESSION_SECURE_COOKIE={$secureCookie}
 
 DRAVION_LICENSE_KEY={$licenseKey}
 DRAVION_PURCHASE_CODE={$purchaseCode}

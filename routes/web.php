@@ -53,10 +53,10 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 
-Route::get('/locale/{code}', [LocaleController::class, 'switch'])->name('locale.switch');
+Route::get('/locale/{code}', [LocaleController::class, 'switch'])->middleware('auth')->name('locale.switch');
 
 // User dashboard
-Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+Route::get('/dashboard', fn () => view('dashboard'))->middleware('auth')->name('dashboard');
 
 // Admin
 Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefix('admin')->name('admin.')->group(function () {

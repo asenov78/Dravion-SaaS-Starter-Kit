@@ -17,10 +17,10 @@ class PortalDashboardTest extends TestCase
         return $user;
     }
 
-    public function test_guest_can_view_dashboard(): void
+    public function test_guest_is_redirected_from_dashboard(): void
     {
         $this->get(route('dashboard'))
-            ->assertStatus(200);
+            ->assertRedirect(route('login'));
     }
 
     public function test_auth_user_can_view_dashboard(): void
