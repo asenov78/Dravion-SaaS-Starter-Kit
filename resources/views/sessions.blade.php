@@ -1,75 +1,96 @@
+@php
+    $isAdmin = auth()->user()?->hasAnyRole(['admin','manager','editor']);
+    $backRoute = $isAdmin ? route('admin.dashboard') : route('dashboard');
+@endphp
+
+@if($isAdmin)
+<x-layouts.admin :title="__('sessions.title')">
+@else
 <x-layouts.portal :title="__('sessions.title')">
+@endif
 
-<div style="max-width:720px; margin:0 auto; padding:32px 16px;">
-
-    <div style="margin-bottom:24px;">
-        <h1 style="font-size:20px; font-weight:700; color:var(--color-gray-900); margin:0 0 4px;">{{ __('sessions.title') }}</h1>
-        <p style="color:var(--color-gray-500); font-size:13px; margin:0;">{{ __('sessions.subtitle') }}</p>
+<div class="mb-6 flex items-center justify-between">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ __('sessions.title') }}</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('sessions.subtitle') }}</p>
     </div>
-
-    @if(session('success'))
-        <x-ui.alert variant="success" class="mb-5">{{ session('success') }}</x-ui.alert>
-    @endif
-
-    {{-- Active sessions list --}}
-    @if($sessions->isNotEmpty())
-    <x-ui.card class="mb-6">
-        <h2 style="font-size:15px; font-weight:600; color:var(--color-gray-800); margin:0 0 16px;">{{ __('sessions.active') }}</h2>
-        <div style="display:flex; flex-direction:column; gap:0;">
-            @foreach($sessions as $session)
-            <div style="display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid var(--color-gray-100);">
-                <div style="flex-shrink:0; margin-top:2px; color:{{ $session->is_current ? '#22c55e' : 'var(--color-gray-400)' }};">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-                    </svg>
-                </div>
-                <div style="flex:1; min-width:0;">
-                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                        <span style="font-size:13px; font-weight:500; color:var(--color-gray-800);">{{ $session->ip_address ?? __('sessions.unknown_ip') }}</span>
-                        @if($session->is_current)
-                            <span style="font-size:11px; background:#dcfce7; color:#15803d; padding:1px 8px; border-radius:999px; font-weight:600;">{{ __('sessions.this_device') }}</span>
-                        @endif
-                    </div>
-                    <p style="font-size:11px; color:var(--color-gray-400); margin:2px 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                        {{ Str::limit($session->user_agent ?? __('sessions.unknown_browser'), 80) }}
-                    </p>
-                    <p style="font-size:11px; color:var(--color-gray-400); margin:2px 0 0;">
-                        {{ __('sessions.last_active') }}: {{ $session->last_activity->diffForHumans() }}
-                    </p>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </x-ui.card>
-    @endif
-
-    {{-- Logout other devices --}}
-    <x-ui.card x-data="{open: false}">
-        <h2 style="font-size:15px; font-weight:600; color:var(--color-gray-800); margin:0 0 8px;">{{ __('sessions.logout_others_title') }}</h2>
-        <p style="font-size:13px; color:var(--color-gray-500); margin:0 0 16px;">{{ __('sessions.logout_others_desc') }}</p>
-
-        <button @click="open = !open"
-            style="padding:8px 16px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer;">
-            {{ __('sessions.logout_others_btn') }}
-        </button>
-
-        <div x-show="open" x-cloak style="margin-top:16px; padding-top:16px; border-top:1px solid var(--color-gray-100);">
-            <form method="POST" action="{{ route('sessions.logout-others') }}">
-                @csrf
-                <div style="display:flex; gap:10px; align-items:flex-start;">
-                    <div style="flex:1;">
-                        <x-ui.input name="password" type="password" :placeholder="__('auth.password_label')" />
-                        @error('password')<p style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</p>@enderror
-                    </div>
-                    <x-ui.button type="submit" variant="danger">{{ __('app.confirm') }}</x-ui.button>
-                </div>
-            </form>
-        </div>
-    </x-ui.card>
-
-    <p style="margin-top:16px; font-size:12px; color:var(--color-gray-400);">
-        <a href="{{ route('dashboard') }}" style="color:#5e6ad2; text-decoration:none;">← {{ __('app.back') }}</a>
-    </p>
-
+    <a href="{{ $backRoute }}"
+        class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        {{ __('app.back') }}
+    </a>
 </div>
+
+@if(session('success'))
+    <x-ui.alert variant="success" class="mb-5">{{ session('success') }}</x-ui.alert>
+@endif
+
+{{-- Active sessions list --}}
+@if($sessions->isNotEmpty())
+<div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] mb-5">
+    <h3 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-4">{{ __('sessions.active') }}</h3>
+    <div class="divide-y divide-gray-100 dark:divide-gray-800">
+        @foreach($sessions as $session)
+        <div class="flex items-start gap-4 py-4">
+            <div class="mt-0.5 text-{{ $session->is_current ? 'success-500' : 'gray-400' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-sm font-medium text-gray-800 dark:text-white/90">
+                        {{ $session->ip_address ?? __('sessions.unknown_ip') }}
+                    </span>
+                    @if($session->is_current)
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-success-50 text-success-700 dark:bg-success-500/10 dark:text-success-400">
+                            {{ __('sessions.this_device') }}
+                        </span>
+                    @endif
+                </div>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">
+                    {{ Str::limit($session->user_agent ?? __('sessions.unknown_browser'), 80) }}
+                </p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                    {{ __('sessions.last_active') }}: {{ $session->last_activity->diffForHumans() }}
+                </p>
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
+{{-- Logout other devices --}}
+<div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+    x-data="{open: false}">
+    <h3 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-1">{{ __('sessions.logout_others_title') }}</h3>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('sessions.logout_others_desc') }}</p>
+
+    <button @click="open = !open"
+        class="inline-flex items-center gap-2 rounded-lg bg-error-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-error-600 transition-colors">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        {{ __('sessions.logout_others_btn') }}
+    </button>
+
+    <div x-show="open" x-cloak class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+        <form method="POST" action="{{ route('sessions.logout-others') }}">
+            @csrf
+            <div class="flex gap-3 items-start">
+                <div class="flex-1">
+                    <x-ui.input name="password" type="password" :placeholder="__('auth.password_label')" />
+                    @error('password')
+                        <p class="mt-1 text-xs text-error-500">{{ $message }}</p>
+                    @enderror
+                </div>
+                <x-ui.button type="submit" variant="danger">{{ __('app.confirm') }}</x-ui.button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if($isAdmin)
+</x-layouts.admin>
+@else
 </x-layouts.portal>
+@endif

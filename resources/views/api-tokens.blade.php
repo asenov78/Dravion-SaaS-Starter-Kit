@@ -1,95 +1,111 @@
+@php
+    $isAdmin = auth()->user()?->hasAnyRole(['admin','manager','editor']);
+    $backRoute = $isAdmin ? route('admin.dashboard') : route('dashboard');
+@endphp
+
+@if($isAdmin)
+<x-layouts.admin :title="__('tokens.title')">
+@else
 <x-layouts.portal :title="__('tokens.title')">
+@endif
 
-<div style="max-width:720px; margin:0 auto; padding:32px 16px;">
+<div class="mb-6 flex items-center justify-between">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ __('tokens.title') }}</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('tokens.subtitle') }}</p>
+    </div>
+    <a href="{{ $backRoute }}"
+        class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        {{ __('app.back') }}
+    </a>
+</div>
 
-    <div style="margin-bottom:24px;">
-        <h1 style="font-size:20px; font-weight:700; color:var(--color-gray-900); margin:0 0 4px;">{{ __('tokens.title') }}</h1>
-        <p style="color:var(--color-gray-500); font-size:13px; margin:0;">{{ __('tokens.subtitle') }}</p>
+{{-- New token notice --}}
+@if($new_token)
+<div class="rounded-2xl border border-success-200 bg-success-50 p-5 dark:border-success-500/20 dark:bg-success-500/10 mb-5"
+    x-data="{copied: false}">
+    <p class="text-sm font-semibold text-success-700 dark:text-success-400 mb-2">{{ __('tokens.new_token_notice') }}</p>
+    <div class="flex items-center gap-3">
+        <code class="flex-1 min-w-0 block rounded-lg bg-white dark:bg-gray-900 border border-success-200 dark:border-success-500/20 px-3 py-2 text-sm font-mono text-gray-800 dark:text-white break-all">{{ $new_token }}</code>
+        <button type="button"
+            @click="navigator.clipboard.writeText('{{ $new_token }}'); copied = true; setTimeout(() => copied = false, 2000)"
+            class="shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-success-300 dark:border-success-500/30 bg-white dark:bg-gray-900 px-3 py-2 text-xs font-medium text-success-700 dark:text-success-400 hover:bg-success-50 dark:hover:bg-success-500/10 transition-colors">
+            <svg x-show="!copied" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg x-show="copied" x-cloak width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span x-text="copied ? '{{ __('tokens.copied') }}' : '{{ __('tokens.copy') }}'"></span>
+        </button>
+    </div>
+</div>
+@endif
+
+{{-- Create token --}}
+<div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 mb-5">
+    <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">{{ __('tokens.create') }}</h3>
+    <form method="POST" action="{{ route('api-tokens.store') }}" class="flex gap-3 items-start">
+        @csrf
+        <div class="flex-1">
+            <x-ui.input name="name" type="text" :placeholder="__('tokens.name_placeholder')" value="{{ old('name') }}" />
+            @error('name')
+                <p class="mt-1 text-xs text-error-500">{{ $message }}</p>
+            @enderror
+        </div>
+        <x-ui.button type="submit" variant="primary">{{ __('tokens.create_btn') }}</x-ui.button>
+    </form>
+</div>
+
+{{-- Existing tokens --}}
+<div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold text-gray-800 dark:text-white">{{ __('tokens.existing') }}</h3>
+        @if($tokens->isNotEmpty())
+        <form method="POST" action="{{ route('api-tokens.destroy-all') }}"
+            onsubmit="return confirm('{{ __('tokens.revoke_all_confirm') }}')">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                class="text-xs text-error-500 hover:text-error-700 dark:hover:text-error-400 font-medium transition-colors">
+                {{ __('tokens.revoke_all') }}
+            </button>
+        </form>
+        @endif
     </div>
 
-    @if(session('success'))
-        <x-ui.alert variant="success" class="mb-5">{{ session('success') }}</x-ui.alert>
-    @endif
-
-    {{-- New token plaintext (shown once) --}}
-    @if($new_token)
-    <x-ui.alert variant="success" class="mb-5" x-data="{copied: false}">
-        <p class="font-semibold mb-1">{{ __('tokens.new_token_notice') }}</p>
-        <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
-            <code style="flex:1; background:rgba(0,0,0,.08); border-radius:6px; padding:8px 12px; font-size:12px; word-break:break-all;">{{ $new_token }}</code>
-            <button @click="navigator.clipboard.writeText('{{ $new_token }}'); copied=true; setTimeout(()=>copied=false,2000)"
-                style="flex-shrink:0; padding:6px 12px; background:#5e6ad2; color:#fff; border:none; border-radius:6px; font-size:12px; cursor:pointer;">
-                <span x-show="!copied">{{ __('tokens.copy') }}</span>
-                <span x-show="copied" x-cloak>{{ __('tokens.copied') }}</span>
-            </button>
-        </div>
-    </x-ui.alert>
-    @endif
-
-    {{-- Create token form --}}
-    <x-ui.card class="mb-6">
-        <h2 style="font-size:15px; font-weight:600; color:var(--color-gray-800); margin:0 0 16px;">{{ __('tokens.create') }}</h2>
-        <form method="POST" action="{{ route('api-tokens.store') }}" style="display:flex; gap:10px; align-items:flex-start;">
-            @csrf
-            <div style="flex:1;">
-                <x-ui.input name="name" :placeholder="__('tokens.name_placeholder')" :value="old('name')" autofocus />
-                @error('name')<p style="color:#ef4444; font-size:12px; margin-top:4px;">{{ $message }}</p>@enderror
-            </div>
-            <x-ui.button type="submit">{{ __('tokens.create_btn') }}</x-ui.button>
-        </form>
-    </x-ui.card>
-
-    {{-- Token list --}}
-    <x-ui.card>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-            <h2 style="font-size:15px; font-weight:600; color:var(--color-gray-800); margin:0;">{{ __('tokens.existing') }}</h2>
-            @if($tokens->count() > 1)
-            <form method="POST" action="{{ route('api-tokens.destroy-all') }}">
-                @csrf
-                @method('DELETE')
-                <button type="submit" style="font-size:12px; color:#ef4444; background:none; border:none; cursor:pointer;"
-                    onclick="return confirm('{{ __('tokens.revoke_all_confirm') }}')">
-                    {{ __('tokens.revoke_all') }}
-                </button>
-            </form>
-            @endif
-        </div>
-
-        @if($tokens->isEmpty())
-            <p style="color:var(--color-gray-400); font-size:13px; text-align:center; padding:24px 0;">{{ __('tokens.none') }}</p>
-        @else
-        <div style="display:flex; flex-direction:column; gap:0;">
+    @if($tokens->isEmpty())
+        <p class="text-sm text-gray-400 dark:text-gray-500 py-4 text-center">{{ __('tokens.none') }}</p>
+    @else
+        <div class="divide-y divide-gray-100 dark:divide-gray-800">
             @foreach($tokens as $token)
-            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--color-gray-100);"
-                id="token-row-{{ $token->id }}">
-                <div>
-                    <p style="font-size:14px; font-weight:500; color:var(--color-gray-800); margin:0;">{{ $token->name }}</p>
-                    <p style="font-size:11px; color:var(--color-gray-400); margin:2px 0 0;">
-                        {{ __('tokens.created') }} {{ $token->created_at->diffForHumans() }}
+            <div class="flex items-center gap-4 py-4">
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-gray-800 dark:text-white truncate">{{ $token->name }}</p>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                        {{ __('tokens.created') }}: {{ $token->created_at->diffForHumans() }}
+                        &bull;
                         @if($token->last_used_at)
-                            · {{ __('tokens.last_used') }} {{ $token->last_used_at->diffForHumans() }}
+                            {{ __('tokens.last_used') }}: {{ $token->last_used_at->diffForHumans() }}
                         @else
-                            · {{ __('tokens.never_used') }}
+                            {{ __('tokens.never_used') }}
                         @endif
                     </p>
                 </div>
-                <form method="POST" action="{{ route('api-tokens.destroy', $token->id) }}">
+                <form method="POST" action="{{ route('api-tokens.destroy', $token->id) }}"
+                    onsubmit="return confirm('{{ __('tokens.revoke_confirm') }}')">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" style="font-size:12px; color:#ef4444; background:none; border:none; cursor:pointer; padding:4px 8px;"
-                        onclick="return confirm('{{ __('tokens.revoke_confirm') }}')">
+                    <button type="submit"
+                        class="text-xs text-error-500 hover:text-error-700 dark:hover:text-error-400 font-medium transition-colors shrink-0">
                         {{ __('tokens.revoke') }}
                     </button>
                 </form>
             </div>
             @endforeach
         </div>
-        @endif
-    </x-ui.card>
-
-    <p style="margin-top:16px; font-size:12px; color:var(--color-gray-400);">
-        <a href="{{ route('dashboard') }}" style="color:#5e6ad2; text-decoration:none;">← {{ __('app.back') }}</a>
-    </p>
-
+    @endif
 </div>
+
+@if($isAdmin)
+</x-layouts.admin>
+@else
 </x-layouts.portal>
+@endif
