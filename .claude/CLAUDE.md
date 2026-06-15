@@ -95,3 +95,12 @@ Communicate in compressed, direct style. Drop filler words, articles, pleasantri
 ## Multi-Agent Usage
 
 See `AGENTS.md` at project root for agent-type guidance.
+
+---
+
+## Session State
+
+`.claude/STATE.md` — updated at the end of every session.
+
+**At session start:** read `STATE.md` to resume context (pending tasks, current version, last commit).  
+**At session end:** update `STATE.md` with: what changed, new pending tasks, current version, last commit SHA.
