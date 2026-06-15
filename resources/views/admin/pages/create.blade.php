@@ -139,7 +139,7 @@
                     </div>
                     {{-- Right: preview panel --}}
                     <div x-show="showPreview" class="cms-content"
-                         style="width:50%;border-left:1px solid #e5e7eb;overflow-y:auto;min-height:500px;padding:20px 24px;background:#fff;"
+                         class="tiptap-preview cms-content"
                          x-html="content">
                     </div>
                 </div>

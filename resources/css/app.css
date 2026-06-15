@@ -404,11 +404,16 @@
 .ProseMirror ul, .ProseMirror ol { padding-left: 20px; margin: 8px 0; }
 .ProseMirror li { margin: 2px 0; }
 .ProseMirror blockquote { border-left: 3px solid #465fff; margin: 10px 0; padding: 4px 12px; color: #667085; }
+.dark .ProseMirror blockquote { color: #98a2b3; }
 .ProseMirror code { background: #f2f4f7; border-radius: 3px; padding: 1px 5px; font-family: monospace; font-size: 13px; }
+.dark .ProseMirror code { background: #344054; color: #e4e7ec; }
 .ProseMirror pre { background: #1d2939; color: #e4e7ec; border-radius: 6px; padding: 12px 16px; overflow-x: auto; }
+.dark .ProseMirror pre { background: #0c111d; }
 .ProseMirror pre code { background: none; padding: 0; color: inherit; }
 .ProseMirror a { color: #465fff; text-decoration: underline; }
+.dark .ProseMirror a { color: #7592ff; }
 .ProseMirror hr { border: none; border-top: 2px solid #e4e7ec; margin: 16px 0; }
+.dark .ProseMirror hr { border-top-color: #344054; }
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   color: #98a2b3;
@@ -431,7 +436,17 @@
   outline: none;
   resize: vertical;
 }
-.dark .tiptap-html-source { color: #e4e7ec; background: #1d2939; }
+.dark .tiptap-html-source { color: #e4e7ec; background: #1a2231; }
+
+.tiptap-preview {
+  width: 50%;
+  border-left: 1px solid #e4e7ec;
+  overflow-y: auto;
+  min-height: 500px;
+  padding: 20px 24px;
+  background: #fff;
+}
+.dark .tiptap-preview { background: #1a2231; border-left-color: #344054; }
 
 /* Row flash animations */
 @keyframes row-flash-success {
