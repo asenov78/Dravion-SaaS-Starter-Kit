@@ -92,7 +92,7 @@
         @elseif($update['has_update'])
             {{-- Update available --}}
             <div @if($licensed) x-data="updateInstaller()" @endif
-                class="rounded-2xl border border-brand-200 bg-white dark:border-brand-500/30 dark:bg-white/[0.03]">
+                class="rounded-2xl border border-brand-200 bg-white dark:border-brand-500/30 dark:bg-gray-900">
 
                 {{-- Header --}}
                 <div class="flex items-center gap-3 px-6 py-4 border-b border-brand-100 dark:border-brand-500/20">
@@ -118,7 +118,7 @@
                                 <span class="px-1.5 py-0.5 text-[10px] font-semibold uppercase rounded bg-brand-500 text-white leading-none">{{ __('updates.latest') }}</span>
                                 @endif
                             </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">{{ trim($rel['changelog']) ?: '—' }}</div>
+                            <div class="rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">{{ trim($rel['changelog']) ?: '—' }}</div>
                         </div>
                         @endforeach
                     </div>
@@ -226,7 +226,7 @@
                             </div>
                             @if($rel['changelog'])
                             <div x-show="expanded" x-collapse class="mt-3">
-                                <div class="rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 px-4 py-3">
+                                <div class="rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3">
                                     <div class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">{{ trim($rel['changelog']) }}</div>
                                 </div>
                             </div>
