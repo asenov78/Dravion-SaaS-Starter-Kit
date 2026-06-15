@@ -10,6 +10,9 @@ import { Calendar } from '@fullcalendar/core';
 // Popper (for table dropdowns)
 import { createPopper } from '@popperjs/core';
 
+// HTML beautifier for source view
+import { html as beautifyHtml } from 'js-beautify';
+
 // TipTap — static imports (no async complexity)
 import { Editor } from '@tiptap/core';
 import { StarterKit } from '@tiptap/starter-kit';
@@ -58,8 +61,16 @@ document.addEventListener('alpine:init', () => {
 
             toggleHtml() {
                 this.showHtml = !this.showHtml;
-                if (!this.showHtml && _editor) {
-                    // Switching back to WYSIWYG — push HTML into editor
+                if (this.showHtml) {
+                    // Format HTML when opening source view
+                    this.content = beautifyHtml(this.content, {
+                        indent_size: 2,
+                        wrap_line_length: 100,
+                        preserve_newlines: false,
+                        end_with_newline: false,
+                    });
+                } else if (_editor) {
+                    // Switching back to WYSIWYG — push edited HTML into editor
                     _editor.commands.setContent(this.content, false);
                 }
             },
