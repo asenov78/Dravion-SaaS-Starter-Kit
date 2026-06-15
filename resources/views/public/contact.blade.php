@@ -4,8 +4,9 @@
 @section('content')
 @php
     $contactBg = $contactPage?->hero_image ?? 'https://images.unsplash.com/photo-1516387938699-a93567ec168e?auto=format&fit=crop&w=1920&q=80';
-    $contactTitle = $contactPage?->hero_title ?? __('contact.title');
-    $contactSubtitle = $contactPage?->hero_subtitle ?? __('contact.subtitle');
+    $_ct = $contactPage?->translate(app()->getLocale());
+    $contactTitle = $_ct?->hero_title ?? __('contact.title');
+    $contactSubtitle = $_ct?->hero_subtitle ?? __('contact.subtitle');
 @endphp
 {{-- Hero --}}
 <section class="relative overflow-hidden py-20 sm:py-24 flex items-center"

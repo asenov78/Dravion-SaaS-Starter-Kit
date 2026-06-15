@@ -11,7 +11,7 @@ class ContactController extends Controller
     public function show(): \Illuminate\View\View
     {
         $navPages = Page::published()->inNav()->get();
-        $contactPage = Page::published()->where('slug', 'contact')->first();
+        $contactPage = Page::published()->where('slug', 'contact')->with('translations')->first();
         return view('public.contact', compact('navPages', 'contactPage'));
     }
 

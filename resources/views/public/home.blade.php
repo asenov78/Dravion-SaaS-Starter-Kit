@@ -7,9 +7,10 @@
 {{-- ══════════════════ HERO ══════════════════ --}}
 @php
     $heroBg = $homePage?->hero_image ?? 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80';
-    $heroTitle = $homePage?->hero_title ?? null;
-    $heroSubtitle = $homePage?->hero_subtitle ?? null;
-    $heroCtaLabel = $homePage?->hero_cta_label ?? null;
+    $_t = $homePage?->translate(app()->getLocale());
+    $heroTitle = $_t?->hero_title ?? null;
+    $heroSubtitle = $_t?->hero_subtitle ?? null;
+    $heroCtaLabel = $_t?->hero_cta_label ?? null;
     $heroCtaUrl = $homePage?->hero_cta_url ?? null;
 @endphp
 <section class="relative overflow-hidden py-28 sm:py-36 min-h-[600px] flex items-center"

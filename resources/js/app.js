@@ -16,6 +16,78 @@ window.flatpickr = flatpickr;
 window.FullCalendar = Calendar;
 window.createPopper = createPopper;
 
+// TipTap rich-text editor Alpine component
+document.addEventListener('alpine:init', () => {
+    Alpine.data('tiptap', (options = {}) => ({
+        editor: null,
+        content: options.content ?? '',
+        _textarea: null,
+
+        init() {
+            import('@tiptap/core').then(({ Editor }) => {
+                import('@tiptap/starter-kit').then(({ default: StarterKit }) => {
+                    import('@tiptap/extension-link').then(({ default: Link }) => {
+                        import('@tiptap/extension-placeholder').then(({ default: Placeholder }) => {
+                            import('@tiptap/extension-typography').then(({ default: Typography }) => {
+                                this.editor = new Editor({
+                                    element: this.$refs.editorEl,
+                                    extensions: [
+                                        StarterKit,
+                                        Link.configure({ openOnClick: false }),
+                                        Placeholder.configure({ placeholder: options.placeholder ?? '' }),
+                                        Typography,
+                                    ],
+                                    content: this.content,
+                                    onUpdate: ({ editor }) => {
+                                        this.content = editor.getHTML();
+                                        if (this._textarea) this._textarea.value = this.content;
+                                    },
+                                });
+                                // find the hidden textarea sibling
+                                this._textarea = this.$el.querySelector('textarea[data-tiptap-target]');
+                            });
+                        });
+                    });
+                });
+            });
+        },
+
+        destroy() {
+            this.editor?.destroy();
+        },
+
+        execCmd(cmd, value) {
+            if (!this.editor) return;
+            const chain = this.editor.chain().focus();
+            switch (cmd) {
+                case 'bold':        chain.toggleBold().run(); break;
+                case 'italic':      chain.toggleItalic().run(); break;
+                case 'strike':      chain.toggleStrike().run(); break;
+                case 'h2':          chain.toggleHeading({ level: 2 }).run(); break;
+                case 'h3':          chain.toggleHeading({ level: 3 }).run(); break;
+                case 'ul':          chain.toggleBulletList().run(); break;
+                case 'ol':          chain.toggleOrderedList().run(); break;
+                case 'blockquote':  chain.toggleBlockquote().run(); break;
+                case 'code':        chain.toggleCode().run(); break;
+                case 'codeBlock':   chain.toggleCodeBlock().run(); break;
+                case 'hr':          chain.setHorizontalRule().run(); break;
+                case 'undo':        chain.undo().run(); break;
+                case 'redo':        chain.redo().run(); break;
+                case 'link': {
+                    const url = prompt('URL:');
+                    if (url) chain.setLink({ href: url }).run();
+                    break;
+                }
+                case 'unlink':      chain.unsetLink().run(); break;
+            }
+        },
+
+        isActive(type, attrs) {
+            return this.editor ? this.editor.isActive(type, attrs) : false;
+        },
+    }));
+});
+
 Alpine.start();
 
 // Initialize components on DOM ready
