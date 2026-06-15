@@ -24,8 +24,14 @@ use App\Http\Controllers\InstallController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (! file_exists(storage_path('install.lock'))) {
+    $lockExists = file_exists(storage_path('install.lock'));
+    $dbInstalled = $lockExists || \Illuminate\Support\Facades\Schema::hasTable('settings');
+    if (! $dbInstalled) {
         return redirect()->route('install.index');
+    }
+    // Recreate lock file if missing but DB is installed
+    if (! $lockExists) {
+        file_put_contents(storage_path('install.lock'), '');
     }
     return app(\App\Http\Controllers\HomeController::class)->index();
 })->name('home');
