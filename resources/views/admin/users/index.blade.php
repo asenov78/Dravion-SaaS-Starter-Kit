@@ -1,5 +1,16 @@
 <x-layouts.admin :title="__('users.title')">
 
+<div
+    x-data="{
+        selected: [],
+        toggleAll(ids) {
+            if (this.selected.length === ids.length) { this.selected = []; }
+            else { this.selected = [...ids]; }
+        }
+    }"
+>
+
+{{-- Page header --}}
 <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
     <div>
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ __('users.title') }}</h2>
@@ -52,6 +63,48 @@
     @endif
 </form>
 
+{{-- Bulk action bar --}}
+@if(!$trashed)
+<div x-show="selected.length > 0" x-cloak
+    class="mb-4 flex items-center gap-3 rounded-xl border border-brand-200 bg-brand-50 px-4 py-2.5 dark:border-brand-800 dark:bg-brand-500/10">
+    <span class="text-sm font-medium text-brand-700 dark:text-brand-300">
+        <span x-text="selected.length"></span> {{ __('users.selected') }}
+    </span>
+    <div class="flex items-center gap-2 ml-auto">
+        <form method="POST" action="{{ route('admin.users.bulk') }}" @submit.prevent="if(selected.length) $el.submit()">
+            @csrf
+            <input type="hidden" name="action" value="activate">
+            <template x-for="id in selected"><input type="hidden" name="ids[]" :value="id"></template>
+            <button type="submit" class="inline-flex items-center rounded-lg border border-success-200 bg-success-50 px-3 py-1.5 text-xs font-medium text-success-700 hover:bg-success-100 dark:border-success-700 dark:bg-success-500/10 dark:text-success-400">
+                {{ __('users.activate') }}
+            </button>
+        </form>
+        <form method="POST" action="{{ route('admin.users.bulk') }}" @submit.prevent="if(selected.length) $el.submit()">
+            @csrf
+            <input type="hidden" name="action" value="suspend">
+            <template x-for="id in selected"><input type="hidden" name="ids[]" :value="id"></template>
+            <button type="submit" class="inline-flex items-center rounded-lg border border-warning-200 bg-warning-50 px-3 py-1.5 text-xs font-medium text-warning-700 hover:bg-warning-100 dark:border-warning-700 dark:bg-warning-500/10 dark:text-warning-400">
+                {{ __('users.suspend') }}
+            </button>
+        </form>
+        @role('admin')
+        <form method="POST" action="{{ route('admin.users.bulk') }}" @submit.prevent="if(selected.length) $el.submit()">
+            @csrf
+            <input type="hidden" name="action" value="delete">
+            <template x-for="id in selected"><input type="hidden" name="ids[]" :value="id"></template>
+            <button type="submit" class="inline-flex items-center rounded-lg border border-error-200 bg-error-50 px-3 py-1.5 text-xs font-medium text-error-700 hover:bg-error-100 dark:border-error-700 dark:bg-error-500/10 dark:text-error-400">
+                {{ __('app.delete') }}
+            </button>
+        </form>
+        @endrole
+        <button type="button" @click="selected = []"
+            class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+            {{ __('app.cancel') }}
+        </button>
+    </div>
+</div>
+@endif
+
 {{-- Tabs: All / Trash --}}
 <div class="mb-4 flex gap-1 border-b border-gray-200 dark:border-gray-800">
     <a href="{{ route('admin.users.index', array_filter(['search'=>$search,'role'=>$role,'status'=>$status])) }}"
@@ -66,11 +119,19 @@
     @endrole
 </div>
 
-<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead>
                 <tr class="border-b border-gray-100 dark:border-gray-800">
+                    @if(!$trashed)
+                    <th class="w-10 px-4 py-3">
+                        <input type="checkbox"
+                            @change="toggleAll({{ $users->pluck('id')->toJson() }})"
+                            :checked="selected.length === {{ $users->count() }} && {{ $users->count() }} > 0"
+                            class="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800">
+                    </th>
+                    @endif
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">{{ __('app.name') }}</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">{{ __('app.role') }}</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">{{ __('app.status') }}</th>
@@ -83,7 +144,14 @@
                 <tr id="row-{{ $user->id }}"
                     x-data="{ status: '{{ $user->status }}' }"
                     @user-status-updated.window="if ($event.detail.id === {{ $user->id }}) status = $event.detail.newStatus"
-                    class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors {{ $trashed ? 'opacity-60' : '' }}">
+                    :class="selected.includes({{ $user->id }}) ? 'bg-brand-50 dark:bg-brand-500/5' : 'hover:bg-gray-50 dark:hover:bg-white/[0.02]'"
+                    class="transition-colors {{ $trashed ? 'opacity-60' : '' }}">
+                    @if(!$trashed)
+                    <td class="w-10 px-4 py-3">
+                        <input type="checkbox" :value="{{ $user->id }}" x-model="selected"
+                            class="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500 dark:border-gray-600 dark:bg-gray-800">
+                    </td>
+                    @endif
                     <td class="px-6 py-3">
                         <div class="flex items-center gap-3">
                             <span class="flex items-center justify-center w-9 h-9 rounded-full {{ $trashed ? 'bg-gray-400' : 'bg-brand-500' }} text-white text-sm font-semibold flex-shrink-0 overflow-hidden">
@@ -163,7 +231,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-12 text-center text-sm text-gray-400 dark:text-gray-500">
+                    <td colspan="{{ $trashed ? 5 : 6 }}" class="px-6 py-12 text-center text-sm text-gray-400 dark:text-gray-500">
                         {{ __('app.no_results') }}
                     </td>
                 </tr>
@@ -179,4 +247,5 @@
     @endif
 </div>
 
+</div>{{-- end x-data --}}
 </x-layouts.admin>

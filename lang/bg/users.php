@@ -42,4 +42,5 @@ return [
     'filter_status'    => 'Всички статуси',
     'export_csv'       => 'Експортирай CSV',
     'deleted_at'       => 'Изтрит на',
+    'selected'         => 'избрани',
 ];

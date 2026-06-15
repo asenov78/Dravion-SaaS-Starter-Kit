@@ -229,6 +229,29 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', __('flash.user_activated'));
     }
 
+    public function bulk(Request $request)
+    {
+        $data = $request->validate([
+            'action' => 'required|in:suspend,activate,delete',
+            'ids'    => 'required|array',
+            'ids.*'  => 'integer',
+        ]);
+
+        $ids = collect($data['ids'])->reject(fn ($id) => $id === auth()->id());
+
+        match ($data['action']) {
+            'suspend'  => User::whereIn('id', $ids)->update(['status' => 'suspended']),
+            'activate' => User::whereIn('id', $ids)->update(['status' => 'active']),
+            'delete'   => User::whereIn('id', $ids)->get()->each->delete(),
+        };
+
+        ActivityLogger::log('users', 'bulk_' . $data['action'],
+            auth()->user()->name . ' bulk ' . $data['action'] . 'd ' . $ids->count() . ' users');
+
+        return redirect()->route('admin.users.index')
+            ->with('success', __('flash.bulk_done', ['action' => $data['action'], 'count' => $ids->count()]));
+    }
+
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {

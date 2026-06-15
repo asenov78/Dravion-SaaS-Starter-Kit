@@ -334,6 +334,61 @@ class UserManagementTest extends TestCase
             ->assertDontSee('Active Person');
     }
 
+    // --- Bulk Actions ---
+
+    public function test_admin_can_bulk_suspend_users(): void
+    {
+        $u1 = User::factory()->create(['status' => 'active']); $u1->assignRole('user');
+        $u2 = User::factory()->create(['status' => 'active']); $u2->assignRole('user');
+
+        $this->actingAs($this->admin)
+            ->post('/admin/users/bulk', ['action' => 'suspend', 'ids' => [$u1->id, $u2->id]])
+            ->assertRedirect();
+
+        $this->assertEquals('suspended', $u1->fresh()->status);
+        $this->assertEquals('suspended', $u2->fresh()->status);
+    }
+
+    public function test_admin_can_bulk_activate_users(): void
+    {
+        $u1 = User::factory()->create(['status' => 'suspended']); $u1->assignRole('user');
+
+        $this->actingAs($this->admin)
+            ->post('/admin/users/bulk', ['action' => 'activate', 'ids' => [$u1->id]])
+            ->assertRedirect();
+
+        $this->assertEquals('active', $u1->fresh()->status);
+    }
+
+    public function test_admin_can_bulk_delete_users(): void
+    {
+        $u1 = User::factory()->create(); $u1->assignRole('user');
+        $u2 = User::factory()->create(); $u2->assignRole('user');
+
+        $this->actingAs($this->admin)
+            ->post('/admin/users/bulk', ['action' => 'delete', 'ids' => [$u1->id, $u2->id]])
+            ->assertRedirect();
+
+        $this->assertSoftDeleted('users', ['id' => $u1->id]);
+        $this->assertSoftDeleted('users', ['id' => $u2->id]);
+    }
+
+    public function test_bulk_cannot_affect_self(): void
+    {
+        $this->actingAs($this->admin)
+            ->post('/admin/users/bulk', ['action' => 'delete', 'ids' => [$this->admin->id]])
+            ->assertRedirect();
+
+        $this->assertNull($this->admin->fresh()->deleted_at);
+    }
+
+    public function test_bulk_requires_valid_action(): void
+    {
+        $this->actingAs($this->admin)
+            ->post('/admin/users/bulk', ['action' => 'nuke', 'ids' => [1]])
+            ->assertSessionHasErrors('action');
+    }
+
     // --- Export CSV ---
 
     public function test_admin_can_export_users_csv(): void

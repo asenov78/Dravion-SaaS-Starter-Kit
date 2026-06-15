@@ -42,4 +42,5 @@ return [
     'filter_status'    => 'All statuses',
     'export_csv'       => 'Export CSV',
     'deleted_at'       => 'Deleted',
+    'selected'         => 'selected',
 ];

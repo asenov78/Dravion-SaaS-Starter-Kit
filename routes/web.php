@@ -68,6 +68,7 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     // Users — guarded by permission
     Route::get('/users',                             [UserController::class, 'index'])->name('users.index')->middleware('can:view users');
     Route::get('/users/export',                      [UserController::class, 'export'])->name('users.export')->middleware('can:view users');
+    Route::post('/users/bulk',                       [UserController::class, 'bulk'])->name('users.bulk')->middleware('can:edit users');
     Route::get('/users/create',                      [UserController::class, 'create'])->name('users.create')->middleware('can:create users');
     Route::post('/users',                            [UserController::class, 'store'])->name('users.store')->middleware('can:create users');
     Route::get('/users/{user}/edit',                 [UserController::class, 'edit'])->name('users.edit')->middleware('can:edit users');
