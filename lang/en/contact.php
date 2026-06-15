@@ -1,0 +1,20 @@
+<?php
+return [
+    'title'                => 'Contact Us',
+    'subtitle'             => 'Have a question or want to work together? We would love to hear from you.',
+    'name'                 => 'Your Name',
+    'email'                => 'Email Address',
+    'subject'              => 'Subject',
+    'subject_placeholder'  => 'How can we help you?',
+    'message'              => 'Message',
+    'message_placeholder'  => 'Tell us more about your project or question...',
+    'send'                 => 'Send Message',
+    'success'              => 'Thank you! Your message has been received. We will get back to you soon.',
+    'email_label'          => 'Email',
+    'response_label'       => 'Response time',
+    'response_time'        => 'Within 24 hours',
+    'support_label'        => 'Support',
+    'support_value'        => 'Mon – Fri, 9:00 – 18:00',
+    'cta_title'            => 'Ready to get started?',
+    'cta_body'             => 'Register now and explore all features of the platform.',
+];

@@ -19,4 +19,10 @@ class HomeController extends Controller
         $page = Page::published()->where('slug', $slug)->firstOrFail();
         return view('public.page', compact('navPages', 'page'));
     }
+
+    public function gallery(): View
+    {
+        $navPages = Page::published()->inNav()->get();
+        return view('public.gallery', compact('navPages'));
+    }
 }

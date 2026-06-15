@@ -37,6 +37,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/p/{slug}', [\App\Http\Controllers\HomeController::class, 'show'])->name('page.show');
+Route::get('/contact', [\App\Http\Controllers\ContactController::class, 'show'])->name('contact');
+Route::post('/contact', [\App\Http\Controllers\ContactController::class, 'store'])->name('contact.store')->middleware('throttle:5,1');
+Route::get('/gallery', [\App\Http\Controllers\HomeController::class, 'gallery'])->name('gallery');
 
 // Installer — disabled after install.lock exists
 Route::middleware(\App\Http\Middleware\InstallGuard::class)

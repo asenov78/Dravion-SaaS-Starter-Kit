@@ -66,7 +66,8 @@
                 {{ __('nav.home') }}
             </a>
             @foreach ($navPages as $navPage)
-            <a href="{{ route('page.show', $navPage->slug) }}"
+            @php $specialRoutes = ['contact' => 'contact', 'gallery' => 'gallery']; $href = isset($specialRoutes[$navPage->slug]) ? route($specialRoutes[$navPage->slug]) : route('page.show', $navPage->slug); @endphp
+            <a href="{{ $href }}"
                class="flex items-center gap-2 px-3 py-2 rounded-lg text-theme-sm font-medium text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-gray-300 transition-colors">
                 {{ $navPage->title }}
             </a>
