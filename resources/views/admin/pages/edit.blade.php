@@ -140,7 +140,7 @@
                     </div>
                     {{-- Right: preview panel --}}
                     <div x-show="showPreview" class="cms-content"
-                         style="width:50%;border-left:1px solid #e5e7eb;overflow-y:auto;max-height:450px;padding:16px 20px;background:#fff;"
+                         style="width:50%;border-left:1px solid #e5e7eb;overflow-y:auto;min-height:500px;padding:20px 24px;background:#fff;"
                          x-html="content">
                     </div>
                 </div>

@@ -14,6 +14,7 @@ return [
     'excerpt'     => 'Резюме',
     'meta_title'  => 'Мета заглавие',
     'meta_desc'   => 'Мета описание',
+    'no_content'     => 'Все още няма съдържание. Добавете го от администрацията.',
     'slug'           => 'Slug',
     'slug_hint'      => 'URL-friendly идентификатор',
     'hero_section'   => 'Hero секция',

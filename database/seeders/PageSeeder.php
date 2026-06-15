@@ -370,6 +370,28 @@ HTML;
                     'content'          => $homeContentBg,
                 ],
             ],
+            'gallery' => [
+                'en' => [
+                    'title'            => 'Gallery',
+                    'excerpt'          => 'Explore our UI components and admin panel features.',
+                    'hero_title'       => 'Component Gallery',
+                    'hero_subtitle'    => 'A showcase of the built-in UI components, admin panels, and features ready to use in your project.',
+                    'hero_cta_label'   => 'View Components',
+                    'meta_title'       => 'Gallery',
+                    'meta_description' => 'Browse the Dravion UI component library — buttons, badges, alerts, tables, forms, and more.',
+                    'content'          => '<h2>UI Component Library</h2><p>Dravion ships with 38+ production-ready UI components built on Tailwind CSS v4 and Alpine.js v3. Every component supports dark mode out of the box.</p><h3>Available Components</h3><ul><li><strong>Buttons</strong> — Primary, Secondary, Danger, Ghost, with size variants</li><li><strong>Badges</strong> — Status indicators with color variants</li><li><strong>Alerts</strong> — Success, Warning, Error inline alerts</li><li><strong>Modals &amp; Drawers</strong> — Accessible dialogs with Alpine.js</li><li><strong>Tables</strong> — Sortable, searchable, paginated data tables</li><li><strong>Forms</strong> — Input, Select, Textarea, Checkbox, Radio, Date Picker</li><li><strong>Cards</strong> — Content containers with header/body/footer slots</li><li><strong>Tabs</strong> — Horizontal and vertical tab navigation</li><li><strong>Accordion</strong> — Collapsible content sections</li><li><strong>Toast Notifications</strong> — Success/error/warning flash messages</li><li><strong>Pagination</strong> — Laravel paginator with query string preservation</li><li><strong>Breadcrumbs</strong> — Navigation breadcrumb component</li><li><strong>Avatar</strong> — User avatar with image or letter fallback</li><li><strong>Spinner &amp; Skeleton</strong> — Loading state indicators</li></ul><hr><h2>Admin Panel Features</h2><p>The admin panel is fully built and ready to customize. It includes a responsive sidebar, dark mode, global search, notification bell, user management, roles &amp; permissions, activity log, settings, and more.</p><h3>Pages &amp; CMS</h3><p>All public pages are managed through the CMS. Create, edit, and delete pages with per-language content, hero sections, SEO meta tags, and rich text editing with TipTap.</p>',
+                ],
+                'bg' => [
+                    'title'            => 'Галерия',
+                    'excerpt'          => 'Разгледайте UI компонентите и функциите на администрацията.',
+                    'hero_title'       => 'Галерия с компоненти',
+                    'hero_subtitle'    => 'Преглед на вградените UI компоненти, администраторски панели и функции, готови за употреба.',
+                    'hero_cta_label'   => 'Виж компонентите',
+                    'meta_title'       => 'Галерия',
+                    'meta_description' => 'Разгледайте библиотеката от UI компоненти на Dravion — бутони, значки, предупреждения, таблици, форми и още.',
+                    'content'          => '<h2>Библиотека с UI компоненти</h2><p>Dravion включва 38+ готови за продукция UI компонента, изградени на Tailwind CSS v4 и Alpine.js v3. Всеки компонент поддържа тъмен режим по подразбиране.</p><h3>Налични компоненти</h3><ul><li><strong>Бутони</strong> — Primary, Secondary, Danger, Ghost с размерови варианти</li><li><strong>Значки</strong> — Цветни индикатори за статус</li><li><strong>Предупреждения</strong> — Success, Warning, Error инлайн съобщения</li><li><strong>Модали и чекмеджета</strong> — Достъпни диалози с Alpine.js</li><li><strong>Таблици</strong> — Сортируеми, търсими, пагинирани таблици с данни</li><li><strong>Форми</strong> — Input, Select, Textarea, Checkbox, Radio, Date Picker</li><li><strong>Карти</strong> — Контейнери за съдържание с header/body/footer slots</li><li><strong>Табове</strong> — Хоризонтална и вертикална навигация</li><li><strong>Акордеон</strong> — Сгъваеми секции с съдържание</li><li><strong>Toast нотификации</strong> — Success/error/warning flash съобщения</li><li><strong>Пагинация</strong> — Laravel пагинатор с запазване на query string</li><li><strong>Breadcrumbs</strong> — Навигационен компонент</li><li><strong>Аватар</strong> — Потребителски аватар с image или буква</li><li><strong>Spinner и Skeleton</strong> — Индикатори за зареждане</li></ul><hr><h2>Функции на администрацията</h2><p>Администраторският панел е напълно изграден и готов за персонализиране. Включва responsive sidebar, тъмен режим, глобално търсене, нотификационна камбана, управление на потребители, роли и права, activity log, настройки и много повече.</p><h3>Страници и CMS</h3><p>Всички публични страници се управляват чрез CMS. Създавайте, редактирайте и изтривайте страници с per-language съдържание, hero секции, SEO мета тагове и rich text редактиране с TipTap.</p>',
+                ],
+            ],
             'contact' => [
                 'en' => [
                     'title'            => 'Contact',

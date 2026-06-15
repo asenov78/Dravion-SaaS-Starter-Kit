@@ -14,6 +14,7 @@ return [
     'excerpt'     => 'Excerpt',
     'meta_title'  => 'Meta Title',
     'meta_desc'   => 'Meta Description',
+    'no_content'     => 'No content yet. Add content from the admin panel.',
     'slug'           => 'Slug',
     'slug_hint'      => 'URL-friendly identifier (auto-generated from title)',
     'hero_section'   => 'Hero Section',
