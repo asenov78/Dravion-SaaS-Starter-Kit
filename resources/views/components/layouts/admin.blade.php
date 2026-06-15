@@ -50,6 +50,18 @@
                 }
             });
 
+            Alpine.store('broadcast', {
+                content: @js(\App\Models\Setting::get('broadcast_banner', '')),
+                dismissed: false,
+                init() {
+                    this.dismissed = sessionStorage.getItem('banner_dismissed') === this.content;
+                },
+                dismiss() {
+                    sessionStorage.setItem('banner_dismissed', this.content);
+                    this.dismissed = true;
+                }
+            });
+
             Alpine.store('sidebar', {
                 isExpanded: window.innerWidth >= 1280
                     ? (localStorage.getItem('sidebarExpanded') !== 'false')
@@ -151,6 +163,27 @@
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                     </button>
                 </div>
+
+                {{-- Broadcast Banner --}}
+                @if(\App\Models\Setting::get('broadcast_banner', ''))
+                <div id="broadcast-banner"
+                     x-data
+                     x-show="$store.broadcast.content && !$store.broadcast.dismissed"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="mb-5 flex items-center gap-3 rounded-lg border border-warning-200 bg-warning-50 px-4 py-3 text-sm text-warning-700 dark:border-warning-800 dark:bg-warning-500/10 dark:text-warning-400"
+                     x-cloak>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span class="flex-1" x-text="$store.broadcast.content">{{ \App\Models\Setting::get('broadcast_banner') }}</span>
+                    <button type="button" @click="$store.broadcast.dismiss()" class="ml-auto opacity-50 hover:opacity-80 transition-opacity" aria-label="{{ __('app.cancel') }}">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                @endif
 
                 {{ $slot }}
             </div>

@@ -91,6 +91,28 @@ class SystemSettingsTest extends TestCase
             ->assertStatus(200);
     }
 
+    public function test_default_language_setting_is_applied_to_unauthenticated_request(): void
+    {
+        Setting::set('default_language', 'bg');
+
+        $this->get('/login')->assertStatus(200);
+
+        $this->assertSame('bg', app()->getLocale());
+    }
+
+    public function test_default_language_can_be_saved(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'app_name'         => 'Test',
+                'app_url'          => 'https://example.com',
+                'default_language' => 'bg',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('bg', Setting::get('default_language'));
+    }
+
     // --- Logo upload ---
 
     public function test_logo_upload_stores_file(): void
@@ -156,5 +178,40 @@ class SystemSettingsTest extends TestCase
             ->post('/admin/settings/smtp-test')
             ->assertOk()
             ->assertJson(['ok' => false]);
+    }
+
+    // --- Broadcast Banner ---
+
+    public function test_broadcast_banner_appears_when_set(): void
+    {
+        Setting::set('broadcast_banner', 'Hello world');
+
+        $this->actingAs($this->admin())
+            ->get('/admin/dashboard')
+            ->assertStatus(200)
+            ->assertSee('Hello world');
+    }
+
+    public function test_broadcast_banner_hidden_when_empty(): void
+    {
+        Setting::set('broadcast_banner', '');
+
+        $this->actingAs($this->admin())
+            ->get('/admin/dashboard')
+            ->assertStatus(200)
+            ->assertDontSee('id="broadcast-banner"', false);
+    }
+
+    public function test_broadcast_banner_can_be_saved_from_settings(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'app_name'         => 'Test',
+                'app_url'          => 'https://example.com',
+                'broadcast_banner' => 'Maintenance tonight',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('Maintenance tonight', Setting::get('broadcast_banner'));
     }
 }

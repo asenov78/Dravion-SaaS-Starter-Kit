@@ -27,13 +27,17 @@ class SettingsController extends Controller
             'date_format'            => Setting::get('date_format', 'd/m/Y'),
             'maintenance'            => Setting::get('maintenance', '0'),
             'logo'                   => Setting::get('logo', ''),
+            'default_language'       => Setting::get('default_language', 'en'),
             'activity_log_auth'      => Setting::get('activity_log_auth', '1'),
             'activity_log_users'     => Setting::get('activity_log_users', '1'),
             'activity_log_profile'   => Setting::get('activity_log_profile', '1'),
             'activity_log_settings'  => Setting::get('activity_log_settings', '1'),
+            'broadcast_banner'       => Setting::get('broadcast_banner', ''),
         ];
 
-        return view('admin.settings', compact('settings', 'timezones'));
+        $availableLocales = ['en' => 'English', 'bg' => 'Български'];
+
+        return view('admin.settings', compact('settings', 'timezones', 'availableLocales'));
     }
 
     public function update(Request $request)
@@ -43,9 +47,11 @@ class SettingsController extends Controller
             'app_url'        => 'required|url',
             'mail_from'      => 'nullable|email',
             'mail_from_name' => 'nullable|string|max:100',
-            'timezone'       => 'nullable|string|timezone',
-            'date_format'    => 'nullable|string|max:20',
-            'logo'           => 'nullable|image|max:2048',
+            'timezone'         => 'nullable|string|timezone',
+            'date_format'      => 'nullable|string|max:20',
+            'default_language'  => 'nullable|in:en,bg',
+            'logo'              => 'nullable|image|max:2048',
+            'broadcast_banner'  => 'nullable|string|max:500',
         ]);
 
         $logoPath = Setting::get('logo', '');
@@ -69,10 +75,12 @@ class SettingsController extends Controller
             'date_format'           => $request->input('date_format', 'd/m/Y'),
             'maintenance'           => $request->boolean('maintenance') ? '1' : '0',
             'logo'                  => $logoPath,
+            'default_language'      => $request->input('default_language', 'en'),
             'activity_log_auth'     => $request->boolean('activity_log_auth') ? '1' : '0',
             'activity_log_users'    => $request->boolean('activity_log_users') ? '1' : '0',
             'activity_log_profile'  => $request->boolean('activity_log_profile') ? '1' : '0',
             'activity_log_settings' => $request->boolean('activity_log_settings') ? '1' : '0',
+            'broadcast_banner'      => $request->input('broadcast_banner', ''),
         ]);
 
         return redirect()->route('admin.settings')->with('success', __('flash.settings_saved'));

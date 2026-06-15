@@ -40,5 +40,9 @@ return [
     'smtp_test_desc'    => 'Sends a test email to your account to verify SMTP settings.',
     'smtp_test_ok'      => 'Test email sent successfully.',
     'smtp_test_fail'    => 'Failed to send test email.',
-    'system_health'     => 'System Health',
+    'system_health'          => 'System Health',
+    'default_language'       => 'Default Language',
+    'default_language_desc'  => 'Fallback language for guests and new users.',
+    'broadcast_banner'       => 'Broadcast Banner',
+    'broadcast_banner_desc'  => 'Show an announcement bar to all admin users. Leave empty to hide.',
 ];

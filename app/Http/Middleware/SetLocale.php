@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,7 @@ class SetLocale
     {
         $locale = session('locale')
             ?? optional($request->user())->locale
+            ?? Setting::get('default_language')
             ?? config('app.locale', 'en');
 
         app()->setLocale($locale);

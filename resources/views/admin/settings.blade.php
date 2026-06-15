@@ -43,6 +43,13 @@
                     <div class="h-6 w-11 rounded-full border border-gray-200 bg-gray-100 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all peer-checked:bg-brand-500 peer-checked:after:translate-x-full peer-checked:border-brand-500 dark:border-gray-700 dark:bg-gray-700"></div>
                 </label>
             </div>
+            <div>
+                <label for="broadcast_banner" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.broadcast_banner') }}</label>
+                <textarea name="broadcast_banner" id="broadcast_banner" rows="2" maxlength="500"
+                    placeholder="{{ __('settings.broadcast_banner_desc') }}"
+                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90">{{ $settings['broadcast_banner'] }}</textarea>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('settings.broadcast_banner_desc') }}</p>
+            </div>
         </div>
     </div>
 
@@ -89,6 +96,16 @@
                     placeholder="d/m/Y"
                     class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('settings.date_format_desc') }}</p>
+            </div>
+            <div>
+                <label for="default_language" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.default_language') }}</label>
+                <select name="default_language" id="default_language"
+                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white/90">
+                    @foreach($availableLocales as $code => $label)
+                    <option value="{{ $code }}" {{ ($settings['default_language'] ?? 'en') === $code ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('settings.default_language_desc') }}</p>
             </div>
             <div class="flex items-center justify-between">
                 <div>
