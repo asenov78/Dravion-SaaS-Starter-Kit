@@ -33,4 +33,7 @@ return [
     'token_revoked'            => 'API token revoked.',
     'tokens_revoked_all'       => 'All API tokens revoked.',
     'sessions_cleared'         => 'All other sessions have been signed out.',
+    'page_created'             => 'Page created.',
+    'page_updated'             => 'Page updated.',
+    'page_deleted'             => 'Page deleted.',
 ];

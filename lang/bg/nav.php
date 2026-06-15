@@ -9,6 +9,7 @@ return [
     'languages' => 'Езици',
     'license'   => 'Лиценз',
     'updates'   => 'Обновявания',
+    'pages'     => 'Страници',
     'profile'   => 'Профил',
     'main'             => 'Главни',
     'system'           => 'Система',

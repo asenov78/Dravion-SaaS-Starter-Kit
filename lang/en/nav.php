@@ -9,6 +9,7 @@ return [
     'languages'  => 'Languages',
     'license'    => 'License',
     'updates'    => 'Updates',
+    'pages'      => 'Pages',
     'profile'    => 'Profile',
     'main'             => 'Main',
     'system'           => 'System',

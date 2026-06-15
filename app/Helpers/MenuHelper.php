@@ -106,6 +106,12 @@ class MenuHelper
                 'route' => 'admin.roles.*',
             ],
             [
+                'icon'  => 'pages',
+                'name'  => __('nav.pages'),
+                'path'  => route('admin.pages.index'),
+                'route' => 'admin.pages.*',
+            ],
+            [
                 'icon'  => 'activity',
                 'name'  => __('nav.activity'),
                 'path'  => route('admin.activity'),
@@ -175,6 +181,8 @@ class MenuHelper
             'ui' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 3.25C4.25736 3.25 3.25 4.25736 3.25 5.5V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H18.5C19.7426 20.75 20.75 19.7426 20.75 18.5V5.5C20.75 4.25736 19.7426 3.25 18.5 3.25H5.5ZM4.75 5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H18.5C18.9142 4.75 19.25 5.08579 19.25 5.5V8.25H4.75V5.5ZM4.75 9.75H8.25V19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V9.75ZM9.75 19.25H18.5C18.9142 19.25 19.25 18.9142 19.25 18.5V9.75H9.75V19.25Z" fill="currentColor"/></svg>',
 
             'updates' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 4 21 9 16 9"/><line x1="12" y1="8" x2="12" y2="13"/><polyline points="9.5 11 12 13.5 14.5 11"/></svg>',
+
+            'pages' => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6 2.75C4.75736 2.75 3.75 3.75736 3.75 5V19C3.75 20.2426 4.75736 21.25 6 21.25H18C19.2426 21.25 20.25 20.2426 20.25 19V9C20.25 8.80109 20.171 8.61032 20.0303 8.46967L14.5303 2.96967C14.3897 2.82902 14.1989 2.75 14 2.75H6ZM5.25 5C5.25 4.58579 5.58579 4.25 6 4.25H13.25V9C13.25 9.41421 13.5858 9.75 14 9.75H18.75V19C18.75 19.4142 18.4142 19.75 18 19.75H6C5.58579 19.75 5.25 19.4142 5.25 19V5ZM17.6893 8.25H14.75V5.31066L17.6893 8.25ZM7.75 12C7.75 11.5858 8.08579 11.25 8.5 11.25H15.5C15.9142 11.25 16.25 11.5858 16.25 12C16.25 12.4142 15.9142 12.75 15.5 12.75H8.5C8.08579 12.75 7.75 12.4142 7.75 12ZM8.5 14.75C8.08579 14.75 7.75 15.0858 7.75 15.5C7.75 15.9142 8.08579 16.25 8.5 16.25H13C13.4142 16.25 13.75 15.9142 13.75 15.5C13.75 15.0858 13.4142 14.75 13 14.75H8.5Z" fill="currentColor"/></svg>',
         ];
 
         return $icons[$iconName] ?? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>';

@@ -33,4 +33,7 @@ return [
     'token_revoked'            => 'API токенът е анулиран.',
     'tokens_revoked_all'       => 'Всички API токени са анулирани.',
     'sessions_cleared'         => 'Всички останали сесии са затворени.',
+    'page_created'             => 'Страницата е създадена.',
+    'page_updated'             => 'Страницата е обновена.',
+    'page_deleted'             => 'Страницата е изтрита.',
 ];
