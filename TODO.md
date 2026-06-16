@@ -6,21 +6,23 @@
 - [x] Laravel 13 scaffold
 - [x] Auth — login, register, logout, suspended block
 - [x] RBAC — Spatie Permission (admin, manager, editor, user)
-- [x] User Management — list, create, edit, suspend, activate
-- [x] Settings — key-value DB store, admin UI
-- [x] Activity Log — Spatie activitylog, User model logging
+- [x] User Management — list, create, edit, suspend, activate, bulk actions, soft-delete restore
+- [x] Settings — key-value DB store, admin UI, logo upload, SMTP test, welcome-email toggle
+- [x] Activity Log — Spatie activitylog, filter UI, export CSV
 - [x] User dashboard stub (`/dashboard`)
+- [x] Rate limiting — login (5/min), register (3/min), forgot-password, contact (5/min)
+- [x] Session security — regenerate on login, CSRF regenerate on logout, SESSION_ENCRYPT, SESSION_SECURE_COOKIE
+- [x] Suspended check BEFORE session creation
+- [x] No plain password in welcome email
+- [x] Avatar upload — GD resize 200×200, MIME validation, max 2MB
 
 ### Admin UI
 - [x] Admin layout — Quantix/Linear-style dark sidebar
-- [x] Sidebar — glass backdrop, section labels (GENERAL/TOOLS/SUPPORT), 12 nav items
-- [x] Sidebar — animated collapse, section labels fade, version footer
-- [x] Sidebar — promo card (Installer Wizard / Coming soon)
-- [x] Topbar — search, Live data pill, System healthy pill, bell, settings, user card
-- [x] Page header — title + `$actions` slot (filter, export on dashboard)
-- [x] Floating layout — 8px gap, border-radius:12px app shell
+- [x] Sidebar — glass backdrop, section labels, collapse, version footer
+- [x] Topbar — global search (3-char autosearch), bell, theme toggle, user card
 - [x] Animated canvas background — 55 particles, cyan network lines
-- [x] Background on login + register pages (via `<x-ui.net-bg>`)
+- [x] Dashboard — system health widget (PHP, Laravel, disk, DB, cache)
+- [x] Alert — site-wide broadcast banner (admin dismissible)
 
 ### UI Components (38 total)
 - [x] button, badge, card, input, alert, label, stat
@@ -32,62 +34,82 @@
 - [x] switch, toggle, toggle-group, slider, collapsible
 - [x] toast, net-bg
 
+### Roles & Permissions
+- [x] Roles management — create, rename, delete
+- [x] Permission matrix — grouped, per-route guards
+- [x] Pages permissions — can: middleware per action
+
+### Public Website
+- [x] Landing page (`/`) — hero, features, security section, stack section
+- [x] Contact page (`/contact`) — form → DB + optional email
+- [x] Gallery page (`/gallery`) — component showcase
+- [x] CMS pages — admin CRUD, TipTap editor with live split-pane preview
+- [x] TipTap — HTML source view, auto-scroll, independent scroll, resize bar
+- [x] Public layout — theme toggle, language switcher, logo from Settings
+
+### Notifications
+- [x] Welcome email on user create (toggle in Settings)
+- [x] Account suspended / activated emails
+
+### License & Updates
+- [x] LicenseService — HMAC cache, weekly ping
+- [x] UpdaterService — GitHub releases, ZIP download, file copy, migrate
+- [x] Self-updater admin UI — per-version changelog, one-click install
+- [x] License middleware — gates updater features
+
+### i18n
+- [x] DB-driven translations + lang/en/ + lang/bg/ (17 files)
+- [x] Language management admin UI
+- [x] SetLocale middleware
+
 ### Installer
 - [x] 5-step wizard (requirements → database → admin → license → finish)
 - [x] InstallGuard middleware (blocks after install.lock)
-- [x] PDO connection test
-- [x] Write .env on finish
-- [x] Hot-swap DB config + Artisan::call('migrate')
-- [x] Seed roles on finish
-- [x] Create admin user + assign role
-- [x] Write storage/install.lock
+- [x] PDO connection test, write .env, migrate, seed, write install.lock
+- [x] app_name field, try/catch on migrate/seed
 - [x] 17 installer tests, all green
 
 ### Documentation
 - [x] README.md — full feature docs, routes, DB tables, install guide
 - [x] CHANGELOG.md — per-version history
-- [x] TODO.md (this file)
+- [x] Release ZIP (dravion-v1.5.0.zip + v1.6.0 in progress)
 
 ---
 
 ## In Progress 🔄
 
-- [ ] Update packages — zip archive per version (files + dirs, relative paths)
+- [ ] **#20** Auth — Email verification (MustVerifyEmail + middleware)
 
 ---
 
 ## Pending ⏳
 
-### High Priority
-- [ ] **Update packages** — create zip for each version tag with only changed files
-- [ ] **GitHub releases** — attach zip to each GitHub release tag
-- [ ] **License check middleware** — weekly ping to dravion-server, cache result
-- [ ] **User dashboard** — replace stub with real page (profile, activity, etc.)
-- [ ] **Welcome page** — replace default Laravel welcome with Dravion landing
+### URGENT
+- [ ] **#21** Auth — 2FA / TOTP
+- [ ] **#26** Notifications — In-app bell + read/unread feed (NotificationController exists, needs UI)
 
-### Admin Panel
-- [ ] Analytics page (GENERAL > Analytics — currently placeholder)
-- [ ] Billing page (GENERAL > Billing — currently placeholder)
-- [ ] Messages (GENERAL > Messages — currently placeholder)
-- [ ] Roles management page (TOOLS > Roles — currently placeholder)
-- [ ] Automation page (TOOLS > Automation — currently placeholder)
-- [ ] Security page (SUPPORT > Security — currently placeholder)
-- [ ] Help / Documentation page (SUPPORT > Help — currently placeholder)
+### HIGH
+- [ ] **#28** Security — Session management / kill active sessions (SessionController exists, needs UI)
+- [ ] **#36** Security — Log failed login attempts (`LoginController:29` — no ActivityLogger on auth failure, A09)
+- [ ] **#37** Security — .env write race condition: `LicenseController::writeEnvKey()` + `InstallController::writeEnv()` — no flock(); `addslashes()` misses `$`, `#` in passwords
 
-### Installer
-- [ ] License activation API call on finish (ping dravion-server, non-blocking)
-- [ ] Domain binding (store licensed domain in .env)
-- [ ] Installer skinning — allow logo override via config
+### MEDIUM
+- [ ] **#27** API — Sanctum tokens page (ApiTokenController exists, needs UI)
+- [ ] **#29** Users — Export CSV
+- [ ] **#32** Arch — EnvWriter service (atomic .env writes with flock(); blocks #37)
+- [ ] **#30** Arch — LicenseService: consolidate activate() from InstallController
+- [ ] **#31** Arch — Model Observers: UserObserver/PageObserver replace manual ActivityLogger calls
 
-### Documentation (Codester/Envato)
-- [ ] `/documentation` HTML page (required by Codester)
-- [ ] Codester screenshots — 1200×800px (min 6 screenshots)
-- [ ] Demo site deployment on shared hosting
+### LOW
+- [ ] **#33** Tests — ContactController + HomeController (untested)
+- [ ] **#34** Arch — LicenseServiceInterface + DI binding
+- [ ] **#35** Fix — config/updater.php: add config/dravion.php to protected_paths
 
-### Deployment
+### Deployment / Release
 - [ ] Deploy demo to shared hosting
 - [ ] Set up CI/CD (GitHub Actions — tests on push)
-- [ ] `.env.example` — update with all new keys (DRAVION_LICENSE_KEY, etc.)
+- [ ] `/documentation` HTML page (required by Codester)
+- [ ] Codester screenshots — 1200×800px (min 6 screenshots)
 
 ---
 
@@ -97,15 +119,12 @@ For every version bump:
 1. Update `config/dravion.php` — `version`
 2. Update `CHANGELOG.md` — add entry
 3. `git commit` + `git push`
-4. Create zip update package (changed files only, with directory structure)
-5. Create GitHub release tag, attach zip
+4. Create GitHub release tag, attach zip
 
 ### Update Package Format
 ```
 dravion-update-v1.X.X.zip
 └── (files with full relative paths from project root)
-    e.g. resources/views/components/layouts/admin.blade.php
-         config/dravion.php
 ```
 
 Use PowerShell `Compress-Archive` with relative paths (NOT -j / absolute paths).
