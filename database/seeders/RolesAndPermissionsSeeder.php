@@ -17,6 +17,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view settings', 'edit settings',
             'view activity log',
             'view pages', 'create pages', 'edit pages', 'delete pages',
+            'manage languages',
         ];
 
         foreach ($permissions as $permission) {

@@ -61,6 +61,10 @@ class InstallController extends Controller
         if (in_array(false, $checks, true)) {
             return back()->withErrors(['requirements' => 'Please fix the failing requirements before continuing.']);
         }
+
+        // Auto-bootstrap .env so sessions use file driver before DB exists.
+        $this->bootstrapEnv();
+
         return redirect()->route('install.step', 'database');
     }
 
@@ -129,7 +133,6 @@ class InstallController extends Controller
         return redirect()->route('install.step', 'finish');
     }
 
-
     private function handleFinish(Request $request)
     {
         $db      = session('install_db', []);
@@ -139,6 +142,11 @@ class InstallController extends Controller
         if (empty($license)) {
             return redirect()->route('install.step', 'license')
                 ->withErrors(['purchase_code' => 'Please complete the license step.']);
+        }
+
+        if (empty($admin)) {
+            return redirect()->route('install.step', 'admin')
+                ->withErrors(['name' => 'Please complete the admin step.']);
         }
 
         // 1. Write .env and hot-swap DB (skip in test env — uses existing DB)
@@ -170,26 +178,54 @@ class InstallController extends Controller
             return back()->withErrors(['migrate' => 'Seeding failed: ' . $e->getMessage()]);
         }
 
-        // 4. Create admin user
+        // 4. Create admin user (email pre-verified — no welcome-email needed)
         $user = User::firstOrCreate(
             ['email' => $admin['email']],
             [
-                'name'     => $admin['name'],
-                'password' => Hash::make($admin['password']),
-                'status'   => 'active',
+                'name'              => $admin['name'],
+                'password'          => Hash::make($admin['password']),
+                'status'            => 'active',
+                'email_verified_at' => now(),
             ]
         );
+
+        // If user existed before, still mark email verified and set active
+        if ($user->wasRecentlyCreated === false) {
+            $user->update([
+                'email_verified_at' => $user->email_verified_at ?? now(),
+                'status'            => 'active',
+            ]);
+        }
+
         $user->syncRoles(['admin']);
 
-        // 5. Ensure storage dirs exist (shared hosting often lacks them)
-        foreach (['framework/sessions', 'framework/cache/data', 'framework/views', 'logs'] as $dir) {
+        // 5. Seed default English language entry
+        $this->seedDefaultLanguage();
+
+        // 6. Ensure storage dirs exist (shared hosting often lacks them)
+        foreach (['framework/sessions', 'framework/cache/data', 'framework/views', 'logs', 'app'] as $dir) {
             $path = storage_path($dir);
             if (!is_dir($path)) {
-                mkdir($path, 0755, true);
+                @mkdir($path, 0755, true);
             }
         }
 
-        // 6. Write install lock
+        // 7. Attempt public storage symlink (may fail on restrictive shared hosting)
+        try {
+            if (!file_exists(public_path('storage'))) {
+                Artisan::call('storage:link', ['--force' => true]);
+            }
+        } catch (\Throwable) {
+            // Non-fatal — user can create symlink manually or copy public/storage
+        }
+
+        // 8. Clear caches
+        try {
+            Artisan::call('config:clear');
+            Artisan::call('cache:clear');
+        } catch (\Throwable) {}
+
+        // 9. Write install lock
         file_put_contents(storage_path('install.lock'), now()->toDateTimeString());
 
         session()->forget(['install_db', 'install_admin', 'install_license']);
@@ -199,11 +235,50 @@ class InstallController extends Controller
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
+    /**
+     * Bootstrap a minimal .env if none exists, so the session driver is `file`
+     * (not `database`) during the install wizard — the DB doesn't exist yet.
+     */
+    private function bootstrapEnv(): void
+    {
+        $envPath = base_path('.env');
+        if (file_exists($envPath)) {
+            return;
+        }
+
+        $example = base_path('.env.example');
+        $content = file_exists($example) ? file_get_contents($example) : '';
+
+        // Generate a fresh APP_KEY
+        $key = 'base64:' . base64_encode(random_bytes(32));
+
+        // Replace or append APP_KEY
+        if (preg_match('/^APP_KEY=.*/m', $content)) {
+            $content = preg_replace('/^APP_KEY=.*/m', "APP_KEY={$key}", $content);
+        } else {
+            $content = "APP_KEY={$key}\n" . $content;
+        }
+
+        // Force file session during install (DB doesn't exist yet)
+        if (preg_match('/^SESSION_DRIVER=.*/m', $content)) {
+            $content = preg_replace('/^SESSION_DRIVER=.*/m', 'SESSION_DRIVER=file', $content);
+        }
+
+        // Disable session encryption until proper key is set
+        if (preg_match('/^SESSION_ENCRYPT=.*/m', $content)) {
+            $content = preg_replace('/^SESSION_ENCRYPT=.*/m', 'SESSION_ENCRYPT=false', $content);
+        }
+
+        EnvWriter::write($envPath, $content);
+
+        // Hot-load the new key into config so it takes effect immediately
+        config(['app.key' => $key]);
+    }
+
     private function detectAppUrl(): string
     {
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        // Strip /install and anything after it from the current URI
         $path = preg_replace('#/install(/.*)?$#', '', $_SERVER['REQUEST_URI'] ?? '');
         $path = rtrim($path, '/');
         return $scheme . '://' . $host . $path;
@@ -248,14 +323,14 @@ class InstallController extends Controller
     {
         $existing = file_exists(base_path('.env')) ? file_get_contents(base_path('.env')) : '';
         preg_match('/APP_KEY=(.+)/', $existing, $m);
-        $appKey = !empty($m[1]) ? trim($m[1]) : 'base64:' . base64_encode(random_bytes(32));
-        $pass       = EnvWriter::escapeValue($db['db_password'] ?? '');
-        $appUrl     = rtrim($db['app_url'] ?? $this->detectAppUrl(), '/');
-        $secureCookie = str_starts_with($appUrl, 'https://') ? 'true' : 'false';
-        $licenseKey = $license['license_key'] ?? '';
-        $purchaseCode = $license['purchase_code'] ?? '';
+        $appKey = !empty(trim($m[1] ?? '')) ? trim($m[1]) : 'base64:' . base64_encode(random_bytes(32));
 
-        $appName = EnvWriter::escapeValue($db['app_name'] ?? 'Dravion');
+        $appName      = EnvWriter::escapeValue($db['app_name'] ?? 'Dravion');
+        $pass         = EnvWriter::escapeValue($db['db_password'] ?? '');
+        $appUrl       = rtrim($db['app_url'] ?? $this->detectAppUrl(), '/');
+        $secureCookie = str_starts_with($appUrl, 'https://') ? 'true' : 'false';
+        $licenseKey   = $license['license_key'] ?? '';
+        $purchaseCode = $license['purchase_code'] ?? '';
 
         $env = <<<ENV
 APP_NAME={$appName}
@@ -263,6 +338,9 @@ APP_ENV=production
 APP_KEY={$appKey}
 APP_DEBUG=false
 APP_URL={$appUrl}
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
 
 LOG_CHANNEL=stack
 LOG_LEVEL=error
@@ -276,16 +354,42 @@ DB_PASSWORD={$pass}
 
 CACHE_STORE=file
 QUEUE_CONNECTION=sync
+FILESYSTEM_DISK=local
 SESSION_DRIVER=file
 SESSION_LIFETIME=120
 SESSION_ENCRYPT=true
 SESSION_SECURE_COOKIE={$secureCookie}
 SESSION_SAME_SITE=lax
 
+MAIL_MAILER=smtp
+MAIL_HOST=localhost
+MAIL_PORT=587
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="noreply@example.com"
+MAIL_FROM_NAME={$appName}
+
 DRAVION_LICENSE_SERVER=https://apsbg.com/dravion-server
 DRAVION_LICENSE_KEY={$licenseKey}
 DRAVION_PURCHASE_CODE={$purchaseCode}
 ENV;
         EnvWriter::write(base_path('.env'), $env);
+    }
+
+    private function seedDefaultLanguage(): void
+    {
+        try {
+            DB::table('languages')->insertOrIgnore([
+                'code'       => 'en',
+                'name'       => 'English',
+                'flag'       => '🇬🇧',
+                'is_default' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } catch (\Throwable) {
+            // Non-fatal — language can be added via admin UI
+        }
     }
 }

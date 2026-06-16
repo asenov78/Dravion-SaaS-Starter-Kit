@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use App\Models\User;
 use App\Notifications\NewUserRegisteredNotification;
 use Illuminate\Auth\Events\Registered;
@@ -19,6 +20,10 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
+        if (Setting::get('registration', '1') !== '1') {
+            abort(403, __('auth.registration_disabled'));
+        }
+
         $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'unique:users'],

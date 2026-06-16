@@ -45,6 +45,12 @@ class LoginController extends Controller
                 ->onlyInput('email');
         }
 
+        // 2FA challenge — store user ID in session, redirect to challenge page
+        if ($user->two_factor_confirmed_at) {
+            $request->session()->put('2fa_user_id', $user->id);
+            return redirect()->route('two-factor.challenge');
+        }
+
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
 

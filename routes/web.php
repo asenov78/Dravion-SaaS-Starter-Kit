@@ -147,18 +147,20 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     Route::get('/activity/export',  [ActivityController::class, 'export'])->name('activity.export')->middleware('can:view activity log');
     Route::post('/cache/clear', [DashboardController::class, 'clearCache'])->name('cache.clear')->middleware('can:edit settings');
 
-    Route::get('/languages',                        [LanguageController::class, 'index'])->name('languages.index');
-    Route::post('/languages',                       [LanguageController::class, 'store'])->name('languages.store');
-    Route::delete('/languages/{language}',          [LanguageController::class, 'destroy'])->name('languages.destroy');
-    Route::patch('/languages/{language}/default',   [LanguageController::class, 'setDefault'])->name('languages.default');
-    Route::put('/languages/{language}/lines',       [LanguageController::class, 'updateLine'])->name('languages.lines');
-    Route::get('/languages/{language}/edit',        [LanguageController::class, 'edit'])->name('languages.edit');
-    Route::put('/languages/{language}/batch',       [LanguageController::class, 'batch'])->name('languages.batch');
-    Route::post('/languages/{language}/reseed',     [LanguageController::class, 'reseed'])->name('languages.reseed');
-    Route::get('/languages/{language}/export',      [LanguageController::class, 'export'])->name('languages.export');
-    Route::post('/languages/{language}/import',     [LanguageController::class, 'import'])->name('languages.import');
-    Route::get('/languages/{language}/meta',        [LanguageController::class, 'meta'])->name('languages.meta');
-    Route::patch('/languages/{language}/meta',      [LanguageController::class, 'updateMeta'])->name('languages.meta.update');
+    Route::middleware('can:manage languages')->group(function () {
+        Route::get('/languages',                        [LanguageController::class, 'index'])->name('languages.index');
+        Route::post('/languages',                       [LanguageController::class, 'store'])->name('languages.store');
+        Route::delete('/languages/{language}',          [LanguageController::class, 'destroy'])->name('languages.destroy');
+        Route::patch('/languages/{language}/default',   [LanguageController::class, 'setDefault'])->name('languages.default');
+        Route::put('/languages/{language}/lines',       [LanguageController::class, 'updateLine'])->name('languages.lines');
+        Route::get('/languages/{language}/edit',        [LanguageController::class, 'edit'])->name('languages.edit');
+        Route::put('/languages/{language}/batch',       [LanguageController::class, 'batch'])->name('languages.batch');
+        Route::post('/languages/{language}/reseed',     [LanguageController::class, 'reseed'])->name('languages.reseed');
+        Route::get('/languages/{language}/export',      [LanguageController::class, 'export'])->name('languages.export');
+        Route::post('/languages/{language}/import',     [LanguageController::class, 'import'])->name('languages.import');
+        Route::get('/languages/{language}/meta',        [LanguageController::class, 'meta'])->name('languages.meta');
+        Route::patch('/languages/{language}/meta',      [LanguageController::class, 'updateMeta'])->name('languages.meta.update');
+    });
 
     Route::resource('pages', \App\Http\Controllers\Admin\PagesController::class)
         ->middleware([

@@ -2,6 +2,23 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.0] — 2026-06-16
+### Added
+- Installer tests: 38 tests covering all 5 steps (requirements/database/admin/license/finish), views, validation, session flow, install lock, admin user creation
+- `InstallGuardTest`: 8 tests — lock file blocks all routes (404), accessible without lock, invalid step 404
+- `bootstrapEnv()` in `InstallController`: auto-creates `.env` from `.env.example` at requirements step, forces `SESSION_DRIVER=file` so install works on shared hosting before DB exists
+- Installer: `seedDefaultLanguage()` inserts default English language row on finish
+- Installer: `storage:link` attempt on finish (non-fatal on restrictive shared hosting)
+- Installer: creates all required `storage/` subdirs on finish (framework/sessions, framework/cache/data, etc.)
+- Installer: requires cURL + GD extensions in requirements check
+- `writeEnv()`: adds `APP_LOCALE`, `APP_FALLBACK_LOCALE`, `FILESYSTEM_DISK=local`, full `MAIL_*` defaults
+### Fixed
+- `User` model: added `email_verified_at` to `#[Fillable]` — `firstOrCreate()` now correctly sets it, preventing redirect to email verification on first admin login
+- `RegisterController::store()`: added `Setting::get('registration')` check — direct `POST /register` no longer bypasses the registration-disabled toggle
+### Security
+- Language routes (`/admin/languages/*`) now gated by `can:manage languages` permission (admin-only); previously accessible to any `editor` role
+- `manage languages` permission added to `RolesAndPermissionsSeeder` — assigned to `admin` only
+
 ## [1.9.0] — 2026-06-16
 ### Added
 - `App\Contracts\LicenseServiceInterface` — contract for DI binding and mockability

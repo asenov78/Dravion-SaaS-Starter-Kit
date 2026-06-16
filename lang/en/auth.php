@@ -50,4 +50,5 @@ return [
     '2fa_not_setup'          => '2FA is not configured. Please set it up again.',
     '2fa_invalid_code'       => 'Invalid authentication code. Please try again.',
     'current_password'       => 'Current Password',
+    'registration_disabled'  => 'Registration is currently disabled.',
 ];
