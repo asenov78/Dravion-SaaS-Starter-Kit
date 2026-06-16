@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\EnvWriter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -259,7 +260,7 @@ class InstallController extends Controller
         $existing = file_exists(base_path('.env')) ? file_get_contents(base_path('.env')) : '';
         preg_match('/APP_KEY=(.+)/', $existing, $m);
         $appKey = !empty($m[1]) ? trim($m[1]) : 'base64:' . base64_encode(random_bytes(32));
-        $pass       = addslashes($db['db_password'] ?? '');
+        $pass       = EnvWriter::escapeValue($db['db_password'] ?? '');
         $appUrl     = rtrim($db['app_url'] ?? $this->detectAppUrl(), '/');
         $secureCookie = str_starts_with($appUrl, 'https://') ? 'true' : 'false';
         $licenseKey = $license['license_key'] ?? '';
@@ -295,6 +296,6 @@ SESSION_SAME_SITE=lax
 DRAVION_LICENSE_KEY={$licenseKey}
 DRAVION_PURCHASE_CODE={$purchaseCode}
 ENV;
-        file_put_contents(base_path('.env'), $env);
+        EnvWriter::write(base_path('.env'), $env);
     }
 }

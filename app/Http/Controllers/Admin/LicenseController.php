@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\EnvWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -71,15 +72,6 @@ class LicenseController extends Controller
 
     private function writeEnvKey(string $key, string $value): void
     {
-        $path = base_path('.env');
-        $content = file_get_contents($path);
-
-        if (preg_match("/^{$key}=.*/m", $content)) {
-            $content = preg_replace("/^{$key}=.*/m", "{$key}={$value}", $content);
-        } else {
-            $content .= "\n{$key}={$value}";
-        }
-
-        file_put_contents($path, $content);
+        EnvWriter::set(base_path('.env'), $key, $value);
     }
 }
