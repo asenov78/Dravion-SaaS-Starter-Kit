@@ -2,6 +2,20 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.7.0] — 2026-06-16
+### Added
+- EnvWriter service: atomic `.env` writes with `flock()` — eliminates race condition on concurrent admin requests
+- Failed login attempts now logged to activity log (causer + masked email) — A09 Logging Failures fix
+- `config/dravion.php` added to updater protected paths — never overwritten by self-update
+- SessionManagementTest: 5 tests for session listing and logout-other-devices
+- PublicPagesTest: 10 tests for HomeController (home/gallery/CMS pages) and ContactController
+### Fixed
+- `.env` password escaping: `addslashes()` replaced with `EnvWriter::escapeValue()` — handles `$`, `#`, spaces correctly
+- LicenseController and InstallController now use EnvWriter (no more raw `file_put_contents` on `.env`)
+### Security
+- #36: Failed login attempts logged with email + IP to activity_log
+- #37: `.env` write race condition fixed via EnvWriter with exclusive flock()
+
 ## [1.6.0] — 2026-06-16
 ### Added
 - TipTap editor: independent scroll on both editor and live preview panes
