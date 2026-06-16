@@ -14,6 +14,7 @@ return [
     // Paths never overwritten by an update (relative to project root).
     'protected_paths' => [
         '.env',
+        'config/dravion.php',
         'storage',
         'vendor',
         'node_modules',
