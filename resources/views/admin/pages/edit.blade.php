@@ -105,12 +105,12 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.content') }}</label>
                 <div x-data="tiptap({ content: {{ json_encode(old('translations.'.$lang->code.'.content', $t?->content ?? ($lang->is_default ? $page->content : ''))) }}, placeholder: '{{ __('pages.content') }}...' })"
                      class="tiptap-editor rounded-lg border border-gray-300 dark:border-gray-700 overflow-hidden"
-                     style="display:flex; align-items:stretch;"
+                     style="display:flex; align-items:stretch; height:520px;"
                      @destroy.window="destroy()">
                     {{-- Left: toolbar + editor --}}
-                    <div style="min-width:0; flex:1; display:flex; flex-direction:column;">
+                    <div style="min-width:0; flex:1; display:flex; flex-direction:column; overflow:hidden;">
                         {{-- Toolbar --}}
-                        <div class="tiptap-toolbar">
+                        <div class="tiptap-toolbar" style="flex-shrink:0;">
                             <button type="button" @click="execCmd('bold')" :class="{active: isActive('bold')}" class="tiptap-btn" title="Bold"><b>B</b></button>
                             <button type="button" @click="execCmd('italic')" :class="{active: isActive('italic')}" class="tiptap-btn" title="Italic"><i>I</i></button>
                             <button type="button" @click="execCmd('strike')" :class="{active: isActive('strike')}" class="tiptap-btn" title="Strikethrough"><s>S</s></button>
@@ -135,11 +135,11 @@
                             <button type="button" @click="toggleHtml()" :class="{active: showHtml}" class="tiptap-btn" title="HTML source">&lt;/&gt;</button>
                             <button type="button" @click="showPreview = !showPreview" :class="{active: showPreview}" class="tiptap-btn" style="margin-left:auto;" title="Toggle live preview">&#128065;</button>
                         </div>
-                        <div x-show="!showHtml" style="flex:1;">
+                        <div x-show="!showHtml" style="flex:1; overflow-y:auto;">
                             <div x-ref="editorEl"></div>
                         </div>
                         <textarea x-show="showHtml" x-model="content"
-                            class="tiptap-html-source" spellcheck="false"></textarea>
+                            class="tiptap-html-source" style="flex:1; height:100%;" spellcheck="false"></textarea>
                         <textarea data-tiptap-target name="translations[{{ $lang->code }}][content]"
                             class="hidden">{{ old('translations.'.$lang->code.'.content', $t?->content ?? ($lang->is_default ? $page->content : '')) }}</textarea>
                     </div>
