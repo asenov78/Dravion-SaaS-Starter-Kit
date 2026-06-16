@@ -2,6 +2,25 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.5.0] — 2026-06-16
+### Added
+- TipTap editor with live split-pane preview (real-time sync, auto-scroll to cursor position)
+- HTML source view with auto-formatting via js-beautify
+- Pages permissions: granular `can:` middleware guards on all CRUD routes
+- Pages group added to Roles permission matrix (view/create/edit/delete)
+- Installer: `app_name` field (was hardcoded "Dravion")
+- Installer: try/catch around migrate and seed — user-friendly error on failure
+### Fixed
+- TipTap buttons not working — Alpine Proxy wrapped editor broke ProseMirror state equality
+- TipTap preview: duplicate class= attribute bug fixed
+- `hero_cta_url` now validated as `url` (blocks javascript: XSS scheme)
+- `footer_copyright` escaped with `{{ }}` instead of `{!! !!}` (stored XSS fix)
+- Editor and preview fonts unified: Onest 15px/1.75, cms-content moved to app.css
+### Security
+- Pages routes: added `can:` middleware per action (view/create/edit/delete)
+- concurrently upgraded 9.2.1→10.0.3 (shell-quote CVE GHSA-w7jw-789q-3m8p CVSS 8.1)
+- Installer: license field label changed from "(optional)" to required
+
 ## [1.4.0] — 2026-06-15
 ### Added
 - Public website: full marketing landing page at `/` with hero, features grid, security section, stack section, CMS pages

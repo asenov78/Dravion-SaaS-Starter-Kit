@@ -44,7 +44,7 @@
 - `config/updater.php` — GitHub owner/repo/token, work dir (`storage/app/updates`), protected paths.
 
 ### Version
-Current version: **1.4.0** (read from `config/dravion.php`).
+Current version: **1.5.0** (read from `config/dravion.php`).
 
 ---
 

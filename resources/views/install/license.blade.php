@@ -13,7 +13,7 @@
 <form method="POST" action="{{ route('install.process', 'license') }}">
     @csrf
     <div style="margin-bottom:24px;">
-        <x-ui.input name="purchase_code" label="Purchase Code (optional)" :value="old('purchase_code')" :error="$errors->first('purchase_code')" placeholder="e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890" />
+        <x-ui.input name="purchase_code" label="Purchase Code" :value="old('purchase_code')" :error="$errors->first('purchase_code')" placeholder="e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890" />
         <p style="color:#2a3a55; font-size:11px; margin:6px 0 0 2px;">The license is tied to a single domain. Contact support to transfer.</p>
     </div>
 

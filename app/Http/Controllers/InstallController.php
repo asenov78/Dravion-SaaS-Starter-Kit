@@ -64,6 +64,7 @@ class InstallController extends Controller
     private function handleDatabase(Request $request)
     {
         $request->validate([
+            'app_name'    => 'required|string|max:100',
             'app_url'     => 'required|url',
             'db_host'     => 'required|string',
             'db_port'     => 'required|integer',
@@ -83,7 +84,7 @@ class InstallController extends Controller
             return back()->withErrors(['db_host' => 'Connection failed: ' . $e->getMessage()])->withInput();
         }
 
-        session(['install_db' => $request->only('app_url', 'db_host', 'db_port', 'db_name', 'db_user', 'db_password')]);
+        session(['install_db' => $request->only('app_name', 'app_url', 'db_host', 'db_port', 'db_name', 'db_user', 'db_password')]);
 
         return redirect()->route('install.step', 'admin');
     }
@@ -165,13 +166,21 @@ class InstallController extends Controller
         }
 
         // 2. Migrate
-        Artisan::call('migrate', ['--force' => true]);
+        try {
+            Artisan::call('migrate', ['--force' => true]);
+        } catch (\Throwable $e) {
+            return back()->withErrors(['migrate' => 'Database migration failed: ' . $e->getMessage()]);
+        }
 
         // 3. Seed roles & permissions
-        Artisan::call('db:seed', [
-            '--class' => 'Database\\Seeders\\RolesAndPermissionsSeeder',
-            '--force' => true,
-        ]);
+        try {
+            Artisan::call('db:seed', [
+                '--class' => 'Database\\Seeders\\RolesAndPermissionsSeeder',
+                '--force' => true,
+            ]);
+        } catch (\Throwable $e) {
+            return back()->withErrors(['migrate' => 'Seeding failed: ' . $e->getMessage()]);
+        }
 
         // 4. Create admin user
         $user = User::firstOrCreate(
@@ -256,8 +265,10 @@ class InstallController extends Controller
         $licenseKey = $license['license_key'] ?? '';
         $purchaseCode = $license['purchase_code'] ?? '';
 
+        $appName = $db['app_name'] ?? 'Dravion';
+
         $env = <<<ENV
-APP_NAME=Dravion
+APP_NAME={$appName}
 APP_ENV=production
 APP_KEY={$appKey}
 APP_DEBUG=false

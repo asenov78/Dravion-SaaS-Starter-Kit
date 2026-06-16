@@ -14,6 +14,8 @@
     @csrf
     <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:24px;">
 
+        <x-ui.input name="app_name" label="Application Name" :value="old('app_name', 'Dravion')" :error="$errors->first('app_name')" required placeholder="e.g. My SaaS App" />
+
         {{-- App URL — auto-detected, user can override --}}
         <div>
             <x-ui.input name="app_url" label="Site URL" :value="old('app_url', $detected_url)" :error="$errors->first('app_url')" required />
