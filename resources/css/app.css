@@ -453,6 +453,12 @@
 }
 .dark .tiptap-html-source { color: #e4e7ec; background: #1a2231; }
 
+.tiptap-preview-pane {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .tiptap-resize-handle {
   position: absolute;
   bottom: 0; right: 0;

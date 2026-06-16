@@ -146,7 +146,8 @@
                     {{-- Right: live preview panel --}}
                     <div x-show="showPreview"
                          x-cloak
-                         style="width:50%; flex-shrink:0; border-left:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden;"
+                         class="tiptap-preview-pane dark:border-gray-700"
+                         style="width:50%; flex-shrink:0; border-left:1px solid #e5e7eb;"
                          class="dark:border-gray-700">
                         <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; border-bottom:1px solid #e5e7eb; background:#f9fafb; font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; flex-shrink:0;"
                              class="dark:bg-gray-900 dark:border-gray-700 dark:text-gray-500">
