@@ -94,8 +94,6 @@ class UserController extends Controller
 
         $user->restore();
 
-        ActivityLogger::log('users', 'restored', "Restored user {$user->name} ({$user->email})", $user, null, 'activity.log.user_restored', ['name' => $user->name, 'email' => $user->email]);
-
         if (request()->wantsJson()) {
             return response()->json(['success' => true]);
         }
@@ -134,8 +132,6 @@ class UserController extends Controller
 
         $user = User::create($data);
         $user->assignRole($role);
-
-        ActivityLogger::log('users', 'created', "Created user {$user->name} ({$user->email})", $user, null, 'activity.log.user_created', ['name' => $user->name, 'email' => $user->email]);
 
         if (Setting::get('mail_welcome', '1') !== '0') {
             try {
@@ -197,8 +193,6 @@ class UserController extends Controller
 
         $user->update($data);
         $user->syncRoles([$role]);
-
-        ActivityLogger::log('users', 'updated', "Updated user {$user->name} ({$user->email})", $user, null, 'activity.log.user_updated', ['name' => $user->name, 'email' => $user->email]);
 
         return redirect()->route('admin.users.edit', $user)->with('success', __('flash.user_updated'));
     }
@@ -269,8 +263,6 @@ class UserController extends Controller
         }
 
         $user->delete();
-
-        ActivityLogger::log('users', 'deleted', "Deleted user {$user->name} ({$user->email})", $user, null, 'activity.log.user_deleted', ['name' => $user->name, 'email' => $user->email]);
 
         if (request()->wantsJson()) {
             return response()->json(['success' => true]);
