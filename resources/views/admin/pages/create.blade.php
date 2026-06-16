@@ -103,7 +103,7 @@
                      style="display:flex; align-items:stretch; height:520px;"
                      @destroy.window="destroy()">
                     {{-- Left: toolbar + editor --}}
-                    <div style="min-width:0; flex:1; display:flex; flex-direction:column; overflow:hidden;">
+                    <div style="min-width:0; flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative;">
                         <div class="tiptap-toolbar" style="flex-shrink:0;">
                             <button type="button" @click="execCmd('bold')" :class="{active: isActive('bold')}" class="tiptap-btn" title="Bold"><b>B</b></button>
                             <button type="button" @click="execCmd('italic')" :class="{active: isActive('italic')}" class="tiptap-btn" title="Italic"><i>I</i></button>
@@ -136,11 +136,14 @@
                             class="tiptap-html-source" style="flex:1; height:100%;" spellcheck="false"></textarea>
                         <textarea data-tiptap-target name="translations[{{ $lang->code }}][content]"
                             class="hidden">{{ old('translations.'.$lang->code.'.content') }}</textarea>
+                        <div class="tiptap-resize-handle" @mousedown.prevent="startResize($event)" title="Drag to resize">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M6 10L10 6M10 10V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
                     </div>
                     {{-- Right: live preview panel --}}
                     <div x-show="showPreview"
                          x-cloak
-                         style="width:50%; flex-shrink:0; border-left:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden;"
+                         style="width:50%; flex-shrink:0; border-left:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; position:relative;"
                          class="dark:border-gray-700">
                         <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; border-bottom:1px solid #e5e7eb; background:#f9fafb; font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; flex-shrink:0;"
                              class="dark:bg-gray-900 dark:border-gray-700 dark:text-gray-500">
@@ -148,6 +151,9 @@
                             Live Preview
                         </div>
                         <div class="cms-content" data-preview-content style="padding:20px 24px; overflow-y:auto; flex:1;" x-html="content"></div>
+                        <div class="tiptap-resize-handle" @mousedown.prevent="startResize($event)" title="Drag to resize">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M6 10L10 6M10 10V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
                     </div>
                 </div>
             </div>

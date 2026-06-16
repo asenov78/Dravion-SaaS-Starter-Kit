@@ -95,6 +95,21 @@ document.addEventListener('alpine:init', () => {
                 }
             },
 
+            startResize(e) {
+                const container = this.$el;
+                const startY = e.clientY;
+                const startH = container.offsetHeight;
+                const onMove = (ev) => {
+                    container.style.height = Math.max(200, startH + ev.clientY - startY) + 'px';
+                };
+                const onUp = () => {
+                    window.removeEventListener('mousemove', onMove);
+                    window.removeEventListener('mouseup', onUp);
+                };
+                window.addEventListener('mousemove', onMove);
+                window.addEventListener('mouseup', onUp);
+            },
+
             destroy() {
                 _editor?.destroy();
                 _editor = null;
