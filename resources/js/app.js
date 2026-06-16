@@ -64,7 +64,11 @@ document.addEventListener('alpine:init', () => {
                         if (!panel) return;
                         const target = panel.children[blockIndex];
                         if (target) {
-                            target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            // Scroll only the preview panel, not the page
+                            const panelRect = panel.getBoundingClientRect();
+                            const targetRect = target.getBoundingClientRect();
+                            const offset = targetRect.top - panelRect.top;
+                            panel.scrollTop += offset - 20;
                         }
                     },
                 });
