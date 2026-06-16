@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\LicenseServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Services\EnvWriter;
-use App\Services\LicenseService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class LicenseController extends Controller
 {
+    public function __construct(private LicenseServiceInterface $license) {}
+
     public function show(): View
     {
         $raw = config('dravion.license_key', '');
@@ -25,7 +27,7 @@ class LicenseController extends Controller
         $request->validate(['license_key' => 'required|string|min:6']);
 
         $domain = parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
-        $result = LicenseService::activate($request->license_key, $domain);
+        $result = $this->license->activate($request->license_key, $domain);
 
         if (isset($result['error'])) {
             return redirect()->route('admin.license')->withErrors(['license_key' => $result['error']]);

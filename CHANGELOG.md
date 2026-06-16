@@ -2,6 +2,18 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.9.0] — 2026-06-16
+### Added
+- `App\Contracts\LicenseServiceInterface` — contract for DI binding and mockability
+- `LicenseService` now implements `LicenseServiceInterface` (instance methods only)
+- `AppServiceProvider` binds `LicenseServiceInterface` → `LicenseService` in the container
+- `LicenseController`, `UpdateController`, `LicenseCheck` middleware, `InstallController` inject `LicenseServiceInterface` via constructor DI
+- Installer requirements check: added cURL and GD extension checks, bumped PHP requirement label to 8.3
+- Installer `.env` generation: `APP_NAME` now properly escaped via `EnvWriter::escapeValue()`, added `DRAVION_LICENSE_SERVER` entry
+- `config/google2fa.php` added to updater protected paths
+### Changed
+- All tests updated to use `app(LicenseServiceInterface::class)` instead of static `LicenseService::*` calls
+
 ## [1.8.0] — 2026-06-16
 ### Added
 - Two-Factor Authentication (TOTP) with `pragmarx/google2fa-laravel` + `bacon/bacon-qr-code`

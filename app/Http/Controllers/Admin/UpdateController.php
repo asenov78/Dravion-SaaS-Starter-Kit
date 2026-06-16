@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\LicenseServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\UpdateInstalledNotification;
 use App\Rules\GitHubZipUrl;
-use App\Services\LicenseService;
 use App\Services\UpdaterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,9 +14,11 @@ use Illuminate\View\View;
 
 class UpdateController extends Controller
 {
+    public function __construct(private LicenseServiceInterface $license) {}
+
     public function index(UpdaterService $updater): View
     {
-        $licensed = LicenseService::isValid();
+        $licensed = $this->license->isValid();
 
         // Always check for the latest version so the user can SEE a new release
         // exists — but downloading/installing is gated by a valid license.
@@ -41,7 +43,7 @@ class UpdateController extends Controller
         $update = $updater->checkForUpdate();
 
         // Hide download URLs from unlicensed installs (both top-level and per-release).
-        if (! LicenseService::isValid()) {
+        if (! $this->license->isValid()) {
             $update['zip_url'] = null;
             $update['newer']   = array_map(function ($r) {
                 $r['zip_url'] = null;
@@ -54,7 +56,7 @@ class UpdateController extends Controller
 
     public function install(Request $request, UpdaterService $updater): JsonResponse
     {
-        if (! LicenseService::isValid()) {
+        if (! $this->license->isValid()) {
             abort(403, __('updates.license_required'));
         }
 

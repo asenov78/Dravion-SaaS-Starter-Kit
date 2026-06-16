@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Contracts\LicenseServiceInterface;
 use App\Models\User;
 use App\Observers\UserObserver;
+use App\Services\LicenseService;
 use App\Translation\DatabaseLoader;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
@@ -16,6 +18,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->extend('translation.loader', function ($original, $app) {
             return new DatabaseLoader($app['files'], $app['path.lang']);
         });
+
+        $this->app->bind(LicenseServiceInterface::class, LicenseService::class);
     }
 
     /**

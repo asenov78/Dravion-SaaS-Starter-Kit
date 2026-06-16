@@ -15,6 +15,7 @@ return [
     'protected_paths' => [
         '.env',
         'config/dravion.php',
+        'config/google2fa.php',
         'storage',
         'vendor',
         'node_modules',

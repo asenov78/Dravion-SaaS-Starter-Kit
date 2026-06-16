@@ -2,14 +2,16 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\LicenseService;
+use App\Contracts\LicenseServiceInterface;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class LicenseCheck
 {
-    private const TTL = 86400; // 24 hours
+    private const TTL = 86400;
+
+    public function __construct(private LicenseServiceInterface $license) {}
 
     public function handle(Request $request, Closure $next): Response
     {
@@ -30,12 +32,11 @@ class LicenseCheck
         }
 
         // Read the HMAC-signed cache via LicenseService
-        $cache = LicenseService::readCachePublic();
+        $cache = $this->license->readCachePublic();
 
-        // Revalidate if cache is stale or missing
         if ($cache === null || (time() - ($cache['checked_at'] ?? 0)) > self::TTL) {
             $cache = $this->pingServer($licenseKey);
-            LicenseService::writeCache($cache);
+            $this->license->writeCache($cache);
         }
 
         if (! ($cache['valid'] ?? false)) {

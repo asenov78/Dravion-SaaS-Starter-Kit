@@ -2,8 +2,8 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Contracts\LicenseServiceInterface;
 use App\Models\User;
-use App\Services\LicenseService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -33,16 +33,21 @@ class LicenseCheckMiddlewareTest extends TestCase
         return $user;
     }
 
+    private function svc(): LicenseServiceInterface
+    {
+        return app(LicenseServiceInterface::class);
+    }
+
     /** Write a properly HMAC-signed cache entry. */
     private function writeCache(array $data): void
     {
-        LicenseService::writeCache($data);
+        $this->svc()->writeCache($data);
     }
 
     /** Read the signed cache and return the inner payload array. */
     private function readCache(): ?array
     {
-        return LicenseService::readCachePublic();
+        return $this->svc()->readCachePublic();
     }
 
     // ── No key ────────────────────────────────────────────────────────────
@@ -192,7 +197,7 @@ class LicenseCheckMiddlewareTest extends TestCase
         file_put_contents($this->cacheFile, json_encode(['valid' => true, 'checked_at' => time()]));
 
         // readCachePublic() should return null → middleware pings server
-        $this->assertNull(LicenseService::readCachePublic());
+        $this->assertNull($this->svc()->readCachePublic());
     }
 
     // ── Dev key on production ─────────────────────────────────────────────

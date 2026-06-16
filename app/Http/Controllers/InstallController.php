@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\LicenseServiceInterface;
 use App\Models\User;
 use App\Services\EnvWriter;
-use App\Services\LicenseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\URL;
 class InstallController extends Controller
 {
     private array $steps = ['requirements', 'database', 'admin', 'license', 'finish'];
+
+    public function __construct(private LicenseServiceInterface $license) {}
 
     public function index()
     {
@@ -113,7 +115,7 @@ class InstallController extends Controller
         $appUrl = session('install_db.app_url', config('app.url'));
         $domain = parse_url($appUrl, PHP_URL_HOST) ?? request()->getHost();
 
-        $result = LicenseService::activate($code, $domain);
+        $result = $this->license->activate($code, $domain);
 
         if (isset($result['error'])) {
             return back()->withErrors(['purchase_code' => $result['error']])->withInput();
@@ -210,7 +212,7 @@ class InstallController extends Controller
     private function runChecks(): array
     {
         return [
-            'PHP >= 8.2'                => version_compare(PHP_VERSION, '8.2.0', '>='),
+            'PHP >= 8.3'                => version_compare(PHP_VERSION, '8.3.0', '>='),
             'PDO'                       => extension_loaded('pdo'),
             'PDO MySQL'                 => extension_loaded('pdo_mysql'),
             'Mbstring'                  => extension_loaded('mbstring'),
@@ -219,6 +221,8 @@ class InstallController extends Controller
             'JSON'                      => extension_loaded('json'),
             'BCMath'                    => extension_loaded('bcmath'),
             'Fileinfo'                  => extension_loaded('fileinfo'),
+            'cURL'                      => extension_loaded('curl'),
+            'GD (avatars & QR codes)'   => extension_loaded('gd'),
             'storage/ writable'         => is_writable(storage_path()),
             'bootstrap/cache/ writable' => is_writable(base_path('bootstrap/cache')),
             '.env writable'             => is_writable(base_path('.env')) || !file_exists(base_path('.env')),
@@ -251,7 +255,7 @@ class InstallController extends Controller
         $licenseKey = $license['license_key'] ?? '';
         $purchaseCode = $license['purchase_code'] ?? '';
 
-        $appName = $db['app_name'] ?? 'Dravion';
+        $appName = EnvWriter::escapeValue($db['app_name'] ?? 'Dravion');
 
         $env = <<<ENV
 APP_NAME={$appName}
@@ -278,6 +282,7 @@ SESSION_ENCRYPT=true
 SESSION_SECURE_COOKIE={$secureCookie}
 SESSION_SAME_SITE=lax
 
+DRAVION_LICENSE_SERVER=https://apsbg.com/dravion-server
 DRAVION_LICENSE_KEY={$licenseKey}
 DRAVION_PURCHASE_CODE={$purchaseCode}
 ENV;
