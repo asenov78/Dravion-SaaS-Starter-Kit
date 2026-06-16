@@ -103,7 +103,7 @@
                      style="display:flex; align-items:stretch; height:520px;"
                      @destroy.window="destroy()">
                     {{-- Left: toolbar + editor --}}
-                    <div style="min-width:0; flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative;">
+                    <div style="min-width:0; flex:1; display:flex; flex-direction:column; position:relative;">
                         <div class="tiptap-toolbar" style="flex-shrink:0;">
                             <button type="button" @click="execCmd('bold')" :class="{active: isActive('bold')}" class="tiptap-btn" title="Bold"><b>B</b></button>
                             <button type="button" @click="execCmd('italic')" :class="{active: isActive('italic')}" class="tiptap-btn" title="Italic"><i>I</i></button>
@@ -143,7 +143,7 @@
                     {{-- Right: live preview panel --}}
                     <div x-show="showPreview"
                          x-cloak
-                         style="width:50%; flex-shrink:0; border-left:1px solid #e5e7eb; display:flex; flex-direction:column; overflow:hidden; position:relative;"
+                         style="width:50%; flex-shrink:0; border-left:1px solid #e5e7eb; display:flex; flex-direction:column; position:relative;"
                          class="dark:border-gray-700">
                         <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; border-bottom:1px solid #e5e7eb; background:#f9fafb; font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; flex-shrink:0;"
                              class="dark:bg-gray-900 dark:border-gray-700 dark:text-gray-500">
