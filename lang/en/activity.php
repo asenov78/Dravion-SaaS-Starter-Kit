@@ -30,5 +30,6 @@ return [
         'profile_updated'     => 'Profile updated for :name (:email)',
         'user_logged_in'      => ':name logged in',
         'user_logged_out'     => ':name logged out',
+        'login_failed'        => 'Failed login attempt for :email',
     ],
 ];

@@ -4,6 +4,8 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
+use Spatie\Activitylog\Models\Activity;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -49,6 +51,35 @@ class AuthenticationTest extends TestCase
         ])->assertSessionHasErrors('email');
 
         $this->assertGuest();
+    }
+
+    public function test_failed_login_is_logged_to_activity(): void
+    {
+        $user = User::factory()->create();
+
+        $this->post('/login', [
+            'email'    => $user->email,
+            'password' => 'wrong-password',
+        ]);
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'   => 'auth',
+            'event'      => 'login_failed',
+            'subject_id' => $user->id,
+        ]);
+    }
+
+    public function test_failed_login_for_unknown_email_is_logged(): void
+    {
+        $this->post('/login', [
+            'email'    => 'nobody@example.com',
+            'password' => 'wrong',
+        ]);
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name' => 'auth',
+            'event'    => 'login_failed',
+        ]);
     }
 
     public function test_user_can_logout(): void

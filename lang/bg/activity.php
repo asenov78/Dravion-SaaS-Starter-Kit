@@ -30,5 +30,6 @@ return [
         'profile_updated'     => 'Профилът на :name (:email) е обновен',
         'user_logged_in'      => ':name влезе в системата',
         'user_logged_out'     => ':name излезе от системата',
+        'login_failed'        => 'Неуспешен опит за вход с :email',
     ],
 ];

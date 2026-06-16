@@ -27,6 +27,14 @@ class LoginController extends Controller
         $user = User::where('email', $credentials['email'])->first();
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            ActivityLogger::log('auth', 'login_failed',
+                'Failed login attempt for ' . $credentials['email'],
+                $user ?? null,
+                $user ?? null,
+                'activity.log.login_failed',
+                ['email' => $credentials['email']]
+            );
+
             return back()->withErrors(['email' => 'These credentials do not match our records.'])
                 ->onlyInput('email');
         }
