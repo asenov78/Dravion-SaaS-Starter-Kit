@@ -40,11 +40,11 @@
 - `ActivityLogger` — wraps spatie activitylog, called from model observers and controllers.
 
 ### Config
-- `config/dravion.php` — version (`1.3.1`), license server URL, updates server URL, license key, licensed domain.
+- `config/dravion.php` — version (`1.6.0`), license server URL, updates server URL, license key, licensed domain.
 - `config/updater.php` — GitHub owner/repo/token, work dir (`storage/app/updates`), protected paths.
 
 ### Version
-Current version: **1.5.0** (read from `config/dravion.php`).
+Current version: **1.6.0** (read from `config/dravion.php`).
 
 ---
 

@@ -1,57 +1,61 @@
 # Session State — Dravion SaaS Starter Kit
 
-> Updated: 2026-06-15 (session 3) | Version: 1.4.0
+> Updated: 2026-06-16 (session 4) | Version: 1.6.0
 
 ## Current State
 
-- **Tests:** 414/414 passing, 6 risky (acceptable)
+- **Tests:** 414/414 passing
 - **Branch:** main, up to date with origin
-- **Last commit:** (v1.4.0 release tag) — feat: public layout polish — logo/theme/lang/user-dropdown/settings
+- **Last commit:** c5b176f — fix: preview pane display:flex via CSS class
 
 ## Completed This Session
 
-1-12. [previous sessions] security, UI, auth, notifications, API tokens, sessions
-13. **#28** — Session management (SessionController + sessions.blade.php) ✓
-14. **#29** — Users Export CSV ✓ (already existed)
-15. **#26/#27** — Notifications bell + Sanctum tokens ✓ (already existed)
-16. **Public website** — HomeController, public layout, CMS Pages admin CRUD, seed pages
-17. **Hero images** — pages table hero_image/title/subtitle/cta; admin edit/create forms; home/contact/gallery heroes with Unsplash bg + dark overlay; PageHeroSeeder
-18. **Public layout polish** — theme icons (CSS hidden dark:block, exact admin SVGs), lang switcher (@auth), logo from Settings, user dropdown with avatar, app_name from Settings everywhere
-19. **Admin sidebar/header** — logo + app name from Settings (no hardcoded DRAVION)
-20. **Settings: Public Site section** — header_tagline, footer_text, footer_copyright editable from admin
-21. **v1.4.0 release** — CHANGELOG + config/dravion.php + git tag v1.4.0
+1. **TipTap fonts** — editor + preview unified (Onest 15px/1.75), moved cms-content CSS to app.css
+2. **TipTap live split-pane** — editor left, real-time preview right (x-html="content")
+3. **TipTap auto-scroll** — onSelectionUpdate → panel.scrollTop (not scrollIntoView; page stays still)
+4. **Pages permissions** — can: middleware per route action; pages group in roles matrix
+5. **Installer fixes** — app_name field, try/catch on migrate/seed, license label required
+6. **v1.5.0 release** — CHANGELOG + config + docs + ZIP archive dravion-v1.5.0.zip (35MB)
+7. **TipTap editor scroll** — fixed height 520px, overflow:hidden on container, overflow-y:auto on panes
+8. **Preview scroll fix** — .tiptap-preview-pane CSS class (display:flex) — x-show no longer overrides flex
+9. **Resize bar** — sibling div below tiptap editor; drag to resize height; handles inside panes were clipped
+10. **HTML source font** — 12px → 14px
+11. **Architecture review** — HTML report generated with 6 candidates + roadmap
+12. **v1.6.0 bump** — config/dravion.php, CLAUDE.md, CHANGELOG.md
 
-## Pending / Next Steps (ordered)
+## Pending / Next Steps (priority order)
 
-- [ ] **#21** Auth — 2FA / TOTP
-- [ ] Public site styling — polish hero, nav, dark mode toggle on public pages
-- [ ] CMS Pages — rich text editor (TipTap/Quill) instead of raw HTML textarea
+- [ ] **#21** Auth — 2FA / TOTP (URGENT)
+- [ ] **#26** Notifications — In-app bell (URGENT) — NotificationController exists, needs UI
+- [ ] **Arch #1** LicenseService — consolidate activate() from InstallController
+- [ ] **Arch #2** Model Observers — UserObserver/PageObserver replace manual ActivityLogger calls
+- [ ] **#28** Security — Session management (SessionController exists, needs UI)
+- [ ] **Arch #3** EnvWriter service — atomic .env writes with file locking
+- [ ] **#27** API — Sanctum tokens page (ApiTokenController exists, needs UI)
+- [ ] **#29** Users — Export CSV
+- [ ] **Tests** — ContactController + HomeController (untested)
+- [ ] **LOW** Service interfaces: LicenseServiceInterface + DI binding
+- [ ] **LOW** config/updater.php: add config/dravion.php to protected_paths
+- [ ] **#20** Auth — Email verification (in progress)
 
 ## Architecture Snapshot
 
 ```
-Laravel 13 / PHP 8.3 / Tailwind v4 / Alpine.js v3 / Sanctum
-Public:   GET / → HomeController@index; GET /p/{slug} → HomeController@show
-          layouts/public.blade.php — responsive header + nav from DB + auth buttons
-CMS:      pages table (title,slug,content,excerpt,is_published,show_in_nav,sort_order,
-          hero_image,hero_title,hero_subtitle,hero_cta_label,hero_cta_url)
-          App\Models\Page; Admin\PagesController resource; seeded: Home,About,Pricing,Contact
-          Hero fields editable from admin pages edit/create; PageHeroSeeder sets Unsplash defaults
-Public:   layouts/public.blade.php — logo from Settings, app_name from Settings,
-          theme toggle (CSS hidden/dark:block, exact admin SVGs), lang switcher (@auth),
-          user dropdown with avatar, footer_text + footer_copyright from Settings
-Settings: app_name, logo, header_tagline, footer_text, footer_copyright, broadcast_banner
-          Stored via Setting::get/setMany; SettingsController handles upload + all keys
-Sidebar:  logo + app_name from Settings; no hardcoded strings
-Auth:     LoginController (manual) + MustVerifyEmail + VerificationController
-Sanctum:  HasApiTokens on User; GET/POST/DELETE /api-tokens
-Bell:     NotificationController JSON feed; Alpine.js dropdown in app-header
-Notifs:   DB channel on suspend/activate (→user) + new-user/update (→admins)
-License:  LicenseService → HMAC cache → license server
-Updater:  UpdaterService → GitHub API → copyTree()
-Roles:    Spatie (admin/manager/editor/user)
-i18n:     lang/en/ + lang/bg/ — 17 files including pages.php
-Tests:    SQLite in-memory, Http::fake() for external calls
+Laravel 13 / PHP 8.3 / Tailwind v4 / Alpine.js v3 / TipTap v3 / Spatie v8 / PHPUnit 12
+Public:   GET / → HomeController; GET /p/{slug} → HomeController@show
+CMS:      Page + PageTranslation (multilingual); TipTap editor with live preview
+          Independent scroll on editor + preview; resize bar at bottom
+          .tiptap-preview-pane class = display:flex (survives Alpine x-show)
+Auth:     LoginController (manual suspend check) + MustVerifyEmail
+Admin:    UserController, PagesController, RoleController, SettingsController
+          LicenseController, UpdateController, ActivityController, GlobalSearchController
+Services: LicenseService (HMAC cache), UpdaterService (GitHub ZIP), AvatarService (GD)
+          ActivityLogger (Spatie wrapper) — manual in controllers (no observers yet)
+Middleware: InstallGuard, LicenseCheck, SetLocale, MaintenanceMode
+Roles:    Spatie: admin/manager/editor/user + fine-grained can: gates per route
+i18n:     DB-driven + lang/en/ + lang/bg/ (17 files)
+Install:  5-step wizard → write .env → migrate → seed → admin → install.lock
+Tests:    SQLite in-memory, 414 passing, 41 test files
 ```
 
 ## Standing Instructions (always active)

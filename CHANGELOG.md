@@ -2,6 +2,18 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.6.0] — 2026-06-16
+### Added
+- TipTap editor: independent scroll on both editor and live preview panes
+- TipTap editor: resize handle bar at bottom — drag to resize height (min 200px)
+- TipTap editor: HTML source view font increased to 14px
+- TipTap preview: `display:flex` via CSS class (`.tiptap-preview-pane`) — fixes Alpine x-show overriding flex scroll
+- TipTap auto-scroll: preview scrolls only its own panel (`panel.scrollTop`) not the page
+### Fixed
+- Preview scroll broken: `x-show` was setting `display:block` over inline `display:flex`, preventing flex scrolling
+- Resize handles inside panes were clipped by `overflow:hidden` — moved to sibling resize bar
+- `overflow:hidden` on tiptap container now correctly clips both panes while resize bar (sibling) remains accessible
+
 ## [1.5.0] — 2026-06-16
 ### Added
 - TipTap editor with live split-pane preview (real-time sync, auto-scroll to cursor position)
