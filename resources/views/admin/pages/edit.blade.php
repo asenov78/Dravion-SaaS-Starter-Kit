@@ -104,7 +104,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('pages.content') }}</label>
                 <div x-data="tiptap({ content: {{ json_encode(old('translations.'.$lang->code.'.content', $t?->content ?? ($lang->is_default ? $page->content : ''))) }}, placeholder: '{{ __('pages.content') }}...' })"
-                     class="tiptap-editor rounded-lg border border-gray-300 dark:border-gray-700"
+                     class="tiptap-editor rounded-lg border border-gray-300 dark:border-gray-700 overflow-hidden"
                      style="display:flex; align-items:stretch; height:520px;"
                      @destroy.window="destroy()">
                     {{-- Left: toolbar + editor --}}
