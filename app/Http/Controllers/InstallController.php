@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\EnvWriter;
+use App\Services\LicenseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 
 class InstallController extends Controller
@@ -113,35 +113,20 @@ class InstallController extends Controller
         $appUrl = session('install_db.app_url', config('app.url'));
         $domain = parse_url($appUrl, PHP_URL_HOST) ?? request()->getHost();
 
-        $response = $this->callLicenseServer('activate', [
-            'purchase_code' => $code,
-            'domain'        => $domain,
-        ]);
+        $result = LicenseService::activate($code, $domain);
 
-        if (! $response || isset($response['error'])) {
-            $msg = $response['error'] ?? 'Could not reach license server. Check your purchase code.';
-            return back()->withErrors(['purchase_code' => $msg])->withInput();
+        if (isset($result['error'])) {
+            return back()->withErrors(['purchase_code' => $result['error']])->withInput();
         }
 
         session(['install_license' => [
             'purchase_code' => $code,
-            'license_key'   => $response['license_key'],
+            'license_key'   => $result['license_key'],
         ]]);
 
         return redirect()->route('install.step', 'finish');
     }
 
-    private function callLicenseServer(string $endpoint, array $body): ?array
-    {
-        $url = rtrim(config('dravion.license_server', 'https://apsbg.com/dravion-server'), '/') . '/api/router.php?endpoint=' . $endpoint;
-
-        try {
-            $response = Http::timeout(10)->post($url, $body);
-            return $response->json();
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
 
     private function handleFinish(Request $request)
     {

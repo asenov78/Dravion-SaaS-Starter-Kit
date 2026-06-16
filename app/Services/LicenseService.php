@@ -2,9 +2,41 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Http;
+
 class LicenseService
 {
     private const CACHE_FILE = 'license.cache';
+
+    /**
+     * Activate a purchase code against the license server.
+     * Returns ['license_key' => '...'] on success, ['error' => '...'] on failure.
+     */
+    public static function activate(string $purchaseCode, string $domain): array
+    {
+        $server = rtrim(config('dravion.license_server', 'https://apsbg.com/dravion-server'), '/');
+
+        try {
+            $response = Http::timeout(10)->post("{$server}/api/router.php?endpoint=activate", [
+                'purchase_code' => $purchaseCode,
+                'domain'        => $domain,
+            ]);
+
+            $data = $response->json();
+
+            if (! $response->successful()) {
+                return ['error' => $data['error'] ?? $data['message'] ?? 'Activation failed.'];
+            }
+
+            if (! isset($data['license_key'])) {
+                return ['error' => 'Invalid response from license server.'];
+            }
+
+            return $data;
+        } catch (\Throwable $e) {
+            return ['error' => 'Could not reach license server. Try again later.'];
+        }
+    }
 
     /**
      * Whether the installation holds a valid license.

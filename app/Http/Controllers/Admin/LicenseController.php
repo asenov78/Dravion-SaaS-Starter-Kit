@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\EnvWriter;
+use App\Services\LicenseService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
 class LicenseController extends Controller
@@ -25,30 +25,19 @@ class LicenseController extends Controller
         $request->validate(['license_key' => 'required|string|min:6']);
 
         $domain = parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
-        $server = rtrim(config('dravion.license_server'), '/');
+        $result = LicenseService::activate($request->license_key, $domain);
 
-        try {
-            $response = Http::timeout(10)->post("{$server}/api/router.php?endpoint=activate", [
-                'purchase_code' => $request->license_key,
-                'domain'        => $domain,
-            ]);
-
-            if (! $response->successful()) {
-                $msg = $response->json('error') ?? $response->json('message') ?? 'Activation failed.';
-                return redirect()->route('admin.license')->withErrors(['license_key' => $msg]);
-            }
-
-            $licenseKey = $response->json('license_key');
-            if (! app()->environment('testing')) {
-                $this->writeEnvKey('DRAVION_LICENSE_KEY', $licenseKey);
-            }
-            config(['dravion.license_key' => $licenseKey]);
-            @unlink(storage_path('license.cache'));
-            session()->forget('license_warning');
-
-        } catch (\Throwable) {
-            return redirect()->route('admin.license')->withErrors(['license_key' => 'Could not reach license server. Try again later.']);
+        if (isset($result['error'])) {
+            return redirect()->route('admin.license')->withErrors(['license_key' => $result['error']]);
         }
+
+        $licenseKey = $result['license_key'];
+        if (! app()->environment('testing')) {
+            $this->writeEnvKey('DRAVION_LICENSE_KEY', $licenseKey);
+        }
+        config(['dravion.license_key' => $licenseKey]);
+        @unlink(storage_path('license.cache'));
+        session()->forget('license_warning');
 
         return redirect()->route('admin.license')->with('success', __('flash.license_activated'));
     }
