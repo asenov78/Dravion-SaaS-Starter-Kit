@@ -2,6 +2,19 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.8.0] — 2026-06-16
+### Added
+- Two-Factor Authentication (TOTP) with `pragmarx/google2fa-laravel` + `bacon/bacon-qr-code`
+- `TwoFactorController`: setup (QR code), confirm, disable, challenge, verify actions
+- Login gate: users with 2FA enabled are redirected to TOTP challenge before session is created
+- Migration: `two_factor_secret` + `two_factor_confirmed_at` columns on users table
+- Views: `auth/two-factor/setup.blade.php`, `manage.blade.php`, `challenge.blade.php`
+- Profile page: 2FA card with link to enable/manage
+- Lang keys: `auth.2fa_*` (en + bg), `flash.2fa_enabled`, `flash.2fa_disabled`
+- TwoFactorTest: 12 tests covering full 2FA lifecycle
+### Security
+- #21: TOTP 2FA added — eliminates password-only auth risk for admin accounts
+
 ## [1.7.0] — 2026-06-16
 ### Added
 - EnvWriter service: atomic `.env` writes with `flock()` — eliminates race condition on concurrent admin requests

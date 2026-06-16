@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\SessionController;
@@ -72,6 +73,17 @@ Route::middleware('auth')->group(function () {
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 
 Route::get('/locale/{code}', [LocaleController::class, 'switch'])->name('locale.switch');
+
+// 2FA challenge (before full login — no auth middleware, guarded by session key)
+Route::get('/two-factor/challenge',  [TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
+Route::post('/two-factor/challenge', [TwoFactorController::class, 'verify'])->middleware('throttle:5,1')->name('two-factor.verify');
+
+// 2FA setup / manage (requires full auth)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/profile/two-factor',    [TwoFactorController::class, 'show'])->name('profile.two-factor');
+    Route::post('/profile/two-factor',   [TwoFactorController::class, 'confirm'])->name('profile.two-factor.confirm');
+    Route::delete('/profile/two-factor', [TwoFactorController::class, 'disable'])->name('profile.two-factor.disable');
+});
 
 // Email verification
 Route::middleware('auth')->group(function () {

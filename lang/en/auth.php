@@ -33,4 +33,21 @@ return [
     'verify_instructions' => 'Thanks for signing up! Before getting started, please verify your email address by clicking the link we sent to your email.',
     'verify_resend'       => 'Resend Verification Email',
     'verify_resent'       => 'A new verification link has been sent to your email.',
+
+    // 2FA
+    '2fa_title'              => 'Two-Factor Authentication',
+    '2fa_subtitle'           => 'Enter the code from your authenticator app',
+    '2fa_code'               => 'Authentication Code',
+    '2fa_verify'             => 'Verify',
+    '2fa_setup_title'        => 'Set Up Two-Factor Authentication',
+    '2fa_setup_instructions' => 'Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.), then enter the 6-digit code to confirm.',
+    '2fa_enter_code'         => 'Enter 6-digit code',
+    '2fa_enable'             => 'Enable Two-Factor Auth',
+    '2fa_manage_title'       => 'Two-Factor Authentication',
+    '2fa_manage_description' => 'Two-factor authentication is currently enabled. To disable it, enter your current password.',
+    '2fa_enabled_badge'      => '2FA is enabled',
+    '2fa_disable'            => 'Disable Two-Factor Auth',
+    '2fa_not_setup'          => '2FA is not configured. Please set it up again.',
+    '2fa_invalid_code'       => 'Invalid authentication code. Please try again.',
+    'current_password'       => 'Current Password',
 ];

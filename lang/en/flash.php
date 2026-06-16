@@ -36,4 +36,6 @@ return [
     'page_created'             => 'Page created.',
     'page_updated'             => 'Page updated.',
     'page_deleted'             => 'Page deleted.',
+    '2fa_enabled'              => 'Two-factor authentication enabled.',
+    '2fa_disabled'             => 'Two-factor authentication disabled.',
 ];

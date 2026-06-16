@@ -35,6 +35,30 @@
     </div>
     @endif
 
+    {{-- Two-Factor Authentication --}}
+    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90" style="margin:0 0 4px;">{{ __('auth.2fa_manage_title') }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400" style="margin:0;">
+                    @if(auth()->user()->two_factor_confirmed_at)
+                        {{ __('auth.2fa_enabled_badge') }}
+                    @else
+                        {{ __('auth.2fa_setup_title') }}
+                    @endif
+                </p>
+            </div>
+            <a href="{{ route('profile.two-factor') }}"
+                class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-white/[0.03] dark:text-gray-300 dark:hover:bg-white/[0.06] transition-colors">
+                @if(auth()->user()->two_factor_confirmed_at)
+                    {{ __('app.edit') }}
+                @else
+                    {{ __('auth.2fa_enable') }}
+                @endif
+            </a>
+        </div>
+    </div>
+
     {{-- Change password --}}
     <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">Change Password</h3>
