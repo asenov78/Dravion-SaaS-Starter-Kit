@@ -21,7 +21,7 @@ $excludeFiles = @('.env', '*.log', 'make-full-zip.ps1', '.phpunit.result.cache',
 
 robocopy $src $tmp /E /XD $excludeDirs /XF $excludeFiles /NFL /NDL /NJH /NJS /NC /NS | Out-Null
 
-# 2. Remove leftover storage data (keep skeleton dirs)
+# 2. Remove leftover storage data (keep skeleton dirs) + write .gitkeep so ZIP includes them
 @(
     "$tmp\storage\logs",
     "$tmp\storage\app\public",
@@ -40,8 +40,9 @@ robocopy $src $tmp /E /XD $excludeDirs /XF $excludeFiles /NFL /NDL /NJH /NJS /NC
 # 3. composer install --no-dev in temp (creates vendor/)
 if (-not (Test-Path "$tmp\vendor")) {
     Write-Host "Running composer install --no-dev ..."
-    $php = (Get-Command php -ErrorAction SilentlyContinue)?.Source
-    if (-not $php) { Write-Warning "PHP not found on PATH — vendor will be missing"; }
+    $phpCmd = Get-Command php -ErrorAction SilentlyContinue
+    $php = if ($phpCmd) { $phpCmd.Source } else { $null }
+    if (-not $php) { Write-Warning "PHP not found on PATH - vendor will be missing" }
     else {
         Push-Location $tmp
         & composer install --no-dev --optimize-autoloader --no-interaction --quiet 2>&1
@@ -51,7 +52,7 @@ if (-not (Test-Path "$tmp\vendor")) {
     Write-Host "vendor/ already in temp (copied from src)"
 }
 
-# Remove bootstrap/cache PHP files — they contain absolute dev-machine paths
+# Remove bootstrap/cache PHP files - they contain absolute dev-machine paths
 # and break Laravel on shared hosting (Target class [view] does not exist)
 Get-ChildItem "$tmp\bootstrap\cache\*.php" -ErrorAction SilentlyContinue | Remove-Item -Force
 
@@ -65,7 +66,7 @@ Get-ChildItem -Path $tmp -Recurse -File | ForEach-Object {
     try {
         [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($z, $_.FullName, $rel) | Out-Null
     } catch {
-        Write-Warning "Skipped: $rel — $_"
+        Write-Warning "Skipped: $rel - $_"
     }
 }
 $z.Dispose()
@@ -73,5 +74,5 @@ $z.Dispose()
 # 5. Cleanup temp
 Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
 
-$size = [math]::Round((Get-Item $out).Length / 1MB, 2)
-Write-Host "Done: $out ($size MB)"
+$sizeMB = [math]::Round((Get-Item $out).Length / 1048576, 2)
+Write-Host "Done: $out ($sizeMB MB)"
