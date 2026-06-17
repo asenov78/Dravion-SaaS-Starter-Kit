@@ -39,7 +39,7 @@
             <div class="divide-y divide-gray-100 dark:divide-gray-800">
                 <div class="flex items-center justify-between px-5 py-3.5">
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('updates.current_version') }}</p>
-                    <p class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90">v{{ $current }}</p>
+                    <p class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90" id="current-version-display">v{{ $current }}</p>
                 </div>
                 <div class="flex items-center justify-between px-5 py-3.5">
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('updates.latest_version') }}</p>
@@ -71,59 +71,53 @@
     {{-- RIGHT COLUMN: main content --}}
     <div class="lg:col-span-2 flex flex-col gap-5">
 
-        {{-- Update panel — fully driven by Alpine once page loads --}}
-        <div id="update-panel"
-            x-data="updateInstaller(
-                @json($licensed),
-                @json(array_reverse($update['newer'] ?? [])),
-                @json($update['latest']),
-                @json($current),
-                @json($update['has_update'] ?? false),
-                @json($update['latest'] === null)
-            )">
-
+        @if($update['latest'] === null)
             {{-- Cannot reach server --}}
-            <template x-if="serverUnreachable">
-                <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-6 flex flex-col gap-4">
-                    <div class="flex items-center gap-3">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-500"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                        </span>
-                        <div>
-                            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.check_failed') }}</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ __('updates.check_failed_desc') }}</p>
-                        </div>
-                    </div>
-                    <a href="{{ route('admin.updates') }}" class="self-start inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-                        {{ __('updates.check_again') }}
-                    </a>
-                </div>
-            </template>
-
-            {{-- Up to date --}}
-            <template x-if="!serverUnreachable && !hasUpdate">
-                <div class="rounded-2xl border border-success-200 bg-success-50 dark:border-success-800 dark:bg-success-500/10 p-6">
-                    <div class="flex items-center gap-4">
-                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-success-100 dark:bg-success-500/20">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success-600 dark:text-success-400"><path d="M20 6L9 17l-5-5"/></svg>
-                        </span>
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.up_to_date') }}</h3>
-                            <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400" x-text="`v${installedVersion} — {{ __('updates.up_to_date_desc') }}`"></p>
-                        </div>
-                        <a href="{{ route('admin.updates') }}"
-                            class="shrink-0 inline-flex items-center gap-2 rounded-lg border border-success-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-success-50 dark:border-success-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-success-500/10 transition-colors">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-                            {{ __('updates.check_again') }}
-                        </a>
+            <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-6 flex flex-col gap-4">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-500"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                    </span>
+                    <div>
+                        <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.check_failed') }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ __('updates.check_failed_desc') }}</p>
                     </div>
                 </div>
-            </template>
+                <a href="{{ route('admin.updates') }}" class="self-start inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                    {{ __('updates.check_again') }}
+                </a>
+            </div>
 
-            {{-- Update available — one version at a time --}}
-            <template x-if="!serverUnreachable && hasUpdate">
-                <div class="rounded-2xl border border-brand-200 bg-white dark:border-brand-500/30 dark:bg-gray-900">
+        @elseif($update['has_update'])
+            {{-- Update available — sequential AJAX install (oldest first), no page reload --}}
+            <div @if($licensed) x-data="updateInstaller()" @endif
+                class="rounded-2xl border border-brand-200 bg-white dark:border-brand-500/30 dark:bg-gray-900">
+
+                {{-- "All done" banner replaces the panel when all installs complete --}}
+                @if($licensed)
+                <template x-if="allDone">
+                    <div class="rounded-2xl border border-success-200 bg-success-50 dark:border-success-800 dark:bg-success-500/10 p-6">
+                        <div class="flex items-center gap-4">
+                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-success-100 dark:bg-success-500/20">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success-600 dark:text-success-400"><path d="M20 6L9 17l-5-5"/></svg>
+                            </span>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.up_to_date') }}</h3>
+                                <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400" x-text="message"></p>
+                            </div>
+                            <a href="{{ route('admin.updates') }}"
+                                class="shrink-0 inline-flex items-center gap-2 rounded-lg border border-success-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-success-50 dark:border-success-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-success-500/10 transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                                {{ __('updates.check_again') }}
+                            </a>
+                        </div>
+                    </div>
+                </template>
+                @endif
+
+                {{-- Main update panel — hidden when allDone --}}
+                <div @if($licensed) x-show="!allDone" @endif>
 
                     {{-- Header --}}
                     <div class="flex items-center gap-3 px-6 py-4 border-b border-brand-100 dark:border-brand-500/20">
@@ -131,47 +125,30 @@
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-brand-600 dark:text-brand-400"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         </span>
                         <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.update_available') }}</h3>
-                                {{-- Badge: "2 of 5 pending" --}}
-                                <template x-if="queue.length > 1">
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-300"
-                                        x-text="`${pendingCount} {{ __('updates.pending') }}`"></span>
-                                </template>
-                            </div>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
-                                <span x-text="`v${installedVersion}`"></span>
-                                <span class="mx-1">→</span>
-                                <span class="font-semibold text-brand-600 dark:text-brand-400" x-text="`v${next.version}`"></span>
-                                <template x-if="queue.length > 1">
-                                    <span class="text-gray-400 dark:text-gray-500" x-text="` ({{ __('updates.step') }} ${currentStep} {{ __('updates.of') }} ${queue.length})`"></span>
-                                </template>
-                            </p>
+                            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.update_available') }}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-0.5">v{{ $current }} → <span class="font-semibold text-brand-600 dark:text-brand-400">v{{ $update['latest'] }}</span></p>
                         </div>
                     </div>
 
-                    {{-- Changelog for the NEXT version only --}}
+                    {{-- Per-version changelogs (all newer versions) --}}
+                    @if(!empty($update['newer']))
                     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                         <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{{ __('updates.whats_new') }}</p>
-
-                        {{-- Upcoming versions (collapsed list) --}}
-                        <template x-if="queue.length > 1">
-                            <div class="mb-3 flex flex-wrap gap-1.5">
-                                <template x-for="(rel, i) in queue" :key="rel.version">
-                                    <span class="px-2 py-0.5 text-xs font-mono rounded-full border"
-                                        :class="i === currentStep - 1
-                                            ? 'bg-brand-50 border-brand-300 text-brand-700 dark:bg-brand-500/10 dark:border-brand-500/40 dark:text-brand-300 font-semibold'
-                                            : i < currentStep - 1
-                                                ? 'bg-success-50 border-success-200 text-success-700 dark:bg-success-500/10 dark:border-success-700 dark:text-success-400'
-                                                : 'bg-gray-50 border-gray-200 text-gray-500 dark:bg-gray-800 dark:border-gray-700'"
-                                        x-text="`v${rel.version}`"></span>
-                                </template>
+                        <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                            @foreach($update['newer'] as $rel)
+                            <div class="py-4 first:pt-0 last:pb-0">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90">v{{ $rel['version'] }}</span>
+                                    @if($rel['version'] === $update['latest'])
+                                    <span class="px-1.5 py-0.5 text-[10px] font-semibold uppercase rounded bg-brand-500 text-white leading-none">{{ __('updates.latest') }}</span>
+                                    @endif
+                                </div>
+                                <div class="rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">{{ trim($rel['changelog']) ?: '—' }}</div>
                             </div>
-                        </template>
-
-                        <div class="rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-hidden"
-                            x-text="next.changelog || '—'"></div>
+                            @endforeach
+                        </div>
                     </div>
+                    @endif
 
                     {{-- Actions --}}
                     <div class="px-6 py-4">
@@ -181,15 +158,12 @@
                                 <button type="button" @click="install()" :disabled="loading"
                                     class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-60 transition-colors">
                                     <svg x-show="!loading" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                    <svg x-show="loading" x-cloak class="animate-spin" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
-                                    <span x-text="loading
-                                        ? '{{ __('updates.installing') }}'
-                                        : (queue.length > 1 ? `{{ __('updates.install') }} v${next.version}` : '{{ __('updates.install') }}')">
-                                    </span>
+                                    <svg x-show="loading" class="animate-spin" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+                                    <span x-text="loading ? currentMessage : '{{ __('updates.install') }}'"></span>
                                 </button>
-                                <p x-show="message" x-text="message" x-cloak
-                                    :class="lastOk ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'"
-                                    class="text-sm font-medium"></p>
+                                <p x-show="message && !loading" x-text="message" x-cloak
+                                    :class="ok ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'"
+                                    class="text-sm"></p>
                             </div>
                         @else
                             <div class="flex items-start gap-3 rounded-xl border border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-500/10 p-4">
@@ -205,10 +179,30 @@
                             </div>
                         @endif
                     </div>
-                </div>
-            </template>
 
-        </div>{{-- /update-panel --}}
+                </div>{{-- /main update panel --}}
+
+            </div>
+
+        @else
+            {{-- Up to date --}}
+            <div class="rounded-2xl border border-success-200 bg-success-50 dark:border-success-800 dark:bg-success-500/10 p-6">
+                <div class="flex items-center gap-4">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-success-100 dark:bg-success-500/20">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success-600 dark:text-success-400"><path d="M20 6L9 17l-5-5"/></svg>
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.up_to_date') }}</h3>
+                        <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400">{{ __('updates.up_to_date_desc') }}</p>
+                    </div>
+                    <a href="{{ route('admin.updates') }}"
+                        class="shrink-0 inline-flex items-center gap-2 rounded-lg border border-success-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-success-50 dark:border-success-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-success-500/10 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                        {{ __('updates.check_again') }}
+                    </a>
+                </div>
+            </div>
+        @endif
 
     </div>{{-- /right --}}
 
@@ -285,72 +279,76 @@
     </div>
 </div>
 
+@if($licensed && $update['has_update'])
 <script>
-function updateInstaller(licensed, queue, latestVersion, startVersion, hasUpdateInit, serverUnreachableInit) {
-    return {
-        licensed,
-        // queue = older releases first, e.g. [1.10.21, 1.10.22, 1.10.23]
-        queue,
-        installedVersion: startVersion,
-        latestVersion,
-        hasUpdate: hasUpdateInit,
-        serverUnreachable: serverUnreachableInit,
-        currentStep: 1,       // 1-based index into queue
-        loading: false,
-        lastOk: null,
-        message: '',
+function updateInstaller() {
+    // queue = all pending releases, oldest first
+    const queue = @json(array_reverse($update['newer'] ?? []));
 
-        get next() { return this.queue[this.currentStep - 1] || null; },
-        get pendingCount() { return this.queue.length - (this.currentStep - 1); },
+    return {
+        loading: false,
+        ok: null,
+        message: '',
+        currentMessage: '',
+        allDone: false,
 
         async install() {
-            if (!this.next || !this.licensed || this.loading) return;
+            if (this.loading || !queue.length) return;
             this.loading = true;
+            this.ok = null;
             this.message = '';
-            this.lastOk  = null;
 
-            try {
-                const res  = await fetch('{{ route('admin.updates.install') }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        zip_url:   this.next.zip_url,
-                        changelog: this.next.changelog || '',
-                    }),
-                });
-                const data = await res.json();
-                this.loading = false;
+            const installed = [];
 
-                if (data.ok) {
-                    this.lastOk          = true;
-                    this.installedVersion = data.version || this.next.version;
-                    const justInstalled  = this.next.version;
-                    this.currentStep++;
+            for (const rel of queue) {
+                if (!rel.zip_url) continue;
 
-                    if (this.currentStep > this.queue.length) {
-                        // All versions installed — mark up-to-date
-                        this.hasUpdate = false;
-                        this.message   = '';
+                this.currentMessage = `{{ __('updates.installing') }} v${rel.version}`;
+
+                try {
+                    const res  = await fetch('{{ route('admin.updates.install') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            zip_url:   rel.zip_url,
+                            changelog: rel.changelog || '',
+                        }),
+                    });
+                    const data = await res.json();
+
+                    if (data.ok) {
+                        installed.push(rel.version);
+                        // update version display in sidebar card
+                        const el = document.getElementById('current-version-display');
+                        if (el) el.textContent = 'v' + (data.version || rel.version);
                     } else {
-                        // More pending — show success for installed, prompt for next
-                        this.message = `v${justInstalled} {{ __('updates.install_success') }} — {{ __('updates.next_ready') }} v${this.next.version}`;
+                        this.loading = false;
+                        this.ok = false;
+                        this.message = data.message || '{{ __('updates.install_failed') }}';
+                        return;
                     }
-                } else {
-                    this.lastOk  = false;
-                    this.message = data.message || '{{ __('updates.install_failed') }}';
+                } catch (e) {
+                    this.loading = false;
+                    this.ok = false;
+                    this.message = e.message;
+                    return;
                 }
-            } catch (e) {
-                this.loading = false;
-                this.lastOk  = false;
-                this.message = e.message;
             }
+
+            this.loading = false;
+            this.ok = true;
+            this.allDone = true;
+            this.message = installed.length === 1
+                ? `v${installed[0]} {{ __('updates.install_success') }}`
+                : `${installed.length} {{ __('updates.versions_installed') }}: v${installed.join(', v')}`;
         },
     };
 }
 </script>
+@endif
 
 </x-layouts.admin>

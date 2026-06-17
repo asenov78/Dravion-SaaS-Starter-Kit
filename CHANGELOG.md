@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.32] — 2026-06-17
+### Fixed
+- Updater: reverted to old design (Blade conditionals, all changelogs visible); sequential AJAX install still active — button installs all pending versions oldest-first, no page reload; "up to date" state shown inline when done
+- diag.php v3: fixed `define(LARAVEL_START)` error; proper Laravel boot for accurate Storage::url() diagnostics
+
 ## [1.10.31] — 2026-06-17
 ### Changed
 - Updater: installs versions one at a time (oldest first) instead of jumping to latest; each install is AJAX — no full page reload; pill badges show progress (step N of M); after each success the next version is shown with its own Install button; when all done the panel switches to "up to date" state without reload
