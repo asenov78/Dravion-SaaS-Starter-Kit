@@ -44,6 +44,42 @@ class UpdaterServiceSortTest extends TestCase
         $this->assertSame('1.10.0', $latest['version']);
     }
 
+    public function test_has_update_true_when_installed_older_than_github(): void
+    {
+        // Scenario: installed = 1.4.0, GitHub latest = 1.10.0
+        config(['dravion.version' => '1.4.0']);
+
+        Http::fake([
+            'api.github.com/*' => Http::response([
+                ['tag_name' => 'v1.10.0', 'body' => '', 'zipball_url' => 'https://example.com/1.10.0.zip', 'draft' => false],
+                ['tag_name' => 'v1.4.0',  'body' => '', 'zipball_url' => 'https://example.com/1.4.0.zip',  'draft' => false],
+            ], 200),
+        ]);
+
+        $info = (new UpdaterService())->checkForUpdate();
+
+        $this->assertSame('1.4.0',  $info['current']);
+        $this->assertSame('1.10.0', $info['latest']);
+        $this->assertTrue($info['has_update'], 'Must show update available when installed < GitHub');
+    }
+
+    public function test_has_update_false_when_on_latest(): void
+    {
+        config(['dravion.version' => '1.10.0']);
+
+        Http::fake([
+            'api.github.com/*' => Http::response([
+                ['tag_name' => 'v1.10.0', 'body' => '', 'zipball_url' => 'https://example.com/1.10.0.zip', 'draft' => false],
+            ], 200),
+        ]);
+
+        $info = (new UpdaterService())->checkForUpdate();
+
+        $this->assertSame('1.10.0', $info['current']);
+        $this->assertSame('1.10.0', $info['latest']);
+        $this->assertFalse($info['has_update'], 'Must NOT show update when already on latest');
+    }
+
     public function test_draft_releases_excluded(): void
     {
         Http::fake([
