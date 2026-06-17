@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.31] — 2026-06-17
+### Changed
+- Updater: installs versions one at a time (oldest first) instead of jumping to latest; each install is AJAX — no full page reload; pill badges show progress (step N of M); after each success the next version is shown with its own Install button; when all done the panel switches to "up to date" state without reload
+
 ## [1.10.30] — 2026-06-17
 ### Security
 - CRITICAL: Path traversal in `GET /storage/{path}` — `realpath()` + prefix check now blocks `../../` escapes from `storage/app/public/`
