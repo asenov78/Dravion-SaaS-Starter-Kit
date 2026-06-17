@@ -48,4 +48,25 @@ class StorageLinkTest extends TestCase
         $this->assertStringContainsString('/storage/', $url);
         $this->assertStringContainsString('avatars/', $url);
     }
+
+    public function test_storage_serve_route_returns_file_when_symlink_missing(): void
+    {
+        // Write a real file to storage/app/public so the route can serve it
+        $content = 'fake-image-data';
+        $relative = 'avatars/test-serve.jpg';
+        $dir = storage_path('app/public/avatars');
+        if (!is_dir($dir)) mkdir($dir, 0755, true);
+        file_put_contents(storage_path('app/public/' . $relative), $content);
+
+        $response = $this->get('/storage/' . $relative);
+        $response->assertOk();
+
+        // Cleanup
+        @unlink(storage_path('app/public/' . $relative));
+    }
+
+    public function test_storage_serve_route_returns_404_for_missing_file(): void
+    {
+        $this->get('/storage/avatars/nonexistent-file-xyz.jpg')->assertNotFound();
+    }
 }

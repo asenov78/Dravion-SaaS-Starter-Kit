@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.24] — 2026-06-17
+### Fixed
+- Avatar and logo images not loading: added `GET /storage/{path}` PHP route that serves files directly from `storage/app/public/` — guaranteed to work on shared hosting without symlink; Apache's `.htaccess` rewrite falls through to PHP when the symlink is absent
+
 ## [1.10.23] — 2026-06-17
 ### Fixed
 - Avatar and logo images not loading on shared hosting: added `serve: true` to `public` filesystem disk — Laravel now serves `storage/app/public` files via built-in route (`GET /storage/{path}`) without requiring a working symlink
