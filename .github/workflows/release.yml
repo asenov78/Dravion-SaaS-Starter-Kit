@@ -23,7 +23,11 @@ jobs:
           fetch-depth: 0
 
       - name: Verify PHP (pre-installed on ubuntu-latest)
-        run: php --version
+        run: |
+          echo "=== PHP ===" && php --version
+          echo "=== Composer ===" && composer --version
+          echo "=== Node ===" && node --version || true
+          echo "=== NPM ===" && npm --version || true
 
       - name: Read version
         id: version
