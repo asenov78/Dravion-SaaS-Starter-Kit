@@ -30,16 +30,20 @@ if (! file_exists(__DIR__ . '/.env') && file_exists(__DIR__ . '/.env.installer')
     copy(__DIR__ . '/.env.installer', __DIR__ . '/.env');
 }
 
-// If .env exists but APP_KEY is missing, inject installer key so Laravel can boot
+// Ensure APP_KEY is set — generate and persist a real key if missing or empty
 if (file_exists(__DIR__ . '/.env')) {
     $envContent = file_get_contents(__DIR__ . '/.env');
-    if (preg_match('/^APP_KEY=\s*$/m', $envContent)) {
-        $envContent = preg_replace(
-            '/^APP_KEY=\s*$/m',
-            'APP_KEY=base64:ZHJhdmlvbi1pbnN0YWxsZXIta2V5LTMyYnl0ZXMA',
-            $envContent
-        );
+    if (! preg_match('/^APP_KEY=.+$/m', $envContent)) {
+        $key = 'base64:' . base64_encode(openssl_random_pseudo_bytes(32));
+        if (preg_match('/^APP_KEY=.*$/m', $envContent)) {
+            $envContent = preg_replace('/^APP_KEY=.*$/m', 'APP_KEY=' . $key, $envContent);
+        } else {
+            $envContent .= "\nAPP_KEY=" . $key;
+        }
         file_put_contents(__DIR__ . '/.env', $envContent);
+        putenv('APP_KEY=' . $key);
+        $_ENV['APP_KEY'] = $key;
+        $_SERVER['APP_KEY'] = $key;
     }
 }
 

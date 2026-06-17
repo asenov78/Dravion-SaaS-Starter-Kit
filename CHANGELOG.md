@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.7] — 2026-06-17
+### Fixed
+- `index.php`: generate real random `APP_KEY` via `openssl_random_pseudo_bytes(32)` when missing or empty in `.env` — handles both empty line and missing line cases; sets via `putenv`/`$_ENV`/`$_SERVER` so Laravel picks it up before dotenv runs
+
 ## [1.10.6] — 2026-06-17
 ### Fixed
 - `index.php`: auto-create `bootstrap/cache` and `storage/` skeleton dirs at runtime — eliminates "directory must be present and writable" crash on shared hosting where ZIP extraction skips empty directories
