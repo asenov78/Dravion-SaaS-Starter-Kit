@@ -26,8 +26,16 @@ use Illuminate\Support\Facades\Route;
 
 // Serve public storage files via PHP — fallback when symlink is missing on shared hosting
 Route::get('/storage/{path}', function (string $path) {
-    $fullPath = storage_path('app/public/' . $path);
-    abort_if(!file_exists($fullPath) || !is_file($fullPath), 404);
+    $base     = storage_path('app/public');
+    $fullPath = realpath($base . DIRECTORY_SEPARATOR . $path);
+
+    // Block path traversal: resolved path must stay inside storage/app/public/
+    abort_if(
+        $fullPath === false || !str_starts_with($fullPath, $base . DIRECTORY_SEPARATOR),
+        404
+    );
+    abort_if(!is_file($fullPath), 404);
+
     $mime = mime_content_type($fullPath) ?: 'application/octet-stream';
     return response()->file($fullPath, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=31536000']);
 })->where('path', '.*')->name('storage.serve');

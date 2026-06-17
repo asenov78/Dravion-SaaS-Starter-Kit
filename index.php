@@ -67,6 +67,12 @@ if (file_exists(__DIR__ . '/.env')) {
         putenv('APP_URL=' . $detectedUrl);
         $_ENV['APP_URL']    = $detectedUrl;
         $_SERVER['APP_URL'] = $detectedUrl;
+
+        // Clear config cache — otherwise cached config still has the old APP_URL baked in
+        $configCache = __DIR__ . '/bootstrap/cache/config.php';
+        if (file_exists($configCache)) {
+            @unlink($configCache);
+        }
     }
 }
 

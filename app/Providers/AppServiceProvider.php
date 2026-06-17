@@ -47,6 +47,18 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->ensureStorageSymlink();
+        $this->fixStorageDiskUrl();
+    }
+
+    private function fixStorageDiskUrl(): void
+    {
+        // getenv() reads the live env var set by index.php putenv() — NOT the cached config value.
+        // This corrects the storage disk URL on the same request that fixed APP_URL in .env,
+        // even when bootstrap/cache/config.php had the old URL baked in.
+        $appUrl = getenv('APP_URL') ?: config('app.url');
+        if ($appUrl && $appUrl !== 'http://localhost') {
+            config(['filesystems.disks.public.url' => rtrim($appUrl, '/') . '/storage']);
+        }
     }
 
     private function ensureStorageSymlink(): void

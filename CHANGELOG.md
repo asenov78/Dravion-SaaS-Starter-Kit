@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.30] — 2026-06-17
+### Security
+- CRITICAL: Path traversal in `GET /storage/{path}` — `realpath()` + prefix check now blocks `../../` escapes from `storage/app/public/`
+- HIGH: CMS XSS — replaced `strip_tags()` (allowed event handlers on permitted tags) with DOMDocument sanitizer that explicitly whitelists attributes per tag and strips all `on*` handlers and `javascript:`/`data:` URI schemes
+### Fixed
+- Storage images: `AppServiceProvider` now overrides `filesystems.disks.public.url` from live env (via `getenv()`) — works even when config cache has stale APP_URL baked in
+- Storage images: `index.php` clears `bootstrap/cache/config.php` when APP_URL is auto-corrected — next request starts fresh
+
 ## [1.10.29] — 2026-06-17
 ### Performance
 - Cache DB translations 24h per locale+group → eliminates repeated DB queries on every page load (main TTFB fix)

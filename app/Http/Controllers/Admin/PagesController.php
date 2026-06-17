@@ -137,8 +137,77 @@ class PagesController extends Controller
 
     private function sanitizeContent(?string $html): ?string
     {
-        if ($html === null) return null;
-        return strip_tags($html, '<p><br><strong><em><b><i><u><ul><ol><li><h1><h2><h3><h4><h5><h6><a><img><blockquote><code><pre><table><thead><tbody><tr><th><td><hr><span><div>');
+        if ($html === null || trim($html) === '') return $html;
+
+        $allowedTags  = ['p','br','strong','em','b','i','u','ul','ol','li',
+                         'h1','h2','h3','h4','h5','h6','a','img','blockquote',
+                         'code','pre','table','thead','tbody','tr','th','td','hr','span','div'];
+
+        // Attributes permitted per tag (no on* handlers, no javascript: hrefs)
+        $allowedAttrs = [
+            'a'   => ['href','title','target','rel'],
+            'img' => ['src','alt','title','width','height'],
+            '*'   => ['class','id','style'],
+        ];
+
+        $dom = new \DOMDocument('1.0', 'UTF-8');
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<meta charset="utf-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        $this->domSanitize($dom->documentElement, $allowedTags, $allowedAttrs);
+
+        // Extract only the body content (strip html/head wrapper added by loadHTML)
+        $body = $dom->getElementsByTagName('body')->item(0);
+        if (!$body) {
+            return strip_tags($html);
+        }
+
+        $out = '';
+        foreach ($body->childNodes as $child) {
+            $out .= $dom->saveHTML($child);
+        }
+
+        return $out;
+    }
+
+    private function domSanitize(\DOMNode $node, array $allowedTags, array $allowedAttrs): void
+    {
+        $remove = [];
+        foreach ($node->childNodes as $child) {
+            if ($child instanceof \DOMElement) {
+                $tag = strtolower($child->tagName);
+                if (!in_array($tag, $allowedTags, true)) {
+                    $remove[] = $child;
+                    continue;
+                }
+                // Remove disallowed attributes (including all on* handlers)
+                $permitted = array_merge($allowedAttrs['*'] ?? [], $allowedAttrs[$tag] ?? []);
+                $attrRemove = [];
+                foreach ($child->attributes as $attr) {
+                    $name = strtolower($attr->name);
+                    if (!in_array($name, $permitted, true) || str_starts_with($name, 'on')) {
+                        $attrRemove[] = $name;
+                    }
+                }
+                // Block javascript: in href/src
+                foreach (['href', 'src', 'action'] as $urlAttr) {
+                    if ($child->hasAttribute($urlAttr)) {
+                        $val = trim(strtolower(preg_replace('/\s+/', '', $child->getAttribute($urlAttr))));
+                        if (str_starts_with($val, 'javascript:') || str_starts_with($val, 'data:')) {
+                            $attrRemove[] = $urlAttr;
+                        }
+                    }
+                }
+                foreach (array_unique($attrRemove) as $a) {
+                    $child->removeAttribute($a);
+                }
+                $this->domSanitize($child, $allowedTags, $allowedAttrs);
+            }
+        }
+        foreach ($remove as $n) {
+            $node->removeChild($n);
+        }
     }
 
     private function saveTranslations(Page $page, array $translations): void
