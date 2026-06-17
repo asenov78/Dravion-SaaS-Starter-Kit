@@ -32,7 +32,7 @@ jobs:
       - name: Read version
         id: version
         run: |
-          VERSION=$(php -r "\$c = require 'config/dravion.php'; echo \$c['version'];")
+          VERSION=$(grep -oP "'version'\s*=>\s*'\K[^']+" config/dravion.php)
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Detected version: ${VERSION}"
