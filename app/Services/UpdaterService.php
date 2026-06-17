@@ -167,6 +167,13 @@ class UpdaterService
             // Copy files, skipping protected paths.
             $this->copyTree($root, base_path(), (array) config('updater.protected_paths', []));
 
+            // Write new version into the protected config/dravion.php BEFORE
+            // cache clear — so getCurrentVersion() returns the new version immediately.
+            $newVersion = $this->detectVersionFromExtract($root);
+            if ($newVersion) {
+                $this->writeVersionToConfig($newVersion);
+            }
+
             // Migrate + clear caches
             Artisan::call('migrate', ['--force' => true]);
             Artisan::call('config:clear');
@@ -174,15 +181,50 @@ class UpdaterService
             Artisan::call('cache:clear');
             @unlink(storage_path('license.cache'));
 
+            // Reset opcache so updated PHP files are served immediately.
+            if (function_exists('opcache_reset')) {
+                @opcache_reset();
+            }
+
             Artisan::call('up');
 
-            return ['ok' => true, 'message' => 'Update installed successfully.'];
+            return ['ok' => true, 'message' => 'Update installed successfully.', 'version' => $newVersion ?? $this->getCurrentVersion()];
         } catch (\Throwable $e) {
             Artisan::call('up');
             return ['ok' => false, 'message' => $e->getMessage()];
         } finally {
             @unlink($zipPath);
             $this->rrmdir($extractPath);
+        }
+    }
+
+    private function detectVersionFromExtract(string $root): ?string
+    {
+        $configFile = $root . '/config/dravion.php';
+        if (! file_exists($configFile)) {
+            return null;
+        }
+        $content = file_get_contents($configFile);
+        if (preg_match("/'version'\s*=>\s*'([^']+)'/", $content, $m)) {
+            return $m[1];
+        }
+        return null;
+    }
+
+    private function writeVersionToConfig(string $version): void
+    {
+        $configFile = base_path('config/dravion.php');
+        if (! file_exists($configFile)) {
+            return;
+        }
+        $content = file_get_contents($configFile);
+        $updated = preg_replace(
+            "/'version'\s*=>\s*'[^']+'/",
+            "'version' => '{$version}'",
+            $content
+        );
+        if ($updated && $updated !== $content) {
+            file_put_contents($configFile, $updated);
         }
     }
 

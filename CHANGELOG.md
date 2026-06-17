@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.13] — 2026-06-17
+### Fixed
+- `UpdaterService::downloadAndInstall()`: after copying files, explicitly reads new version from extracted `config/dravion.php` and writes it to the protected local config — fixes infinite update loop where version never bumped after successful install
+- `opcache_reset()` called after update to ensure updated PHP files served immediately
+
 ## [1.10.12] — 2026-06-17
 ### Added
 - `InstallSeeder` — central entry point for all installer data seeding; installer calls only this, never anything else
