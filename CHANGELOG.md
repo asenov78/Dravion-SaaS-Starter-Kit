@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.28] — 2026-06-17
+### Fixed
+- Storage images actual root cause: `APP_URL` in `.env` was `https://apsbg.com` (missing `/dravion` subdirectory) → `Storage::url()` generated wrong URLs pointing to the main site instead of the Dravion subdirectory; `index.php` now auto-detects and self-heals `APP_URL` when the stored value is missing the install subdirectory
+
 ## [1.10.27] — 2026-06-17
 ### Fixed
 - Storage images root cause fix: root `.htaccess` was rewriting `storage/xxx` → `public/storage/xxx`, causing Apache to restart with a new path that made Laravel see `REQUEST_URI = /dravion/public/storage/xxx` — no route matches, 404. Fix: removed `storage/.+` from root `.htaccess` rewrite; all storage requests now fall directly to `index.php` → Laravel `storage.serve` route serves the file correctly

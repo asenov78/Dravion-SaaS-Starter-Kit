@@ -43,15 +43,26 @@ if (! file_exists(__DIR__ . '/.env')) {
     }
 }
 
-// Auto-detect APP_URL from the real request and persist it if still the placeholder
+// Auto-detect APP_URL — fix placeholder AND missing subdirectory (e.g. APP_URL=https://domain.com when app lives at /dravion/)
 if (file_exists(__DIR__ . '/.env')) {
-    $envContent = file_get_contents(__DIR__ . '/.env');
-    if (preg_match('/^APP_URL=http:\/\/localhost$/m', $envContent)) {
-        $scheme    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host      = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/index.php')), '/');
-        $detectedUrl = $scheme . '://' . $host . $scriptDir;
-        $envContent = preg_replace('/^APP_URL=.*$/m', 'APP_URL=' . $detectedUrl, $envContent);
+    $envContent  = file_get_contents(__DIR__ . '/.env');
+    $scheme      = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host        = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $scriptDir   = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/index.php')), '/');
+    $detectedUrl = $scheme . '://' . $host . $scriptDir;
+
+    $currentUrl  = '';
+    if (preg_match('/^APP_URL=(.+)$/m', $envContent, $m)) {
+        $currentUrl = rtrim(trim($m[1]), '/');
+    }
+
+    // Update if placeholder, or if subdirectory is missing from current URL
+    if ($currentUrl === 'http://localhost' || ($scriptDir !== '' && $currentUrl !== rtrim($detectedUrl, '/'))) {
+        if (preg_match('/^APP_URL=.*$/m', $envContent)) {
+            $envContent = preg_replace('/^APP_URL=.*$/m', 'APP_URL=' . $detectedUrl, $envContent);
+        } else {
+            $envContent .= "\nAPP_URL=" . $detectedUrl;
+        }
         file_put_contents(__DIR__ . '/.env', $envContent);
         putenv('APP_URL=' . $detectedUrl);
         $_ENV['APP_URL']    = $detectedUrl;
