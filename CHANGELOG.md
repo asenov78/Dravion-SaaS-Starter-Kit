@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.20] — 2026-06-17
+### Fixed
+- Notification dropdown overflow: use `position:absolute; right:0` (inline style) instead of `-right-[240px] lg:right-0` — Tailwind v4 purges unused responsive variants; dropdown no longer expands the page
+- Notification bell badge: reverted to simple pulsing dot (copy-paste from original TailAdmin) — count badge was causing visual issues
+
 ## [1.10.19] — 2026-06-17
 ### Changed
 - Notification bell: unread items now have distinct orange background (`bg-orange-50` / dark equivalent) vs read items; unread count badge on bell button (number with pulsing animation, shows `9+` when over 9); each notification item now shows a bell icon area, title+body in TailAdmin style, and `Notification • time` meta row
