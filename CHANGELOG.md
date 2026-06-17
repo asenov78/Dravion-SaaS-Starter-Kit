@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.6] — 2026-06-17
+### Fixed
+- `index.php`: auto-create `bootstrap/cache` and `storage/` skeleton dirs at runtime — eliminates "directory must be present and writable" crash on shared hosting where ZIP extraction skips empty directories
+
 ## [1.10.5] — 2026-06-17
 ### Fixed
 - `make-full-zip.ps1`: rewritten for PowerShell 5.1 compatibility (removed `?.` null-conditional operator)
