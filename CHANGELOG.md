@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.33] — 2026-06-17
+### Fixed
+- Storage images: call `Storage::forgetDisk('public')` after overriding the disk URL in AppServiceProvider — FilesystemManager caches the adapter with URL baked in on first access, so config() change alone had no effect on already-created adapters
+
 ## [1.10.32] — 2026-06-17
 ### Fixed
 - Updater: reverted to old design (Blade conditionals, all changelogs visible); sequential AJAX install still active — button installs all pending versions oldest-first, no page reload; "up to date" state shown inline when done

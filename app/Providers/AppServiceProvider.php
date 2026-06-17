@@ -8,6 +8,7 @@ use App\Observers\UserObserver;
 use App\Services\LicenseService;
 use App\Translation\DatabaseLoader;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -52,13 +53,21 @@ class AppServiceProvider extends ServiceProvider
 
     private function fixStorageDiskUrl(): void
     {
-        // getenv() reads the live env var set by index.php putenv() — NOT the cached config value.
-        // This corrects the storage disk URL on the same request that fixed APP_URL in .env,
-        // even when bootstrap/cache/config.php had the old URL baked in.
         $appUrl = getenv('APP_URL') ?: config('app.url');
-        if ($appUrl && $appUrl !== 'http://localhost') {
-            config(['filesystems.disks.public.url' => rtrim($appUrl, '/') . '/storage']);
+        if (!$appUrl || $appUrl === 'http://localhost') {
+            return;
         }
+
+        $correctUrl = rtrim($appUrl, '/') . '/storage';
+
+        // Override the config value so any NEW disk instances use the right URL.
+        config(['filesystems.disks.public.url' => $correctUrl]);
+
+        // Purge the cached disk adapter — FilesystemManager caches the adapter on first
+        // use with the URL baked in. Without purge, config() change above has no effect.
+        try {
+            Storage::forgetDisk('public');
+        } catch (\Throwable) {}
     }
 
     private function ensureStorageSymlink(): void
