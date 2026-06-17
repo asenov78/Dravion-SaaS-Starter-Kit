@@ -10,7 +10,13 @@ class MaintenanceMode
 {
     public function handle(Request $request, Closure $next)
     {
-        if (Setting::get('maintenance', '0') === '1') {
+        try {
+            $maintenance = Setting::get('maintenance', '0');
+        } catch (\Throwable) {
+            $maintenance = '0';
+        }
+
+        if ($maintenance === '1') {
             $user = $request->user();
 
             if (! $user || ! $user->hasRole('admin')) {
