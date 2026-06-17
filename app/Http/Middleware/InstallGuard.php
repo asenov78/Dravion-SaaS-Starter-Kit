@@ -16,12 +16,16 @@ class InstallGuard
     public function handle(Request $request, Closure $next): Response
     {
         if (file_exists(storage_path('install.lock'))) {
-            // If lock exists but DB is not working, allow reinstall
+            $dbWorks = false;
             try {
                 \Illuminate\Support\Facades\DB::connection()->getPdo();
-                abort(404);
+                $dbWorks = true;
             } catch (\Throwable) {
-                // DB unavailable — lock is stale, allow installer through
+                // DB unavailable — lock is stale, allow reinstall
+            }
+
+            if ($dbWorks) {
+                abort(404);
             }
         }
 

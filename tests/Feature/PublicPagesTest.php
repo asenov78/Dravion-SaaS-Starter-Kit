@@ -10,6 +10,19 @@ class PublicPagesTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Simulate an installed system so the home route doesn't redirect to /install.
+        file_put_contents(storage_path('install.lock'), 'installed');
+    }
+
+    protected function tearDown(): void
+    {
+        @unlink(storage_path('install.lock'));
+        parent::tearDown();
+    }
+
     public function test_home_page_renders(): void
     {
         $this->get('/')->assertStatus(200);

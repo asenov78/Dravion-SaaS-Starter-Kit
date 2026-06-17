@@ -136,7 +136,7 @@ class UpdatePageTest extends TestCase
         $mock = $this->mock(UpdaterService::class);
         $mock->shouldReceive('downloadAndInstall')
             ->once()
-            ->with($validZipUrl)
+            ->with($validZipUrl, \Mockery::any())
             ->andReturn(['ok' => true, 'message' => 'done']);
 
         $this->actingAs($this->admin())

@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.18] — 2026-06-17
+### Changed
+- Notification bell redesigned to match original TailAdmin: `rounded-full` button, filled bell SVG, pulsing orange `animate-ping` dot badge (replaces number badge), dropdown `rounded-2xl` with X close button and unread orange dot per item
+
 ## [1.10.17] — 2026-06-17
 ### Fixed
 - `UpdaterService`: read changelog from `CHANGELOG.md` in the extracted ZIP (not from GitHub release body which is often empty) — `detectChangelogFromExtract()` parses the matching `## [version]` section via regex
