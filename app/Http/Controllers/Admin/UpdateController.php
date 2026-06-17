@@ -31,6 +31,8 @@ class UpdateController extends Controller
             }, $update['newer']);
         }
 
+        $updater->ensureHistoryExists();
+
         return view('admin.updates.index', [
             'licensed' => $licensed,
             'current'  => $updater->getCurrentVersion(),

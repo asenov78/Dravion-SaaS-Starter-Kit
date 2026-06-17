@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.15] — 2026-06-17
+### Fixed
+- `UpdaterService::ensureHistoryExists()`: bootstrap fix — if `history.json` doesn't exist but `install.lock` does, seeds the file with the current version on first page load (handles manual ZIP deploys that predate history tracking)
+- Update history accordion: entries with `from = —` (bootstrapped) show only the installed version without an arrow
+
 ## [1.10.14] — 2026-06-17
 ### Fixed
 - Update history accordion now shows only updates actually installed via the updater (tracked in `storage/app/updates/history.json`), not all older GitHub releases — fresh install shows 0 history entries

@@ -214,7 +214,11 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90">
-                                v{{ $entry['from'] }} → v{{ $entry['to'] }}
+                                @if($entry['from'] === '—')
+                                    v{{ $entry['to'] }}
+                                @else
+                                    v{{ $entry['from'] }} → v{{ $entry['to'] }}
+                                @endif
                             </span>
                             <span class="px-1.5 py-0.5 text-[10px] font-semibold uppercase rounded bg-success-100 text-success-700 dark:bg-success-500/10 dark:text-success-400 leading-none">
                                 {{ __('updates.installed') }}

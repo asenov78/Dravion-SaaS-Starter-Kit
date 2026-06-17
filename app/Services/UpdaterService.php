@@ -202,6 +202,24 @@ class UpdaterService
         }
     }
 
+    /**
+     * Bootstrap history.json if it doesn't exist yet — records the currently
+     * running version as "installed" so the accordion isn't empty after a
+     * manual ZIP deploy that predates history tracking.
+     */
+    public function ensureHistoryExists(): void
+    {
+        $path = storage_path('app/updates/history.json');
+        if (file_exists($path)) {
+            return;
+        }
+        // Only seed if the installer has already run (install.lock present).
+        if (! file_exists(storage_path('install.lock'))) {
+            return;
+        }
+        $this->appendToHistory('—', $this->getCurrentVersion());
+    }
+
     public function getUpdateHistory(): array
     {
         $path = storage_path('app/updates/history.json');
