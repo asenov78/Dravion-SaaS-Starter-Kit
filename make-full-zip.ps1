@@ -32,7 +32,9 @@ robocopy $src $tmp /E /XD $excludeDirs /XF $excludeFiles /NFL /NDL /NJH /NJS /NC
 ) | ForEach-Object {
     if (Test-Path $_) { Remove-Item "$_\*" -Recurse -Force -ErrorAction SilentlyContinue }
     if (-not (Test-Path $_)) { New-Item -ItemType Directory -Path $_ -Force | Out-Null }
-    # keep .gitignore placeholder if exists
+    # Write .gitkeep so ZIP includes the directory (ZIP skips empty dirs)
+    $gitkeep = "$_\.gitkeep"
+    if (-not (Test-Path $gitkeep)) { New-Item -ItemType File -Path $gitkeep -Force | Out-Null }
 }
 
 # 3. composer install --no-dev in temp (creates vendor/)

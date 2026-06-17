@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.4] — 2026-06-17
+### Fixed
+- `index.php`: inject installer `APP_KEY` when `.env` exists but key is empty — fixes `MissingAppKeyException` on shared hosting if `.env` was uploaded without a key
+- `make-full-zip.ps1`: write `.gitkeep` in all skeleton dirs (logs, sessions, views, cache, bootstrap/cache) so ZIP preserves them — fixes `Please provide a valid cache path` on first boot
+
 ## [1.10.3] — 2026-06-17
 ### Fixed
 - `.htaccess`: removed complex dynamic RewriteBase detection — Apache handles relative substitutions correctly in subdirectory `.htaccess` automatically; works at domain root AND in `/dravion/` subdirectory

@@ -30,6 +30,19 @@ if (! file_exists(__DIR__ . '/.env') && file_exists(__DIR__ . '/.env.installer')
     copy(__DIR__ . '/.env.installer', __DIR__ . '/.env');
 }
 
+// If .env exists but APP_KEY is missing, inject installer key so Laravel can boot
+if (file_exists(__DIR__ . '/.env')) {
+    $envContent = file_get_contents(__DIR__ . '/.env');
+    if (preg_match('/^APP_KEY=\s*$/m', $envContent)) {
+        $envContent = preg_replace(
+            '/^APP_KEY=\s*$/m',
+            'APP_KEY=base64:ZHJhdmlvbi1pbnN0YWxsZXIta2V5LTMyYnl0ZXMA',
+            $envContent
+        );
+        file_put_contents(__DIR__ . '/.env', $envContent);
+    }
+}
+
 if (file_exists($maintenance = __DIR__ . '/storage/framework/maintenance.php')) {
     require $maintenance;
 }
