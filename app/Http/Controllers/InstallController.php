@@ -247,8 +247,14 @@ class InstallController extends Controller
             if (!file_exists(public_path('storage'))) {
                 Artisan::call('storage:link', ['--force' => true]);
             }
-        } catch (\Throwable) {
-            // Non-fatal — user can create symlink manually or copy public/storage
+        } catch (\Throwable) {}
+        // Fallback: relative symlink (works where absolute symlinks fail on shared hosting)
+        if (!file_exists(public_path('storage'))) {
+            try {
+                $target = '../../storage/app/public';
+                $link   = public_path('storage');
+                symlink($target, $link);
+            } catch (\Throwable) {}
         }
 
         // 8. Clear caches

@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.23] — 2026-06-17
+### Fixed
+- Avatar and logo images not loading on shared hosting: added `serve: true` to `public` filesystem disk — Laravel now serves `storage/app/public` files via built-in route (`GET /storage/{path}`) without requiring a working symlink
+- InstallController: fallback relative symlink (`../../storage/app/public`) when `php artisan storage:link` fails (relative symlinks work on most cPanel setups where absolute symlinks fail)
+- Removed `serve: true` from `local` disk to prevent route conflict with `public` disk at `/storage`
+- Added `StorageLinkTest` covering disk config, `serve:true`, and avatar upload URL
+
 ## [1.10.22] — 2026-06-17
 ### Fixed
 - Notification bell dot: uses inline `style` instead of Tailwind classes — Tailwind v4 purges dynamic `:class` bindings; dot now always visible (gray=0 unread, orange+pulsing=unread)
