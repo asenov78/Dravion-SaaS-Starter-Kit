@@ -56,7 +56,7 @@ class PagesController extends Controller
         $page = Page::create([
             'slug'         => $data['slug'],
             'title'        => $defTrans['title'] ?? '',
-            'content'      => $defTrans['content'] ?? null,
+            'content'      => $this->sanitizeContent($defTrans['content'] ?? null),
             'excerpt'      => $defTrans['excerpt'] ?? null,
             'hero_title'   => $defTrans['hero_title'] ?? null,
             'hero_subtitle'=> $defTrans['hero_subtitle'] ?? null,
@@ -110,7 +110,7 @@ class PagesController extends Controller
         $page->update([
             'slug'         => $data['slug'],
             'title'        => $defTrans['title'] ?? $page->title,
-            'content'      => $defTrans['content'] ?? $page->content,
+            'content'      => $this->sanitizeContent($defTrans['content'] ?? null) ?? $page->content,
             'excerpt'      => $defTrans['excerpt'] ?? $page->excerpt,
             'hero_title'   => $defTrans['hero_title'] ?? $page->hero_title,
             'hero_subtitle'=> $defTrans['hero_subtitle'] ?? $page->hero_subtitle,
@@ -135,6 +135,12 @@ class PagesController extends Controller
         return redirect()->route('admin.pages.index')->with('success', __('flash.page_deleted'));
     }
 
+    private function sanitizeContent(?string $html): ?string
+    {
+        if ($html === null) return null;
+        return strip_tags($html, '<p><br><strong><em><b><i><u><ul><ol><li><h1><h2><h3><h4><h5><h6><a><img><blockquote><code><pre><table><thead><tbody><tr><th><td><hr><span><div>');
+    }
+
     private function saveTranslations(Page $page, array $translations): void
     {
         foreach ($translations as $locale => $fields) {
@@ -142,7 +148,7 @@ class PagesController extends Controller
                 ['page_id' => $page->id, 'locale' => $locale],
                 array_filter([
                     'title'            => $fields['title'] ?? null,
-                    'content'          => $fields['content'] ?? null,
+                    'content'          => $this->sanitizeContent($fields['content'] ?? null),
                     'excerpt'          => $fields['excerpt'] ?? null,
                     'hero_title'       => $fields['hero_title'] ?? null,
                     'hero_subtitle'    => $fields['hero_subtitle'] ?? null,

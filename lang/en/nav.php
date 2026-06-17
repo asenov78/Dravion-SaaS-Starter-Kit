@@ -17,6 +17,7 @@ return [
     'mark_all_read'    => 'Mark all read',
     'mark_read'        => 'Mark as read',
     'no_notifications' => 'No notifications yet',
+    'notification'     => 'Notification',
     'portal'           => 'Portal',
     'home'             => 'Home',
     'view_site'        => 'View site',

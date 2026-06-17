@@ -17,6 +17,7 @@ return [
     'mark_all_read'    => 'Маркирай всички като прочетени',
     'mark_read'        => 'Маркирай като прочетено',
     'no_notifications' => 'Няма известия',
+    'notification'     => 'Известие',
     'portal'           => 'Портал',
     'home'             => 'Начало',
     'view_site'        => 'Виж сайта',
