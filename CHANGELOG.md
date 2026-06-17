@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.2] — 2026-06-16
+### Fixed
+- `index.php`: friendly "vendor/ missing" message instead of blank 500 on incomplete upload
+- `SetLocale` middleware: catches DB exception before install (settings table doesn't exist yet)
+- `MaintenanceMode` middleware: catches DB exception before install
+- `.env.installer`: removed SQLite/tmp dependency — uses mysql with empty credentials
+- All pre-install requests now survive without crashing before reaching `/install`
+
 ## [1.10.1] — 2026-06-16
 ### Fixed
 - Release ZIP now includes `vendor/` and `public/build/` (built by GitHub Actions) — required for shared hosting installation without separate `composer install`
