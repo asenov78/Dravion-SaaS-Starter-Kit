@@ -5,6 +5,13 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+// Show PHP errors before install is complete (helps diagnose 500s on shared hosting)
+if (! file_exists(__DIR__ . '/storage/install.lock')) {
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+}
+
 // Shared hosting entry point — serves Laravel from project root
 // without requiring document root to point to /public
 
