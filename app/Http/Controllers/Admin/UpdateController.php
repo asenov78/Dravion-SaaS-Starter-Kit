@@ -64,10 +64,11 @@ class UpdateController extends Controller
         }
 
         $data = $request->validate([
-            'zip_url' => ['required', 'url', new GitHubZipUrl],
+            'zip_url'   => ['required', 'url', new GitHubZipUrl],
+            'changelog' => ['nullable', 'string', 'max:10000'],
         ]);
 
-        $result = $updater->downloadAndInstall($data['zip_url']);
+        $result = $updater->downloadAndInstall($data['zip_url'], $data['changelog'] ?? '');
 
         if ($result['ok'] ?? false) {
             try {

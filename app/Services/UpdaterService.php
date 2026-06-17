@@ -126,7 +126,7 @@ class UpdaterService
      *
      * @return array{ok:bool,message:string}
      */
-    public function downloadAndInstall(string $zipUrl): array
+    public function downloadAndInstall(string $zipUrl, string $changelog = ''): array
     {
         $workDir = config('updater.work_dir', storage_path('app/updates'));
         if (! is_dir($workDir)) {
@@ -188,7 +188,7 @@ class UpdaterService
             }
 
             $installedVersion = $newVersion ?? $this->getCurrentVersion();
-            $this->appendToHistory($fromVersion, $installedVersion);
+            $this->appendToHistory($fromVersion, $installedVersion, $changelog);
 
             Artisan::call('up');
 
@@ -230,7 +230,7 @@ class UpdaterService
         return is_array($data) ? $data : [];
     }
 
-    private function appendToHistory(string $fromVersion, string $toVersion): void
+    private function appendToHistory(string $fromVersion, string $toVersion, string $changelog = ''): void
     {
         $dir = storage_path('app/updates');
         if (! is_dir($dir)) {
@@ -240,6 +240,7 @@ class UpdaterService
         $history[] = [
             'from'         => $fromVersion,
             'to'           => $toVersion,
+            'changelog'    => $changelog,
             'installed_at' => now()->toIso8601String(),
         ];
         file_put_contents($dir . '/history.json', json_encode($history, JSON_PRETTY_PRINT));

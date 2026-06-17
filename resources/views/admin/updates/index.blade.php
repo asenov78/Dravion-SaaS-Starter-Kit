@@ -207,26 +207,41 @@
             @else
             <div class="divide-y divide-gray-100 dark:divide-gray-800">
                 @foreach(array_reverse($history) as $entry)
-                <div class="px-6 py-4 flex items-center gap-3">
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success-50 dark:bg-success-500/10">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-success-600 dark:text-success-400"><path d="M20 6L9 17l-5-5"/></svg>
-                    </span>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90">
-                                @if($entry['from'] === '—')
-                                    v{{ $entry['to'] }}
-                                @else
-                                    v{{ $entry['from'] }} → v{{ $entry['to'] }}
+                <div x-data="{ expanded: false }" class="px-6 py-4">
+                    <div class="flex items-start gap-3">
+                        <span class="flex h-7 w-7 shrink-0 mt-0.5 items-center justify-center rounded-full bg-success-50 dark:bg-success-500/10">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-success-600 dark:text-success-400"><path d="M20 6L9 17l-5-5"/></svg>
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90">
+                                    @if($entry['from'] === '—')
+                                        v{{ $entry['to'] }}
+                                    @else
+                                        v{{ $entry['from'] }} → v{{ $entry['to'] }}
+                                    @endif
+                                </span>
+                                <span class="px-1.5 py-0.5 text-[10px] font-semibold uppercase rounded bg-success-100 text-success-700 dark:bg-success-500/10 dark:text-success-400 leading-none">
+                                    {{ __('updates.installed') }}
+                                </span>
+                                @if(!empty($entry['changelog']))
+                                <button type="button" @click="expanded = !expanded"
+                                    class="text-xs text-brand-500 hover:text-brand-600 dark:text-brand-400 font-medium ml-auto">
+                                    <span x-text="expanded ? '{{ __('updates.hide_changelog') }}' : '{{ __('updates.show_changelog') }}'"></span>
+                                </button>
                                 @endif
-                            </span>
-                            <span class="px-1.5 py-0.5 text-[10px] font-semibold uppercase rounded bg-success-100 text-success-700 dark:bg-success-500/10 dark:text-success-400 leading-none">
-                                {{ __('updates.installed') }}
-                            </span>
+                            </div>
+                            <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                                {{ \Carbon\Carbon::parse($entry['installed_at'])->format('d M Y, H:i') }}
+                            </p>
+                            @if(!empty($entry['changelog']))
+                            <div x-show="expanded" x-collapse class="mt-3">
+                                <div class="rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3">
+                                    <div class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">{{ trim($entry['changelog']) }}</div>
+                                </div>
+                            </div>
+                            @endif
                         </div>
-                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                            {{ \Carbon\Carbon::parse($entry['installed_at'])->format('d M Y, H:i') }}
-                        </p>
                     </div>
                 </div>
                 @endforeach
@@ -253,7 +268,7 @@
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({ zip_url: @json($update['zip_url']) }),
+                    body: JSON.stringify({ zip_url: @json($update['zip_url']), changelog: @json($update['changelog'] ?? '') }),
                 })
                 .then(r => r.json().then(d => ({ status: r.status, body: d })))
                 .then(({ status, body }) => {

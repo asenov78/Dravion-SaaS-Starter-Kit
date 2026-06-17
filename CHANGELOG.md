@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.16] — 2026-06-17
+### Fixed
+- Update history accordion now stores and displays changelog per entry — JS passes `changelog` alongside `zip_url` on install; stored in `history.json`; view shows "Show changelog" toggle same as before
+
 ## [1.10.15] — 2026-06-17
 ### Fixed
 - `UpdaterService::ensureHistoryExists()`: bootstrap fix — if `history.json` doesn't exist but `install.lock` does, seeds the file with the current version on first page load (handles manual ZIP deploys that predate history tracking)
