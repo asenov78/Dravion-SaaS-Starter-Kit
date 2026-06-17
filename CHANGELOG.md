@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.25] — 2026-06-17
+### Fixed
+- Storage auto-heal on every boot (`AppServiceProvider`): detects broken `public/storage` symlink → removes it → recreates (absolute then relative fallback); broken symlink caused Apache to 404 before reaching PHP
+- `.htaccess`: force `/storage/` paths through PHP regardless of symlink state
+- 4 new tests: broken symlink removed, serve route works, 404 on missing, URL format
+
 ## [1.10.24] — 2026-06-17
 ### Fixed
 - Avatar and logo images not loading: added `GET /storage/{path}` PHP route that serves files directly from `storage/app/public/` — guaranteed to work on shared hosting without symlink; Apache's `.htaccess` rewrite falls through to PHP when the symlink is absent

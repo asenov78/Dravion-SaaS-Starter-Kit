@@ -45,5 +45,32 @@ class AppServiceProvider extends ServiceProvider
                 mkdir($path, 0755, true);
             }
         }
+
+        $this->ensureStorageSymlink();
+    }
+
+    private function ensureStorageSymlink(): void
+    {
+        $link   = public_path('storage');
+        $target = storage_path('app/public');
+
+        // Remove broken symlink so .htaccess falls through to PHP route
+        if (is_link($link) && !is_dir($link)) {
+            @unlink($link);
+        }
+
+        // Try to create symlink if still missing
+        if (!file_exists($link) && !is_link($link)) {
+            try {
+                symlink($target, $link);
+            } catch (\Throwable) {
+                // Try relative path (works on more shared hosts)
+                try {
+                    $relative = implode('/', array_fill(0, substr_count(str_replace(base_path(), '', public_path()), DIRECTORY_SEPARATOR), '..'))
+                        . '/storage/app/public';
+                    @symlink($relative, $link);
+                } catch (\Throwable) {}
+            }
+        }
     }
 }
