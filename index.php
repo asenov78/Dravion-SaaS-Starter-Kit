@@ -43,6 +43,22 @@ if (! file_exists(__DIR__ . '/.env')) {
     }
 }
 
+// Auto-detect APP_URL from the real request and persist it if still the placeholder
+if (file_exists(__DIR__ . '/.env')) {
+    $envContent = file_get_contents(__DIR__ . '/.env');
+    if (preg_match('/^APP_URL=http:\/\/localhost$/m', $envContent)) {
+        $scheme    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host      = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/index.php')), '/');
+        $detectedUrl = $scheme . '://' . $host . $scriptDir;
+        $envContent = preg_replace('/^APP_URL=.*$/m', 'APP_URL=' . $detectedUrl, $envContent);
+        file_put_contents(__DIR__ . '/.env', $envContent);
+        putenv('APP_URL=' . $detectedUrl);
+        $_ENV['APP_URL']    = $detectedUrl;
+        $_SERVER['APP_URL'] = $detectedUrl;
+    }
+}
+
 // Ensure APP_KEY is set — generate and persist a real key if missing or empty
 if (file_exists(__DIR__ . '/.env')) {
     $envContent = file_get_contents(__DIR__ . '/.env');

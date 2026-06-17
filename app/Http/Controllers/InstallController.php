@@ -71,17 +71,18 @@ class InstallController extends Controller
     private function handleDatabase(Request $request)
     {
         $request->validate([
-            'app_name'    => 'required|string|max:100',
-            'app_url'     => 'required|url',
-            'db_host'     => 'required|string',
-            'db_port'     => 'required|integer',
-            'db_name'     => 'required|string',
-            'db_user'     => 'required|string',
-            'db_password' => 'nullable|string',
+            'app_name'     => 'required|string|max:100',
+            'app_url'      => 'required|url',
+            'db_host'      => 'required|string',
+            'db_port'      => 'required|integer',
+            'db_name'      => 'required|string',
+            'db_user'      => 'required|string',
+            'db_password'  => 'nullable|string',
+            'confirm_drop' => 'nullable|string',
         ]);
 
         try {
-            new \PDO(
+            $pdo = new \PDO(
                 "mysql:host={$request->db_host};port={$request->db_port};dbname={$request->db_name};charset=utf8mb4",
                 $request->db_user,
                 $request->db_password ?? '',
@@ -91,7 +92,20 @@ class InstallController extends Controller
             return back()->withErrors(['db_host' => 'Connection failed: ' . $e->getMessage()])->withInput();
         }
 
-        session(['install_db' => $request->only('app_name', 'app_url', 'db_host', 'db_port', 'db_name', 'db_user', 'db_password')]);
+        // Check for existing tables
+        $tables = $pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN);
+        $hasTables = count($tables) > 0;
+
+        if ($hasTables && $request->input('confirm_drop') !== '1') {
+            return back()
+                ->withErrors(['confirm_drop' => 'The database already has ' . count($tables) . ' table(s). Check the box to confirm they will be dropped and recreated.'])
+                ->withInput();
+        }
+
+        session(['install_db' => array_merge(
+            $request->only('app_name', 'app_url', 'db_host', 'db_port', 'db_name', 'db_user', 'db_password'),
+            ['has_tables' => $hasTables]
+        )]);
 
         return redirect()->route('install.step', 'admin');
     }
@@ -161,9 +175,13 @@ class InstallController extends Controller
             }
         }
 
-        // 2. Migrate
+        // 2. Migrate (fresh if existing tables, otherwise normal)
         try {
-            Artisan::call('migrate', ['--force' => true]);
+            if (!empty($db['has_tables'])) {
+                Artisan::call('migrate:fresh', ['--force' => true]);
+            } else {
+                Artisan::call('migrate', ['--force' => true]);
+            }
         } catch (\Throwable $e) {
             return back()->withErrors(['migrate' => 'Database migration failed: ' . $e->getMessage()]);
         }

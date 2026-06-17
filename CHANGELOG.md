@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.10] — 2026-06-17
+### Fixed
+- `index.php`: auto-detect `APP_URL` from `HTTP_HOST` + `SCRIPT_NAME` when value is `http://localhost` placeholder — fixes redirect from `/` to `/install` in subdirectory installs (e.g. `/dravion/`) AND at domain root
+- `InstallController` database step: detect existing tables in target DB; require explicit `confirm_drop` checkbox before proceeding; run `migrate:fresh` on finish if tables existed
+- `database.blade.php`: show amber warning banner + confirm checkbox when existing tables detected
+
 ## [1.10.9] — 2026-06-17
 ### Fixed
 - `routes/web.php` `/` route: removed `Schema::hasTable('settings')` check — it was throwing DB exception when credentials are empty (pre-install); now redirects to `/install` based on `install.lock` only
