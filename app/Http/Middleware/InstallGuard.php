@@ -15,9 +15,14 @@ class InstallGuard
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Block installer if already installed
         if (file_exists(storage_path('install.lock'))) {
-            abort(404);
+            // If lock exists but DB is not working, allow reinstall
+            try {
+                \Illuminate\Support\Facades\DB::connection()->getPdo();
+                abort(404);
+            } catch (\Throwable) {
+                // DB unavailable — lock is stale, allow installer through
+            }
         }
 
         return $next($request);

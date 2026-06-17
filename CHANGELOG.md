@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.9] — 2026-06-17
+### Fixed
+- `routes/web.php` `/` route: removed `Schema::hasTable('settings')` check — it was throwing DB exception when credentials are empty (pre-install); now redirects to `/install` based on `install.lock` only
+- `InstallGuard`: if `install.lock` exists but DB connection fails, allow installer to run again — fixes 404 on `/install` when lock file is stale from a broken previous install attempt
+
 ## [1.10.8] — 2026-06-17
 ### Fixed
 - `index.php`: if neither `.env` nor `.env.installer` exist, generate a minimal `.env` with a fresh random `APP_KEY` directly — eliminates `MissingAppKeyException` on servers where `.env.installer` is missing or the copy fails silently
