@@ -403,12 +403,13 @@
                         this.dropdownOpen = false;
                     },
                     async markRead(id) {
-                        await fetch(`/notifications/${id}/read`, { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' } });
+                        const url = '{{ route('notifications.read', ':id') }}'.replace(':id', id);
+                        await fetch(url, { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' } });
                         this.items = this.items.map(n => n.id === id ? {...n, read: true} : n);
                         this.unread = this.items.filter(n => !n.read).length;
                     },
                     async markAll() {
-                        await fetch('/notifications/read-all', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' } });
+                        await fetch('{{ route('notifications.read-all') }}', { method: 'POST', headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' } });
                         this.items = this.items.map(n => ({...n, read: true}));
                         this.unread = 0;
                     }
@@ -423,9 +424,10 @@
                     type="button">
                     <!-- Badge: orange+pulsing when unread, gray dot always -->
                     <span class="absolute right-0 top-0.5 z-10 h-2 w-2 rounded-full"
-                        :class="unread > 0 ? 'bg-orange-400' : 'bg-gray-300 dark:bg-gray-600'">
+                        :style="unread > 0 ? 'background:#fb923c' : 'background:#d1d5db'">
                         <span x-show="unread > 0" x-cloak
-                            class="absolute inline-flex w-full h-full bg-orange-400 rounded-full opacity-75 -z-1 animate-ping"></span>
+                            class="absolute inline-flex w-full h-full rounded-full animate-ping"
+                            style="background:#fb923c;opacity:0.75;z-index:-1;"></span>
                     </span>
                     <!-- Bell icon -->
                     <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -472,14 +474,14 @@
                         <template x-for="n in items" :key="n.id">
                             <li @click="if (!n.read) markRead(n.id)" class="cursor-pointer">
                                 <div class="flex gap-3 rounded-lg border-b border-gray-100 p-3 transition-colors dark:border-gray-800"
-                                    :class="!n.read
-                                        ? 'bg-orange-50 hover:bg-orange-100 dark:bg-orange-500/10 dark:hover:bg-orange-500/20'
-                                        : 'hover:bg-gray-100 dark:hover:bg-white/5'">
+                                    :style="!n.read ? 'background:rgba(255,237,213,0.7)' : ''"
+                                    @mouseenter="$el.style.background = !n.read ? 'rgba(254,215,170,0.8)' : 'rgba(243,244,246,1)'"
+                                    @mouseleave="$el.style.background = !n.read ? 'rgba(255,237,213,0.7)' : ''"
                                     <!-- Icon area -->
                                     <span class="relative flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full"
-                                        :class="!n.read ? 'bg-orange-100 dark:bg-orange-500/20' : 'bg-gray-100 dark:bg-gray-800'">
+                                        :style="!n.read ? 'background:rgba(254,215,170,0.6)' : 'background:#f3f4f6'">
                                         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
-                                            :class="!n.read ? 'text-orange-500' : 'text-gray-400 dark:text-gray-500'"
+                                            :style="!n.read ? 'color:#f97316' : 'color:#9ca3af'"
                                             class="fill-current">
                                             <path fill-rule="evenodd" clip-rule="evenodd"
                                                 d="M10.75 2.29248C10.75 1.87827 10.4143 1.54248 10 1.54248C9.58583 1.54248 9.25004 1.87827 9.25004 2.29248V2.83613C6.08266 3.20733 3.62504 5.9004 3.62504 9.16748V14.4591H3.33337C2.91916 14.4591 2.58337 14.7949 2.58337 15.2091C2.58337 15.6234 2.91916 15.9591 3.33337 15.9591H4.37504H15.625H16.6667C17.0809 15.9591 17.4167 15.6234 17.4167 15.2091C17.4167 14.7949 17.0809 14.4591 16.6667 14.4591H16.375V9.16748C16.375 5.9004 13.9174 3.20733 10.75 2.83613V2.29248ZM14.875 14.4591V9.16748C14.875 6.47509 12.6924 4.29248 10 4.29248C7.30765 4.29248 5.12504 6.47509 5.12504 9.16748V14.4591H14.875ZM8.00004 17.7085C8.00004 18.1228 8.33583 18.4585 8.75004 18.4585H11.25C11.6643 18.4585 12 18.1228 12 17.7085C12 17.2943 11.6643 16.9585 11.25 16.9585H8.75004C8.33583 16.9585 8.00004 17.2943 8.00004 17.7085Z"/>

@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.22] — 2026-06-17
+### Fixed
+- Notification bell dot: uses inline `style` instead of Tailwind classes — Tailwind v4 purges dynamic `:class` bindings; dot now always visible (gray=0 unread, orange+pulsing=unread)
+- `markRead` and `markAll`: use `route()` helpers instead of hardcoded `/notifications/...` — fixes broken mark-read on subdirectory hosting (`/dravion/`)
+- Unread item background and icon colors: switched to inline styles to survive Tailwind purge
+
 ## [1.10.21] — 2026-06-17
 ### Changed
 - Notification bell: always shows a small dot indicator — gray when 0 unread, orange+pulsing when unread > 0
