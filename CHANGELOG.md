@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.26] — 2026-06-17
+### Fixed
+- Storage images: removed `serve:true` from public disk — it was registering a framework route that shadowed the explicit `GET /storage/{path}` route in web.php; now only the web.php route exists and correctly serves files from `storage/app/public/`
+
 ## [1.10.25] — 2026-06-17
 ### Fixed
 - Storage auto-heal on every boot (`AppServiceProvider`): detects broken `public/storage` symlink → removes it → recreates (absolute then relative fallback); broken symlink caused Apache to 404 before reaching PHP

@@ -18,10 +18,11 @@ class StorageLinkTest extends TestCase
         $this->assertStringContainsString('/storage/avatars/test.jpg', $url);
     }
 
-    public function test_public_disk_serve_enabled(): void
+    public function test_storage_serve_route_is_registered(): void
     {
-        $config = config('filesystems.disks.public');
-        $this->assertTrue($config['serve'] ?? false, 'public disk must have serve:true for symlink-less hosting');
+        $routes = collect(\Illuminate\Support\Facades\Route::getRoutes()->getRoutes())
+            ->filter(fn ($r) => $r->getName() === 'storage.serve');
+        $this->assertGreaterThan(0, $routes->count(), 'storage.serve route must be registered in web.php');
     }
 
     public function test_avatar_stored_on_public_disk(): void
