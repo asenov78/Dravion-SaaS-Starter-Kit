@@ -43,6 +43,19 @@ if (file_exists(__DIR__ . '/.env')) {
     }
 }
 
+// Ensure required runtime directories exist (ZIP extraction skips empty dirs)
+foreach ([
+    __DIR__ . '/bootstrap/cache',
+    __DIR__ . '/storage/logs',
+    __DIR__ . '/storage/framework/cache/data',
+    __DIR__ . '/storage/framework/sessions',
+    __DIR__ . '/storage/framework/views',
+] as $dir) {
+    if (! is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+}
+
 if (file_exists($maintenance = __DIR__ . '/storage/framework/maintenance.php')) {
     require $maintenance;
 }
