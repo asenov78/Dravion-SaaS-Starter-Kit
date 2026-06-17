@@ -10,9 +10,9 @@
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # Serve Vite build, storage files, and other public assets
-    # from public/ without exposing it in the URL
-    RewriteRule ^(build/.+|storage/.+|favicon\.ico|robots\.txt)$ public/$1 [L,QSA]
+    # Serve Vite build assets and other public assets from public/
+    # NOTE: storage/ is intentionally excluded — routed through Laravel (PHP route)
+    RewriteRule ^(build/.+|favicon\.ico|robots\.txt)$ public/$1 [L,QSA]
 
     # Everything else goes through Laravel
     RewriteRule ^ index.php [L]
