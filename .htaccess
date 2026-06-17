@@ -1,11 +1,19 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Works at domain root OR in a subdirectory (e.g. /dravion/).
+    # Apache prepends the current directory path to relative substitutions
+    # automatically when .htaccess is processed from a subdirectory.
+
+    # Pass real files and directories through unchanged
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    RewriteRule ^(build/.+|css/.+|js/.+|images/.+|favicon\.ico|robots\.txt)$ public/$1 [L,QSA]
+    # Serve Vite build, storage files, and other public assets
+    # from public/ without exposing it in the URL
+    RewriteRule ^(build/.+|storage/.+|favicon\.ico|robots\.txt)$ public/$1 [L,QSA]
 
+    # Everything else goes through Laravel
     RewriteRule ^ index.php [L]
 </IfModule>
