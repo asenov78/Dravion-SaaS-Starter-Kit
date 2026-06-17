@@ -25,9 +25,22 @@ if (! file_exists(__DIR__ . '/vendor/autoload.php')) {
     exit;
 }
 
-// Bootstrap .env for first-time install: copy installer env if no .env exists
-if (! file_exists(__DIR__ . '/.env') && file_exists(__DIR__ . '/.env.installer')) {
-    copy(__DIR__ . '/.env.installer', __DIR__ . '/.env');
+// Bootstrap .env for first-time install
+if (! file_exists(__DIR__ . '/.env')) {
+    if (file_exists(__DIR__ . '/.env.installer')) {
+        copy(__DIR__ . '/.env.installer', __DIR__ . '/.env');
+    } else {
+        // No .env.installer either — generate a minimal .env from scratch
+        $key = 'base64:' . base64_encode(openssl_random_pseudo_bytes(32));
+        $minimal = "APP_NAME=Dravion\nAPP_ENV=production\nAPP_KEY={$key}\nAPP_DEBUG=false\n"
+                 . "APP_URL=http://localhost\nSESSION_DRIVER=file\n"
+                 . "DB_CONNECTION=mysql\nDB_HOST=127.0.0.1\nDB_PORT=3306\n"
+                 . "DB_DATABASE=\nDB_USERNAME=\nDB_PASSWORD=\n";
+        file_put_contents(__DIR__ . '/.env', $minimal);
+        putenv('APP_KEY=' . $key);
+        $_ENV['APP_KEY'] = $key;
+        $_SERVER['APP_KEY'] = $key;
+    }
 }
 
 // Ensure APP_KEY is set — generate and persist a real key if missing or empty

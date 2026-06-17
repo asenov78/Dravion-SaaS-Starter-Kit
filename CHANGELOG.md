@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.8] — 2026-06-17
+### Fixed
+- `index.php`: if neither `.env` nor `.env.installer` exist, generate a minimal `.env` with a fresh random `APP_KEY` directly — eliminates `MissingAppKeyException` on servers where `.env.installer` is missing or the copy fails silently
+
 ## [1.10.7] — 2026-06-17
 ### Fixed
 - `index.php`: generate real random `APP_KEY` via `openssl_random_pseudo_bytes(32)` when missing or empty in `.env` — handles both empty line and missing line cases; sets via `putenv`/`$_ENV`/`$_SERVER` so Laravel picks it up before dotenv runs
