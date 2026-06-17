@@ -53,21 +53,56 @@ class AppServiceProvider extends ServiceProvider
 
     private function fixStorageDiskUrl(): void
     {
-        $appUrl = getenv('APP_URL') ?: config('app.url');
+        $appUrl = $this->resolveAppUrl();
         if (!$appUrl || $appUrl === 'http://localhost') {
             return;
         }
 
         $correctUrl = rtrim($appUrl, '/') . '/storage';
-
-        // Override the config value so any NEW disk instances use the right URL.
         config(['filesystems.disks.public.url' => $correctUrl]);
 
-        // Purge the cached disk adapter — FilesystemManager caches the adapter on first
-        // use with the URL baked in. Without purge, config() change above has no effect.
+        // Purge cached disk adapter so next Storage::url() call picks up the new URL.
         try {
             Storage::forgetDisk('public');
         } catch (\Throwable) {}
+    }
+
+    /**
+     * Resolve the true APP_URL, bypassing Dotenv immutable mode.
+     *
+     * On shared hosting Apache often exports APP_URL as a system env var
+     * without the subdirectory path (e.g. https://domain.com instead of
+     * https://domain.com/dravion). Laravel's Dotenv::createImmutable() keeps
+     * the system env var and ignores the .env file value, so both
+     * config('app.url') and getenv() return the wrong host-only URL.
+     *
+     * Priority:
+     * 1. Compute from the live HTTP request (SCRIPT_NAME) — always correct for web.
+     * 2. Read the .env file directly, bypassing Dotenv and system env.
+     * 3. Fall back to the Laravel config as a last resort.
+     */
+    private function resolveAppUrl(): string
+    {
+        // 1. Derive from current HTTP request — immune to env var misconfig.
+        if (!empty($_SERVER['HTTP_HOST']) && !empty($_SERVER['SCRIPT_NAME'])) {
+            $scheme    = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host      = $_SERVER['HTTP_HOST'];
+            $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+            return $scheme . '://' . $host . $scriptDir;
+        }
+
+        // 2. Read .env file directly (e.g. for artisan commands).
+        $envFile = base_path('.env');
+        if (file_exists($envFile)) {
+            foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+                if (preg_match('/^APP_URL=(.+)$/', $line, $m)) {
+                    return trim($m[1], " \t\n\r\"'");
+                }
+            }
+        }
+
+        // 3. Laravel config — may be wrong if system env overrides .env.
+        return (string) config('app.url', '');
     }
 
     private function ensureStorageSymlink(): void
