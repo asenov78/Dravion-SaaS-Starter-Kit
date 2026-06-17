@@ -2,6 +2,17 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.12] — 2026-06-17
+### Added
+- `InstallSeeder` — central entry point for all installer data seeding; installer calls only this, never anything else
+- `DefaultLanguagesSeeder` — seeds en + bg languages via `insertOrIgnore`
+- `DefaultSettingsSeeder` — seeds all app settings with defaults via `firstOrCreate` (safe to run on existing data)
+- `DefaultPagesSeeder` — seeds home, about, pricing, contact, gallery pages with hero images via `firstOrCreate`
+### Changed
+- `InstallController::handleFinish()`: replaced manual `RolesAndPermissionsSeeder` + inline language insert with `db:seed --class=InstallSeeder` — installer never needs touching for new default data
+### Rule
+- New feature shipping default data → create `database/seeders/YourFeatureSeeder.php` + add `$this->call(YourFeatureSeeder::class)` to `InstallSeeder`. Installer stays untouched.
+
 ## [1.10.11] — 2026-06-17
 ### Fixed
 - `routes/web.php` `/` route: also check DB connectivity when `install.lock` exists — redirects to `/install` if lock exists but DB is broken/unconfigured

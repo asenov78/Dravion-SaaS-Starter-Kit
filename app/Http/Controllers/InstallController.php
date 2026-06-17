@@ -204,10 +204,10 @@ class InstallController extends Controller
             return back()->withErrors(['migrate' => 'Database migration failed: ' . $e->getMessage()]);
         }
 
-        // 3. Seed roles & permissions
+        // 3. Seed all default data via InstallSeeder (roles, languages, settings, pages, …)
         try {
             Artisan::call('db:seed', [
-                '--class' => 'Database\\Seeders\\RolesAndPermissionsSeeder',
+                '--class' => 'Database\\Seeders\\InstallSeeder',
                 '--force' => true,
             ]);
         } catch (\Throwable $e) {
@@ -225,7 +225,6 @@ class InstallController extends Controller
             ]
         );
 
-        // If user existed before, still mark email verified and set active
         if ($user->wasRecentlyCreated === false) {
             $user->update([
                 'email_verified_at' => $user->email_verified_at ?? now(),
@@ -234,9 +233,6 @@ class InstallController extends Controller
         }
 
         $user->syncRoles(['admin']);
-
-        // 5. Seed default English language entry
-        $this->seedDefaultLanguage();
 
         // 6. Ensure storage dirs exist (shared hosting often lacks them)
         foreach (['framework/sessions', 'framework/cache/data', 'framework/views', 'logs', 'app'] as $dir) {
@@ -413,19 +409,4 @@ ENV;
         EnvWriter::write(base_path('.env'), $env);
     }
 
-    private function seedDefaultLanguage(): void
-    {
-        try {
-            DB::table('languages')->insertOrIgnore([
-                'code'       => 'en',
-                'name'       => 'English',
-                'flag'       => '🇬🇧',
-                'is_default' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        } catch (\Throwable) {
-            // Non-fatal — language can be added via admin UI
-        }
-    }
 }
