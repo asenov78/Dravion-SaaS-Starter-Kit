@@ -35,6 +35,7 @@ class UpdateController extends Controller
             'licensed' => $licensed,
             'current'  => $updater->getCurrentVersion(),
             'update'   => $update,
+            'history'  => $updater->getUpdateHistory(),
         ]);
     }
 

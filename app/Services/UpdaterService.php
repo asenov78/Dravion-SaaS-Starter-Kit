@@ -137,6 +137,7 @@ class UpdaterService
         $extractPath = $workDir . '/extract-' . time();
 
         try {
+            $fromVersion = $this->getCurrentVersion();
             Artisan::call('down');
 
             // Download
@@ -186,9 +187,12 @@ class UpdaterService
                 @opcache_reset();
             }
 
+            $installedVersion = $newVersion ?? $this->getCurrentVersion();
+            $this->appendToHistory($fromVersion, $installedVersion);
+
             Artisan::call('up');
 
-            return ['ok' => true, 'message' => 'Update installed successfully.', 'version' => $newVersion ?? $this->getCurrentVersion()];
+            return ['ok' => true, 'message' => 'Update installed successfully.', 'version' => $installedVersion];
         } catch (\Throwable $e) {
             Artisan::call('up');
             return ['ok' => false, 'message' => $e->getMessage()];
@@ -196,6 +200,31 @@ class UpdaterService
             @unlink($zipPath);
             $this->rrmdir($extractPath);
         }
+    }
+
+    public function getUpdateHistory(): array
+    {
+        $path = storage_path('app/updates/history.json');
+        if (! file_exists($path)) {
+            return [];
+        }
+        $data = json_decode(file_get_contents($path), true);
+        return is_array($data) ? $data : [];
+    }
+
+    private function appendToHistory(string $fromVersion, string $toVersion): void
+    {
+        $dir = storage_path('app/updates');
+        if (! is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+        $history   = $this->getUpdateHistory();
+        $history[] = [
+            'from'         => $fromVersion,
+            'to'           => $toVersion,
+            'installed_at' => now()->toIso8601String(),
+        ];
+        file_put_contents($dir . '/history.json', json_encode($history, JSON_PRETTY_PRINT));
     }
 
     private function detectVersionFromExtract(string $root): ?string

@@ -30,4 +30,5 @@ return [
     'installed'           => 'Installed',
     'show_changelog'      => 'Show changelog',
     'hide_changelog'      => 'Hide changelog',
+    'no_history'          => 'No updates have been installed yet.',
 ];

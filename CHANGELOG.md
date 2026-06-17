@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.14] — 2026-06-17
+### Fixed
+- Update history accordion now shows only updates actually installed via the updater (tracked in `storage/app/updates/history.json`), not all older GitHub releases — fresh install shows 0 history entries
+- Each history entry: from version → to version + timestamp
+- Added `UpdaterService::getUpdateHistory()` and `appendToHistory()` helpers
+
 ## [1.10.13] — 2026-06-17
 ### Fixed
 - `UpdaterService::downloadAndInstall()`: after copying files, explicitly reads new version from extracted `config/dravion.php` and writes it to the protected local config — fixes infinite update loop where version never bumped after successful install
