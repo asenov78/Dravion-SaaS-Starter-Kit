@@ -89,6 +89,8 @@ class LanguageController extends Controller
             );
         }
 
+        \App\Translation\DatabaseLoader::clearCache($language->code);
+
         return redirect()->back()->with('success', __('flash.translations_saved', ['count' => count($data)]));
     }
 

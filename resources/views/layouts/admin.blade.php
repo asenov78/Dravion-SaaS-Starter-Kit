@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Admin' }} — Dravion</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="https://fonts.gstatic.com/s/onest/v9/gNMKW3F-SZuj7xmf-HY.woff2">
+    {{-- Reserve sidebar width before Alpine initialises — prevents layout shift --}}
+    <script>
+    (function(){var w=localStorage.getItem('sidebar')==='closed'?'52px':'220px';document.documentElement.style.setProperty('--sidebar-init-w',w);})();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full" style="background:#0a0a0b; color:#e2e2e9; font-family:Inter,system-ui,sans-serif;"
+<body class="h-full" style="background:#0a0a0b; color:#e2e2e9;"
     x-data="{ sidebarOpen: localStorage.getItem('sidebar') !== 'closed' }"
     x-init="$watch('sidebarOpen', v => localStorage.setItem('sidebar', v ? 'open' : 'closed'))">
 
@@ -16,7 +22,7 @@
 
     {{-- SIDEBAR --}}
     <aside class="sidebar flex flex-col flex-shrink-0 h-full border-r overflow-hidden"
-        style="background:#111113; border-color:#2a2a35;"
+        style="background:#111113; border-color:#2a2a35; width:var(--sidebar-init-w,220px);"
         :style="sidebarOpen ? 'width:220px' : 'width:52px'">
 
         {{-- Logo --}}

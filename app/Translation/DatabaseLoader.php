@@ -24,28 +24,43 @@ class DatabaseLoader extends FileLoader
 
     private function loadFromDb(string $locale, string $group): array
     {
-        try {
-            $language = Language::where('code', $locale)->first();
-            if (! $language) {
+        $cacheKey = "translations:{$locale}:{$group}";
+
+        return cache()->remember($cacheKey, now()->addHours(24), function () use ($locale, $group) {
+            try {
+                $language = Language::where('code', $locale)->first();
+                if (! $language) {
+                    return [];
+                }
+
+                $prefix = $group . '.';
+                $lines  = $language->lines()
+                    ->where('key', 'like', $prefix . '%')
+                    ->where('value', '!=', '')
+                    ->pluck('value', 'key');
+
+                $result = [];
+                foreach ($lines as $key => $value) {
+                    $shortKey = substr($key, strlen($prefix));
+                    Arr::set($result, $shortKey, $value);
+                }
+
+                return $result;
+            } catch (\Throwable) {
                 return [];
             }
+        });
+    }
 
-            $prefix = $group . '.';
-            $lines  = $language->lines()
-                ->where('key', 'like', $prefix . '%')
-                ->where('value', '!=', '')
-                ->pluck('value', 'key');
-
-            $result = [];
-            foreach ($lines as $key => $value) {
-                $shortKey = substr($key, strlen($prefix));
-                Arr::set($result, $shortKey, $value);
+    public static function clearCache(?string $locale = null): void
+    {
+        if ($locale) {
+            // Clear all groups for this locale — pattern-match keys
+            foreach (['app', 'auth', 'nav', 'flash', 'ui', 'users', 'roles', 'settings', 'pages', 'install'] as $group) {
+                cache()->forget("translations:{$locale}:{$group}");
             }
-
-            return $result;
-        } catch (\Throwable) {
-            // DB not available (e.g. during install)
-            return [];
+        } else {
+            cache()->flush();
         }
     }
 }

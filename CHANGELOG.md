@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.29] — 2026-06-17
+### Performance
+- Cache DB translations 24h per locale+group → eliminates repeated DB queries on every page load (main TTFB fix)
+- Bust translation cache automatically when admin saves translations via LanguageController
+- Preload Onest woff2 in `<head>` → font starts loading in parallel with CSS, not after
+- Remove unused Inter Google Font from admin layout (Onest is the project font)
+- Fix sidebar CLS: inline script reads localStorage before Alpine initialises, sets `--sidebar-init-w` CSS var → sidebar renders at correct width immediately, no layout shift
+
 ## [1.10.28] — 2026-06-17
 ### Fixed
 - Storage images actual root cause: `APP_URL` in `.env` was `https://apsbg.com` (missing `/dravion` subdirectory) → `Storage::url()` generated wrong URLs pointing to the main site instead of the Dravion subdirectory; `index.php` now auto-detects and self-heals `APP_URL` when the stored value is missing the install subdirectory
