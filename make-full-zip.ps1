@@ -49,6 +49,10 @@ if (-not (Test-Path "$tmp\vendor")) {
     Write-Host "vendor/ already in temp (copied from src)"
 }
 
+# Remove bootstrap/cache PHP files — they contain absolute dev-machine paths
+# and break Laravel on shared hosting (Target class [view] does not exist)
+Get-ChildItem "$tmp\bootstrap\cache\*.php" -ErrorAction SilentlyContinue | Remove-Item -Force
+
 # 4. ZIP from temp
 if (Test-Path $out) { Remove-Item $out }
 Add-Type -Assembly System.IO.Compression.FileSystem
