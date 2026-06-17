@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.5] — 2026-06-17
+### Fixed
+- `make-full-zip.ps1`: rewritten for PowerShell 5.1 compatibility (removed `?.` null-conditional operator)
+
 ## [1.10.4] — 2026-06-17
 ### Fixed
 - `index.php`: inject installer `APP_KEY` when `.env` exists but key is empty — fixes `MissingAppKeyException` on shared hosting if `.env` was uploaded without a key
