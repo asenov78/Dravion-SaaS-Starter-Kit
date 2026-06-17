@@ -1,26 +1,71 @@
-param([string]$Out = "releases\dravion-v1.2.11-full.zip")
+param([string]$Version = "")
 
 $src = $PSScriptRoot
-$zip = Join-Path $src $Out
-if (Test-Path $zip) { Remove-Item $zip }
 
-Add-Type -Assembly System.IO.Compression.FileSystem
-$z = [System.IO.Compression.ZipFile]::Open($zip, 'Create')
-
-Get-ChildItem -Path $src -Recurse -File | Where-Object {
-    $rel = $_.FullName.Substring($src.Length + 1)
-    $rel -notmatch '^\.git' -and
-    $rel -notmatch '^node_modules' -and
-    $rel -notmatch '^releases' -and
-    $rel -ne '.env' -and
-    $rel -notlike '*.log' -and
-    $rel -ne 'make-full-zip.ps1'
-} | ForEach-Object {
-    $rel = $_.FullName.Substring($src.Length + 1)
-    try {
-        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($z, $_.FullName, $rel) | Out-Null
-    } catch {}
+# Auto-detect version from config if not passed
+if (-not $Version) {
+    $Version = (Select-String -Path "$src\config\dravion.php" -Pattern "'version'\s*=>\s*'([^']+)'" | `
+        ForEach-Object { $_.Matches[0].Groups[1].Value } | Select-Object -First 1)
 }
 
+$out  = Join-Path (Split-Path $src) "dravion-v${Version}-full.zip"
+$tmp  = Join-Path $env:TEMP "dravion-build-$(Get-Date -Format 'yyyyMMddHHmmss')"
+
+Write-Host "Version : $Version"
+Write-Host "Temp dir: $tmp"
+Write-Host "Output  : $out"
+
+# 1. Robocopy to temp (handles locked files better than Get-ChildItem)
+$excludeDirs  = @('.git', 'node_modules', 'releases', '.claude')
+$excludeFiles = @('.env', '*.log', 'make-full-zip.ps1', '.phpunit.result.cache', 'phpunit.xml')
+
+robocopy $src $tmp /E /XD $excludeDirs /XF $excludeFiles /NFL /NDL /NJH /NJS /NC /NS | Out-Null
+
+# 2. Remove leftover storage data (keep skeleton dirs)
+@(
+    "$tmp\storage\logs",
+    "$tmp\storage\app\public",
+    "$tmp\storage\framework\cache\data",
+    "$tmp\storage\framework\sessions",
+    "$tmp\storage\framework\views",
+    "$tmp\bootstrap\cache"
+) | ForEach-Object {
+    if (Test-Path $_) { Remove-Item "$_\*" -Recurse -Force -ErrorAction SilentlyContinue }
+    if (-not (Test-Path $_)) { New-Item -ItemType Directory -Path $_ -Force | Out-Null }
+    # keep .gitignore placeholder if exists
+}
+
+# 3. composer install --no-dev in temp (creates vendor/)
+if (-not (Test-Path "$tmp\vendor")) {
+    Write-Host "Running composer install --no-dev ..."
+    $php = (Get-Command php -ErrorAction SilentlyContinue)?.Source
+    if (-not $php) { Write-Warning "PHP not found on PATH — vendor will be missing"; }
+    else {
+        Push-Location $tmp
+        & composer install --no-dev --optimize-autoloader --no-interaction --quiet 2>&1
+        Pop-Location
+    }
+} else {
+    Write-Host "vendor/ already in temp (copied from src)"
+}
+
+# 4. ZIP from temp
+if (Test-Path $out) { Remove-Item $out }
+Add-Type -Assembly System.IO.Compression.FileSystem
+$z = [System.IO.Compression.ZipFile]::Open($out, 'Create')
+
+Get-ChildItem -Path $tmp -Recurse -File | ForEach-Object {
+    $rel = $_.FullName.Substring($tmp.Length + 1)
+    try {
+        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($z, $_.FullName, $rel) | Out-Null
+    } catch {
+        Write-Warning "Skipped: $rel — $_"
+    }
+}
 $z.Dispose()
-Write-Host "Done: $zip"
+
+# 5. Cleanup temp
+Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue
+
+$size = [math]::Round((Get-Item $out).Length / 1MB, 2)
+Write-Host "Done: $out ($size MB)"

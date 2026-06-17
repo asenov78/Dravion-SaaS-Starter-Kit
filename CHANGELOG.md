@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.1] — 2026-06-16
+### Fixed
+- Release ZIP now includes `vendor/` and `public/build/` (built by GitHub Actions) — required for shared hosting installation without separate `composer install`
+- `make-full-zip.ps1` rewritten: copies to temp via robocopy, runs `composer install --no-dev`, then zips — avoids locked-file issues on Windows
+- `UpdaterService::getReleases()` sorts by semver, not GitHub publish date
+
 ## [1.10.0] — 2026-06-16
 ### Added
 - Installer tests: 38 tests covering all 5 steps (requirements/database/admin/license/finish), views, validation, session flow, install lock, admin user creation
