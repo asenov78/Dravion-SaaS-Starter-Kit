@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.21] — 2026-06-17
+### Changed
+- Notification bell: always shows a small dot indicator — gray when 0 unread, orange+pulsing when unread > 0
+
 ## [1.10.20] — 2026-06-17
 ### Fixed
 - Notification dropdown overflow: use `position:absolute; right:0` (inline style) instead of `-right-[240px] lg:right-0` — Tailwind v4 purges unused responsive variants; dropdown no longer expands the page
