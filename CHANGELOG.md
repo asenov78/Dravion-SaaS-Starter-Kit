@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.11] — 2026-06-17
+### Fixed
+- `routes/web.php` `/` route: also check DB connectivity when `install.lock` exists — redirects to `/install` if lock exists but DB is broken/unconfigured
+- `InstallController` database step: two-phase flow — Phase 1 tests connection, Phase 2 shows confirmation-only page (no re-entering credentials); `?reset=1` clears session and returns to Phase 1
+- `database.blade.php`: separate confirmation view with amber warning, checkbox, "Drop & Reinstall" and "Change credentials" buttons
+
 ## [1.10.10] — 2026-06-17
 ### Fixed
 - `index.php`: auto-detect `APP_URL` from `HTTP_HOST` + `SCRIPT_NAME` when value is `http://localhost` placeholder — fixes redirect from `/` to `/install` in subdirectory installs (e.g. `/dravion/`) AND at domain root

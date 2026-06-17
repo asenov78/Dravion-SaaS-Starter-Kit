@@ -25,7 +25,15 @@ use App\Http\Controllers\InstallController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (! file_exists(storage_path('install.lock'))) {
+    $hasLock = file_exists(storage_path('install.lock'));
+    $dbWorks = false;
+    if ($hasLock) {
+        try {
+            \Illuminate\Support\Facades\DB::connection()->getPdo();
+            $dbWorks = true;
+        } catch (\Throwable) {}
+    }
+    if (! $hasLock || ! $dbWorks) {
         return redirect()->route('install.index');
     }
     return app(\App\Http\Controllers\HomeController::class)->index();

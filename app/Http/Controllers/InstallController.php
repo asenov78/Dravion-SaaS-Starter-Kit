@@ -35,7 +35,12 @@ class InstallController extends Controller
         }
 
         if ($step === 'database') {
-            $data['detected_url'] = $this->detectAppUrl();
+            if (request()->query('reset')) {
+                session()->forget(['install_db', 'install_db_confirm_needed']);
+            }
+            $data['detected_url']   = $this->detectAppUrl();
+            $data['confirm_needed'] = session('install_db_confirm_needed', 0);
+            $data['saved_db']       = session('install_db', []);
         }
 
         return view("install.{$step}", $data);
@@ -70,15 +75,29 @@ class InstallController extends Controller
 
     private function handleDatabase(Request $request)
     {
+        // Phase 2: user confirmed drop — proceed without re-entering credentials
+        if ($request->input('phase') === 'confirm') {
+            $db = session('install_db');
+            if (empty($db)) {
+                return redirect()->route('install.step', 'database');
+            }
+            if ($request->input('confirm_drop') !== '1') {
+                return back()->withErrors(['confirm_drop' => 'You must confirm before continuing.']);
+            }
+            // Mark confirmed
+            session(['install_db' => array_merge($db, ['has_tables' => true])]);
+            return redirect()->route('install.step', 'admin');
+        }
+
+        // Phase 1: validate & test connection
         $request->validate([
-            'app_name'     => 'required|string|max:100',
-            'app_url'      => 'required|url',
-            'db_host'      => 'required|string',
-            'db_port'      => 'required|integer',
-            'db_name'      => 'required|string',
-            'db_user'      => 'required|string',
-            'db_password'  => 'nullable|string',
-            'confirm_drop' => 'nullable|string',
+            'app_name'    => 'required|string|max:100',
+            'app_url'     => 'required|url',
+            'db_host'     => 'required|string',
+            'db_port'     => 'required|integer',
+            'db_name'     => 'required|string',
+            'db_user'     => 'required|string',
+            'db_password' => 'nullable|string',
         ]);
 
         try {
@@ -92,21 +111,20 @@ class InstallController extends Controller
             return back()->withErrors(['db_host' => 'Connection failed: ' . $e->getMessage()])->withInput();
         }
 
+        $dbData = array_merge(
+            $request->only('app_name', 'app_url', 'db_host', 'db_port', 'db_name', 'db_user', 'db_password'),
+            ['has_tables' => false]
+        );
+
         // Check for existing tables
         $tables = $pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN);
-        $hasTables = count($tables) > 0;
-
-        if ($hasTables && $request->input('confirm_drop') !== '1') {
-            return back()
-                ->withErrors(['confirm_drop' => 'The database already has ' . count($tables) . ' table(s). Check the box to confirm they will be dropped and recreated.'])
-                ->withInput();
+        if (count($tables) > 0) {
+            // Save credentials to session, redirect to confirmation phase
+            session(['install_db' => $dbData, 'install_db_confirm_needed' => count($tables)]);
+            return redirect()->route('install.step', 'database');
         }
 
-        session(['install_db' => array_merge(
-            $request->only('app_name', 'app_url', 'db_host', 'db_port', 'db_name', 'db_user', 'db_password'),
-            ['has_tables' => $hasTables]
-        )]);
-
+        session(['install_db' => $dbData]);
         return redirect()->route('install.step', 'admin');
     }
 
