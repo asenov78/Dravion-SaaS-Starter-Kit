@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.3] — 2026-06-17
+### Fixed
+- `.htaccess`: removed complex dynamic RewriteBase detection — Apache handles relative substitutions correctly in subdirectory `.htaccess` automatically; works at domain root AND in `/dravion/` subdirectory
+
 ## [1.10.2] — 2026-06-16
 ### Fixed
 - `index.php`: friendly "vendor/ missing" message instead of blank 500 on incomplete upload
