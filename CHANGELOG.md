@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.17] — 2026-06-17
+### Fixed
+- `UpdaterService`: read changelog from `CHANGELOG.md` in the extracted ZIP (not from GitHub release body which is often empty) — `detectChangelogFromExtract()` parses the matching `## [version]` section via regex
+
 ## [1.10.16] — 2026-06-17
 ### Fixed
 - Update history accordion now stores and displays changelog per entry — JS passes `changelog` alongside `zip_url` on install; stored in `history.json`; view shows "Show changelog" toggle same as before

@@ -175,6 +175,10 @@ class UpdaterService
                 $this->writeVersionToConfig($newVersion);
             }
 
+            // Prefer changelog from CHANGELOG.md in the ZIP over the (often empty) GitHub release body.
+            $installedVersion  = $newVersion ?? $this->getCurrentVersion();
+            $resolvedChangelog = $changelog ?: $this->detectChangelogFromExtract($root, $installedVersion);
+
             // Migrate + clear caches
             Artisan::call('migrate', ['--force' => true]);
             Artisan::call('config:clear');
@@ -187,8 +191,7 @@ class UpdaterService
                 @opcache_reset();
             }
 
-            $installedVersion = $newVersion ?? $this->getCurrentVersion();
-            $this->appendToHistory($fromVersion, $installedVersion, $changelog);
+            $this->appendToHistory($fromVersion, $installedVersion, $resolvedChangelog);
 
             Artisan::call('up');
 
@@ -244,6 +247,21 @@ class UpdaterService
             'installed_at' => now()->toIso8601String(),
         ];
         file_put_contents($dir . '/history.json', json_encode($history, JSON_PRETTY_PRINT));
+    }
+
+    private function detectChangelogFromExtract(string $root, string $version): string
+    {
+        $file = $root . '/CHANGELOG.md';
+        if (! file_exists($file)) {
+            return '';
+        }
+        $content = file_get_contents($file);
+        // Match the section for this version: ## [1.2.3] ... up to the next ## heading.
+        $escaped = preg_quote($version, '/');
+        if (preg_match('/^##\s+\[' . $escaped . '\][^\n]*\n(.*?)(?=^##\s+\[|\z)/ms', $content, $m)) {
+            return trim($m[1]);
+        }
+        return '';
     }
 
     private function detectVersionFromExtract(string $root): ?string
