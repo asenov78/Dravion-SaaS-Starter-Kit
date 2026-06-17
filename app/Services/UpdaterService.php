@@ -61,6 +61,9 @@ class UpdaterService
             ];
         }
 
+        // Sort by semver descending — GitHub API orders by publish date, not version.
+        usort($releases, fn ($a, $b) => version_compare($b['version'], $a['version']));
+
         return $releases;
     }
 
