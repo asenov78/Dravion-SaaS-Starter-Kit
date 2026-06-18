@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.36] — 2026-06-18
+### Fixed
+- Storage image URLs (logo, avatars): use request()->root() from Symfony HttpFoundation instead of env('APP_URL') — bypasses Apache system env var that overrides .env subdirectory path; applies to both URL::forceRootUrl() and filesystems.disks.public.url
+
 ## [1.10.35] — 2026-06-18
 ### Removed
 - `/dashboard` route, `dashboard.blade.php` view, and all `route('dashboard')` references — portal is `/` (home), admin panel is `/admin/dashboard`
