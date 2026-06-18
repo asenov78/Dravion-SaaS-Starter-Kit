@@ -5,7 +5,7 @@
     <p class="mb-3 text-gray-500 text-theme-xs dark:text-gray-400">
         SaaS Starter Kit v{{ config('dravion.version', '1.0') }}
     </p>
-    <a href="{{ route('dashboard') }}"
+    <a href="{{ route('home') }}"
         class="flex items-center justify-center p-2.5 font-medium text-white rounded-lg bg-brand-500 text-theme-sm hover:bg-brand-600">
         ← User Portal
     </a>

@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.35] — 2026-06-18
+### Removed
+- `/dashboard` route, `dashboard.blade.php` view, and all `route('dashboard')` references — portal is `/` (home), admin panel is `/admin/dashboard`
+
 ## [1.10.34] — 2026-06-17
 ### Fixed
 - Storage images: root cause found — Apache exports APP_URL system env var without subdirectory path; Laravel Dotenv::createImmutable() keeps system env and ignores .env, so config('app.url') and getenv() both return wrong host-only URL; fixed by resolveAppUrl() which reads SCRIPT_NAME from live HTTP request (always correct) and falls back to reading .env file directly

@@ -130,7 +130,7 @@
                         {{ __('nav.dashboard') }}
                     </a>
                 @else
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route('home') }}"
                        class="hidden sm:inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-600 transition-colors">
                         {{ __('nav.portal') }}
                     </a>
@@ -178,7 +178,7 @@
                                 @if(auth()->user()->hasAnyRole(['admin', 'manager', 'editor']))
                                 <a href="{{ route('admin.dashboard') }}"
                                 @else
-                                <a href="{{ route('dashboard') }}"
+                                <a href="{{ route('home') }}"
                                 @endif
                                    class="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300">
                                     <span class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300">

@@ -18,7 +18,7 @@
     <div class="flex h-full items-center gap-3 px-6">
 
         {{-- Logo --}}
-        <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 text-inherit no-underline flex-shrink-0">
+        <a href="{{ route('home') }}" class="flex items-center gap-2.5 text-inherit no-underline flex-shrink-0">
             <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-500">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             </span>

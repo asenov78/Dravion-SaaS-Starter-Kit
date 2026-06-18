@@ -131,8 +131,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 });
 
-// User dashboard
-Route::get('/dashboard', fn () => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
 // Admin
 Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefix('admin')->name('admin.')->group(function () {
