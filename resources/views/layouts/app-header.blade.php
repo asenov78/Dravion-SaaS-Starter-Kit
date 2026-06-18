@@ -375,7 +375,7 @@
             </div>
 
             <!-- View Site link -->
-            <a href="{{ route('home') }}" target="_blank"
+            <a href="{{ route('home') }}"
                title="{{ __('nav.view_site') }}"
                class="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full hover:text-gray-700 h-11 w-11 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.46] — 2026-06-18
+### Fixed
+- Portal unlicensed banner: was added to wrong file (welcome.blade.php); public portal uses layouts/public.blade.php — banner now correctly in that layout, visible on all public pages
+- Admin app-header: globe icon (View Site) now opens in same window instead of new tab
+
 ## [1.10.45] — 2026-06-18
 ### Fixed
 - welcome.blade.php (public portal page at /dravion/): add unlicensed warning banner — this page is standalone HTML and does not use x-layouts.portal, so the banner had to be added directly here
