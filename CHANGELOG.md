@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.49] — 2026-06-18
+### Arch
+- Extract HtmlSanitizer service (app/Services/HtmlSanitizer.php) from PagesController private method — 17 unit tests, covers XSS/CSS-exfil/javascript:/data: vectors
+- PagesController: inject HtmlSanitizer, remove 80-line embedded sanitizeContent()/domSanitize() methods
+
 ## [1.10.48] — 2026-06-18
 ### Fixed
 - GitHub Actions: revert softprops/action-gh-release to @v2 tag — SHA was incorrect and broke CI
