@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Contracts\LicenseServiceInterface;
 use App\Http\Controllers\Controller;
+use App\Services\ActivityLogger;
 use App\Services\EnvWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,16 +42,32 @@ class LicenseController extends Controller
         @unlink(storage_path('license.cache'));
         session()->forget('license_warning');
 
+        ActivityLogger::log(
+            'license', 'activated',
+            'License activated for domain ' . ($domain),
+            null, null,
+            'activity.license_activated', ['domain' => $domain]
+        );
+
         return redirect()->back()->with('success', __('flash.license_activated'));
     }
 
     public function remove(): RedirectResponse
     {
+        $domain = parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
+
         if (! app()->environment('testing')) {
             $this->writeEnvKey('DRAVION_LICENSE_KEY', '');
         }
         config(['dravion.license_key' => '']);
         @unlink(storage_path('license.cache'));
+
+        ActivityLogger::log(
+            'license', 'removed',
+            'License removed for domain ' . $domain,
+            null, null,
+            'activity.license_removed', ['domain' => $domain]
+        );
 
         return redirect()->back()->with('success', __('flash.license_removed'));
     }

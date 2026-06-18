@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.40] — 2026-06-18
+### Fixed
+- License activate/remove now log to activity log (category: license, events: activated/removed)
+- License warning banner now shows in admin layout when session('license_warning') is set — previously the warning was flashed to session but never displayed anywhere; banner links directly to License & Updates page
+- Added activity translation keys: license_activated, license_removed (EN + BG)
+
 ## [1.10.39] — 2026-06-18
 ### Changed
 - Updates page renamed to "License & Updates": replaced small license link card with full license management UI (status, key input, activate/remove); layout changed from 3-col to 2-col; LicenseController now uses redirect()->back() so form works from both the license page and the updates page

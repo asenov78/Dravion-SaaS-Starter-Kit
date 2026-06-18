@@ -164,6 +164,15 @@
                     </button>
                 </div>
 
+                {{-- License Warning Banner --}}
+                @if(session('license_warning'))
+                <div class="mb-5 flex items-center gap-3 rounded-lg border border-error-200 bg-error-50 px-4 py-3 text-sm text-error-700 dark:border-error-800 dark:bg-error-500/10 dark:text-error-400">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span class="flex-1">{{ session('license_warning') }}</span>
+                    <a href="{{ route('admin.updates') }}" class="shrink-0 font-medium underline hover:no-underline">{{ __('updates.go_to_license') }}</a>
+                </div>
+                @endif
+
                 {{-- Broadcast Banner --}}
                 @if(\App\Models\Setting::get('broadcast_banner', ''))
                 <div id="broadcast-banner"

@@ -31,5 +31,7 @@ return [
         'user_logged_in'      => ':name logged in',
         'user_logged_out'     => ':name logged out',
         'login_failed'        => 'Failed login attempt for :email',
+        'license_activated'   => 'License activated for domain :domain',
+        'license_removed'     => 'License removed for domain :domain',
     ],
 ];

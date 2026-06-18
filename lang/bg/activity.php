@@ -31,5 +31,7 @@ return [
         'user_logged_in'      => ':name влезе в системата',
         'user_logged_out'     => ':name излезе от системата',
         'login_failed'        => 'Неуспешен опит за вход с :email',
+        'license_activated'   => 'Лицензът е активиран за домейн :domain',
+        'license_removed'     => 'Лицензът е премахнат за домейн :domain',
     ],
 ];
