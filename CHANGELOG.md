@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.44] — 2026-06-18
+### Fixed
+- CRITICAL: MenuHelper.php called route('admin.license') which no longer exists — caused 500 on every page after v1.10.42
+
 ## [1.10.43] — 2026-06-18
 ### Changed
 - Admin layout: blur reduced to 2px; license check now reads config() directly instead of session — works on all pages including /sessions and /api-tokens which bypass license.check middleware
