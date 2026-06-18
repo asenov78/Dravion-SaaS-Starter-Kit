@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.48] — 2026-06-18
+### Fixed
+- GitHub Actions: revert softprops/action-gh-release to @v2 tag — SHA was incorrect and broke CI
+
 ## [1.10.47] — 2026-06-18
 ### Security
 - PagesController::domSanitize(): strip url()/expression()/behavior()/vbscript() from style attributes — blocks CSS data exfiltration
