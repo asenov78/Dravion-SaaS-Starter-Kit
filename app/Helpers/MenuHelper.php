@@ -135,12 +135,6 @@ class MenuHelper
                 'path'  => route('admin.languages.index'),
                 'route' => 'admin.languages.*',
             ],
-            [
-                'icon'  => 'license',
-                'name'  => __('nav.license'),
-                'path'  => route('admin.license'),
-                'route' => 'admin.license',
-            ],
         ];
 
         // Updates are admin-only (route guarded by role:admin).
