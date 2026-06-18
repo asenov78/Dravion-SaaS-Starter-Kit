@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.45] — 2026-06-18
+### Fixed
+- welcome.blade.php (public portal page at /dravion/): add unlicensed warning banner — this page is standalone HTML and does not use x-layouts.portal, so the banner had to be added directly here
+
 ## [1.10.44] — 2026-06-18
 ### Fixed
 - CRITICAL: MenuHelper.php called route('admin.license') which no longer exists — caused 500 on every page after v1.10.42

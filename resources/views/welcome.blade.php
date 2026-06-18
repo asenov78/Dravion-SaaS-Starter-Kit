@@ -47,6 +47,13 @@
                 </nav>
             @endif
         </header>
+        @php $portalLicensed = !empty(config('dravion.license_key')); @endphp
+        @if(!$portalLicensed)
+        <div class="w-full lg:max-w-4xl max-w-[335px] mb-4 flex items-center gap-2 rounded-md border border-[#f8b803] bg-[#fff9e6] px-4 py-2 text-xs text-[#735c00] dark:border-[#a07800] dark:bg-[#2a1f00] dark:text-[#f8b803]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>{{ \App\Models\Setting::get('app_name', config('app.name')) }} {{ __('license.no_license_portal') }}</span>
+        </div>
+        @endif
         <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">
             <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
                 <div class="text-[13px] leading-[20px] flex-1 p-6 pb-6 lg:p-20 lg:pb-10 bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-bl-lg rounded-br-lg lg:rounded-tl-lg lg:rounded-br-none">
