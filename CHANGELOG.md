@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.38] — 2026-06-18
+### Changed
+- Settings page: 2-column grid layout (General+System+ActivityLog left, PublicSite+Logo+Email+License right) — reduces page height ~50%
+
 ## [1.10.37] — 2026-06-18
 ### Fixed
 - Logo and avatar images: replaced all Storage::url() calls in views with url('storage/'.$path) — url() uses Symfony SCRIPT_NAME detection (same as route generation, proven correct) and is unaffected by Apache system env APP_URL override; fixed in 12 view locations across sidebar, header, public layout, user-dropdown, profile-card, dashboard, settings, users pages
