@@ -12,5 +12,6 @@ return [
     'enter_key_desc' => 'Enter your purchase code from Envato / your license provider to activate this installation.',
     'activate'   => 'Activate License',
     'remove'     => 'Remove License',
-    'info'       => 'Each license is tied to one domain. Re-activating on the same domain is safe and will return your existing key. If you need to move to a new domain, contact support.',
+    'info'               => 'Each license is tied to one domain. Re-activating on the same domain is safe and will return your existing key. If you need to move to a new domain, contact support.',
+    'no_license_portal'  => 'is running without a valid license. Some features may be limited.',
 ];

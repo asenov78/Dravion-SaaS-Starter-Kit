@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.43] — 2026-06-18
+### Changed
+- Admin layout: blur reduced to 2px; license check now reads config() directly instead of session — works on all pages including /sessions and /api-tokens which bypass license.check middleware
+- Portal layout: thin warning bar when no license key is configured
+- Added license.no_license_portal translation key (EN + BG)
+
 ## [1.10.42] — 2026-06-18
 ### Removed
 - `/admin/license` GET route and `admin/license.blade.php` view — license management is now fully on the License & Updates page
