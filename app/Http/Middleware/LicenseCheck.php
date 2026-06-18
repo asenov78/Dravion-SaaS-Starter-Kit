@@ -67,6 +67,7 @@ class LicenseCheck
 
         // Server unreachable → assume valid, retry next cycle
         if ($raw === false || $code === 0) {
+            \Illuminate\Support\Facades\Log::warning('License server unreachable — assuming valid until next cycle');
             return ['valid' => true, 'checked_at' => time(), 'message' => null];
         }
 

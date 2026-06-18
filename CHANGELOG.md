@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.47] — 2026-06-18
+### Security
+- PagesController::domSanitize(): strip url()/expression()/behavior()/vbscript() from style attributes — blocks CSS data exfiltration
+- SecurityHeaders middleware: X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy, X-XSS-Protection, Permissions-Policy on all web responses
+- GitHub Actions: SHA-pinned actions/checkout, actions/setup-node, softprops/action-gh-release — prevents tag-hijack supply chain attack
+- LicenseCheck: log warning when license server unreachable (fail-open remains, now traceable)
+
 ## [1.10.46] — 2026-06-18
 ### Fixed
 - Portal unlicensed banner: was added to wrong file (welcome.blade.php); public portal uses layouts/public.blade.php — banner now correctly in that layout, visible on all public pages

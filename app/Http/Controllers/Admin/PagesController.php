@@ -190,7 +190,7 @@ class PagesController extends Controller
                         $attrRemove[] = $name;
                     }
                 }
-                // Block javascript: in href/src
+                // Block javascript:/data: in href/src
                 foreach (['href', 'src', 'action'] as $urlAttr) {
                     if ($child->hasAttribute($urlAttr)) {
                         $val = trim(strtolower(preg_replace('/\s+/', '', $child->getAttribute($urlAttr))));
@@ -198,6 +198,12 @@ class PagesController extends Controller
                             $attrRemove[] = $urlAttr;
                         }
                     }
+                }
+                // Strip CSS data exfiltration: url(...) and expression(...) in style
+                if ($child->hasAttribute('style')) {
+                    $style = $child->getAttribute('style');
+                    $clean = preg_replace('/\b(url|expression|behavior|vbscript)\s*\(/i', 'BLOCKED(', $style);
+                    $child->setAttribute('style', $clean ?? '');
                 }
                 foreach (array_unique($attrRemove) as $a) {
                     $child->removeAttribute($a);
