@@ -2,6 +2,10 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.41] — 2026-06-18
+### Changed
+- Admin layout: page content blurs (filter:blur 4px, pointer-events:none) when license_warning is active, except on License & Updates and License pages where the admin can actually fix the issue
+
 ## [1.10.40] — 2026-06-18
 ### Fixed
 - License activate/remove now log to activity log (category: license, events: activated/removed)

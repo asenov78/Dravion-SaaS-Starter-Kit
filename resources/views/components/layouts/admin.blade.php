@@ -194,7 +194,13 @@
                 </div>
                 @endif
 
-                {{ $slot }}
+                @php
+                    $licenseBlur = session('license_warning')
+                        && ! request()->routeIs('admin.updates', 'admin.license');
+                @endphp
+                <div @if($licenseBlur) style="filter:blur(4px);pointer-events:none;user-select:none;" @endif>
+                    {{ $slot }}
+                </div>
             </div>
         </div>
     </div>
