@@ -33,7 +33,7 @@
         <div class="p-6 flex items-center gap-6">
             <div class="h-20 w-20 shrink-0 overflow-hidden rounded-full bg-brand-500 flex items-center justify-center text-2xl font-semibold text-white">
                 @if($u->avatar)
-                    <img src="{{ Storage::url($u->avatar) }}" alt="{{ $u->name }}" class="h-full w-full object-cover">
+                    <img src="{{ url('storage/' . $u->avatar) }}" alt="{{ $u->name }}" class="h-full w-full object-cover">
                 @else
                     {{ strtoupper(substr($u->name ?? 'U', 0, 1)) }}
                 @endif

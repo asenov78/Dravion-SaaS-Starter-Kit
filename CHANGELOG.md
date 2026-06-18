@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.37] — 2026-06-18
+### Fixed
+- Logo and avatar images: replaced all Storage::url() calls in views with url('storage/'.$path) — url() uses Symfony SCRIPT_NAME detection (same as route generation, proven correct) and is unaffected by Apache system env APP_URL override; fixed in 12 view locations across sidebar, header, public layout, user-dropdown, profile-card, dashboard, settings, users pages
+- AppServiceProvider: removed risky URL::forceRootUrl() call; storage disk URL now fixed using url('storage') which uses the same correct mechanism as route generation
+
 ## [1.10.36] — 2026-06-18
 ### Fixed
 - Storage image URLs (logo, avatars): use request()->root() from Symfony HttpFoundation instead of env('APP_URL') — bypasses Apache system env var that overrides .env subdirectory path; applies to both URL::forceRootUrl() and filesystems.disks.public.url

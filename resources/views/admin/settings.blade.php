@@ -87,7 +87,7 @@
         <div class="p-6 flex items-center gap-6">
             <div class="h-14 w-14 shrink-0 flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-hidden">
                 @if($settings['logo'])
-                    <img src="{{ Storage::url($settings['logo']) }}" alt="Logo" class="h-full w-full object-contain p-1">
+                    <img src="{{ url('storage/' . $settings['logo']) }}" alt="Logo" class="h-full w-full object-contain p-1">
                 @else
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-gray-400"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 9l4-4 4 4 4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                 @endif

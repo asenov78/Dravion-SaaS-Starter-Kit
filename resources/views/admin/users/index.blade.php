@@ -156,7 +156,7 @@
                         <div class="flex items-center gap-3">
                             <span class="flex items-center justify-center w-9 h-9 rounded-full {{ $trashed ? 'bg-gray-400' : 'bg-brand-500' }} text-white text-sm font-semibold flex-shrink-0 overflow-hidden">
                                 @if($user->avatar)
-                                    <img src="{{ Storage::url($user->avatar) }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                                    <img src="{{ url('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                                 @else
                                     {{ strtoupper(substr($user->name, 0, 1)) }}
                                 @endif

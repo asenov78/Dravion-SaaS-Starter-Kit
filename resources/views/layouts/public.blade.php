@@ -57,7 +57,7 @@
         <a href="{{ route('home') }}" class="flex items-center gap-2.5">
             @php $logoPath = \App\Models\Setting::get('logo'); @endphp
             @if($logoPath)
-                <img src="{{ Storage::url($logoPath) }}" class="h-9 w-auto object-contain" alt="logo">
+                <img src="{{ url('storage/' . $logoPath) }}" class="h-9 w-auto object-contain" alt="logo">
             @else
                 <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white font-bold text-sm shadow-sm">
                     {{ strtoupper(substr($appName, 0, 1)) }}
@@ -146,7 +146,7 @@
                             @click.prevent="toggleDropdown()" type="button">
                         @if(auth()->user()->avatar)
                             <span class="mr-2 overflow-hidden rounded-full h-9 w-9">
-                                <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="h-9 w-9 object-cover rounded-full">
+                                <img src="{{ url('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="h-9 w-9 object-cover rounded-full">
                             </span>
                         @else
                             <span class="mr-2 overflow-hidden rounded-full h-9 w-9 flex items-center justify-center bg-brand-500 text-white font-semibold text-sm">
@@ -281,7 +281,7 @@
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2.5">
                 @if($logoPath ?? false)
-                    <img src="{{ Storage::url($logoPath) }}" class="h-7 w-auto object-contain" alt="logo">
+                    <img src="{{ url('storage/' . $logoPath) }}" class="h-7 w-auto object-contain" alt="logo">
                 @else
                     <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-xs">
                         {{ strtoupper(substr($appName, 0, 1)) }}

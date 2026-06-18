@@ -14,7 +14,7 @@
         type="button"
     >
         @if(auth()->user()->avatar)
-            <img src="{{ Storage::url(auth()->user()->avatar) }}"
+            <img src="{{ url('storage/' . auth()->user()->avatar) }}"
                  alt="{{ auth()->user()->name }}"
                  class="mr-3 h-11 w-11 rounded-full object-cover">
         @else

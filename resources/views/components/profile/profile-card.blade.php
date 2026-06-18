@@ -5,7 +5,7 @@
             <div class="flex w-full flex-col items-center gap-6 xl:flex-row">
                 <div class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-500 text-2xl font-semibold text-white">
                     @if($u->avatar)
-                        <img src="{{ Storage::url($u->avatar) }}" alt="{{ $u->name }}" class="h-full w-full object-cover">
+                        <img src="{{ url('storage/' . $u->avatar) }}" alt="{{ $u->name }}" class="h-full w-full object-cover">
                     @else
                         {{ strtoupper(substr($u->name ?? 'U', 0, 1)) }}
                     @endif
@@ -53,7 +53,7 @@
                         <div class="flex items-center gap-5">
                             <div class="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-brand-500 flex items-center justify-center text-xl font-semibold text-white">
                                 @if($u->avatar)
-                                    <img src="{{ Storage::url($u->avatar) }}" alt="{{ $u->name }}" class="h-full w-full object-cover">
+                                    <img src="{{ url('storage/' . $u->avatar) }}" alt="{{ $u->name }}" class="h-full w-full object-cover">
                                 @else
                                     {{ strtoupper(substr($u->name ?? 'U', 0, 1)) }}
                                 @endif

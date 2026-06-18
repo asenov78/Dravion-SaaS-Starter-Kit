@@ -57,7 +57,7 @@
         :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ? 'xl:justify-center' : 'justify-start'">
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
             @if($sidebarLogo)
-                <img src="{{ Storage::url($sidebarLogo) }}" class="w-8 h-8 object-contain rounded-lg" alt="logo">
+                <img src="{{ url('storage/' . $sidebarLogo) }}" class="w-8 h-8 object-contain rounded-lg" alt="logo">
             @else
                 <div class="flex-shrink-0 w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
