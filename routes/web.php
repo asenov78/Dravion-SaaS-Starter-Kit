@@ -196,7 +196,6 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     Route::get('/updates/check',   [UpdateController::class, 'check'])->name('updates.check')->middleware('role:admin');
     Route::post('/updates/install',[UpdateController::class, 'install'])->name('updates.install')->middleware('role:admin');
 
-    Route::get('/license',    [LicenseController::class, 'show'])->name('license');
     Route::post('/license',   [LicenseController::class, 'update'])->name('license.update');
     Route::delete('/license', [LicenseController::class, 'remove'])->name('license.remove');
 

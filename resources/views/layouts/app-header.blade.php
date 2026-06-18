@@ -366,7 +366,7 @@
                     $devLicense = str_starts_with($licenseKey, 'DEV-');
                 @endphp
                 @if (!$licensed)
-                <a href="{{ route('admin.license') }}"
+                <a href="{{ route('admin.updates') }}"
                     class="hidden xl:inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors
                         {{ $devLicense ? 'border-warning-200 bg-warning-50 text-warning-700 dark:border-warning-800 dark:bg-warning-500/10 dark:text-warning-400' : 'border-error-200 bg-error-50 text-error-700 dark:border-error-800 dark:bg-error-500/10 dark:text-error-400' }}">
                     {{ $devLicense ? 'Dev License' : 'Unlicensed' }}

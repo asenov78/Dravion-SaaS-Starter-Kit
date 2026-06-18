@@ -196,7 +196,7 @@
 
                 @php
                     $licenseBlur = session('license_warning')
-                        && ! request()->routeIs('admin.updates', 'admin.license');
+                        && ! request()->routeIs('admin.updates');
                 @endphp
                 <div @if($licenseBlur) style="filter:blur(4px);pointer-events:none;user-select:none;" @endif>
                     {{ $slot }}

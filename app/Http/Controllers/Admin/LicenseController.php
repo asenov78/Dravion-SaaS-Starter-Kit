@@ -8,20 +8,10 @@ use App\Services\ActivityLogger;
 use App\Services\EnvWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class LicenseController extends Controller
 {
     public function __construct(private LicenseServiceInterface $license) {}
-
-    public function show(): View
-    {
-        $raw = config('dravion.license_key', '');
-        $masked = $raw ? $this->mask($raw) : null;
-        $valid  = $masked && ! session('license_warning');
-
-        return view('admin.license', compact('masked', 'valid'));
-    }
 
     public function update(Request $request): RedirectResponse
     {

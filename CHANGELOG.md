@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.42] — 2026-06-18
+### Removed
+- `/admin/license` GET route and `admin/license.blade.php` view — license management is now fully on the License & Updates page
+- `LicenseController::show()` method removed (POST/DELETE still exist for form actions)
+### Changed
+- All links to `admin.license` updated to `admin.updates`: app-header badge, updates page "Go to License" button
+- Blur exception updated to `admin.updates` only (no longer needs to exclude the removed license page)
+
 ## [1.10.41] — 2026-06-18
 ### Changed
 - Admin layout: page content blurs (filter:blur 4px, pointer-events:none) when license_warning is active, except on License & Updates and License pages where the admin can actually fix the issue
