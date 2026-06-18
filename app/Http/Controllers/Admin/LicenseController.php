@@ -30,7 +30,7 @@ class LicenseController extends Controller
         $result = $this->license->activate($request->license_key, $domain);
 
         if (isset($result['error'])) {
-            return redirect()->route('admin.license')->withErrors(['license_key' => $result['error']]);
+            return redirect()->back()->withErrors(['license_key' => $result['error']]);
         }
 
         $licenseKey = $result['license_key'];
@@ -41,7 +41,7 @@ class LicenseController extends Controller
         @unlink(storage_path('license.cache'));
         session()->forget('license_warning');
 
-        return redirect()->route('admin.license')->with('success', __('flash.license_activated'));
+        return redirect()->back()->with('success', __('flash.license_activated'));
     }
 
     public function remove(): RedirectResponse
@@ -52,7 +52,7 @@ class LicenseController extends Controller
         config(['dravion.license_key' => '']);
         @unlink(storage_path('license.cache'));
 
-        return redirect()->route('admin.license')->with('success', __('flash.license_removed'));
+        return redirect()->back()->with('success', __('flash.license_removed'));
     }
 
     private function mask(string $key): string

@@ -33,12 +33,24 @@ class UpdateController extends Controller
 
         $updater->ensureHistoryExists();
 
+        $raw    = config('dravion.license_key', '');
+        $masked = $raw ? $this->mask($raw) : null;
+        $valid  = $masked && ! session('license_warning');
+
         return view('admin.updates.index', [
             'licensed' => $licensed,
             'current'  => $updater->getCurrentVersion(),
             'update'   => $update,
             'history'  => $updater->getUpdateHistory(),
+            'masked'   => $masked,
+            'valid'    => $valid,
         ]);
+    }
+
+    private function mask(string $key): string
+    {
+        $parts = explode('-', $key, 2);
+        return ($parts[0] ?? 'DRV') . '-****';
     }
 
     public function check(UpdaterService $updater): JsonResponse

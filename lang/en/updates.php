@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'title'               => 'Updates',
-    'subtitle'            => 'Keep your installation up to date with the latest release.',
+    'title'               => 'License & Updates',
+    'subtitle'            => 'Manage your license key and keep your installation up to date.',
     'current_version'     => 'Current Version',
     'latest_version'      => 'Latest Version',
     'version_info'        => 'Version Info',
