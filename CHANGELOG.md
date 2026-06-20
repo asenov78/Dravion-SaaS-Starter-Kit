@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.76] — 2026-06-20
+
+### Fixed
+- **Sidebar UPDATE badge now shows automatically**: `MenuHelper` now auto-fetches the latest GitHub release when `github_latest_version` cache is empty (no scheduler/webhook required); failed fetches are backed off for 5 minutes to avoid hammering GitHub
+- **Cron command moved to Settings page** (not Dashboard) — visible under Scheduler section below the settings form with status indicator and copy button
+
+### Added
+- 3 new tests in `UpdateNavBadgeTest`: auto-fetch on cache miss, no badge on GitHub 503, no auto-fetch when owner not configured
+- `github_check_failed` cache key (5 min TTL) prevents hammering GitHub on repeated cache misses
+
 ## [1.10.75] — 2026-06-20
 
 ### Added

@@ -6,6 +6,7 @@ use App\Helpers\MenuHelper;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class UpdateNavBadgeTest extends TestCase
@@ -16,11 +17,15 @@ class UpdateNavBadgeTest extends TestCase
     {
         parent::setUp();
         Cache::forget('github_latest_version');
+        Cache::forget('github_check_failed');
+        // Disable auto-fetch by default — individual tests opt-in via Http::fake
+        config(['updater.owner' => '', 'updater.repo' => '']);
     }
 
     protected function tearDown(): void
     {
         Cache::forget('github_latest_version');
+        Cache::forget('github_check_failed');
         parent::tearDown();
     }
 
@@ -127,5 +132,51 @@ class UpdateNavBadgeTest extends TestCase
             ->getContent();
 
         $this->assertStringNotContainsString('data-update-badge="1"', $html);
+    }
+
+    // --- auto-fetch tests ---
+
+    public function test_badge_auto_fetches_from_github_when_cache_empty(): void
+    {
+        config(['updater.owner' => 'o', 'updater.repo' => 'r']);
+        Http::fake([
+            'api.github.com/*' => Http::response([[
+                'tag_name'    => 'v99.0.0',
+                'body'        => 'notes',
+                'zipball_url' => 'https://api.github.com/repos/o/r/zipball/v99.0.0',
+                'draft'       => false,
+                'prerelease'  => false,
+            ]], 200),
+        ]);
+
+        $this->actingAs($this->admin());
+        $item = $this->updatesItem();
+
+        $this->assertTrue($item['update_available'] ?? false);
+        // Also written to cache for subsequent requests
+        $this->assertSame('99.0.0', Cache::get('github_latest_version'));
+    }
+
+    public function test_no_badge_when_github_unreachable_and_cache_empty(): void
+    {
+        config(['updater.owner' => 'o', 'updater.repo' => 'r']);
+        Http::fake(['api.github.com/*' => Http::response(null, 503)]);
+
+        $this->actingAs($this->admin());
+        $item = $this->updatesItem();
+
+        $this->assertArrayNotHasKey('update_available', $item);
+        // Failed check is cached briefly to avoid hammering GitHub
+        $this->assertTrue((bool) Cache::get('github_check_failed'));
+    }
+
+    public function test_no_auto_fetch_when_owner_not_configured(): void
+    {
+        config(['updater.owner' => '', 'updater.repo' => '']);
+
+        $this->actingAs($this->admin());
+        $item = $this->updatesItem();
+
+        $this->assertArrayNotHasKey('update_available', $item);
     }
 }

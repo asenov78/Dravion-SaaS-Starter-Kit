@@ -2,6 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Services\UpdaterService;
+use Illuminate\Support\Facades\Cache;
+
 class MenuHelper
 {
     public static function getMenuGroups(): array
@@ -147,7 +150,7 @@ class MenuHelper
             ];
 
             $current = ltrim(config('dravion.version', '0.0.0'), 'v');
-            $latest  = \Illuminate\Support\Facades\Cache::get('github_latest_version');
+            $latest  = self::resolveLatestVersion();
             if ($latest && version_compare(ltrim($latest, 'v'), $current, '>')) {
                 $item['update_available'] = true;
             }
@@ -156,6 +159,41 @@ class MenuHelper
         }
 
         return $items;
+    }
+
+    /**
+     * Return the latest GitHub release version string, using the cache as the
+     * primary source. If the cache is empty (no scheduler/webhook yet), attempt
+     * a live fetch and write the result so subsequent requests are instant.
+     * Failure is silent — no badge is better than a slow/broken sidebar.
+     */
+    private static function resolveLatestVersion(): ?string
+    {
+        $cached = Cache::get('github_latest_version');
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        // Guard: skip if GitHub repo not configured or a recent fetch already failed.
+        if (!config('updater.owner') || !config('updater.repo')) {
+            return null;
+        }
+        if (Cache::get('github_check_failed')) {
+            return null;
+        }
+
+        try {
+            $release = app(UpdaterService::class)->getLatestRelease();
+            if ($release) {
+                Cache::put('github_latest_version', $release['version'], now()->addHours(4));
+                return $release['version'];
+            }
+        } catch (\Throwable) {
+            // GitHub unreachable — suppress badge, retry in 5 minutes
+        }
+
+        Cache::put('github_check_failed', true, now()->addMinutes(5));
+        return null;
     }
 
     public static function isActive(string $routePattern): bool

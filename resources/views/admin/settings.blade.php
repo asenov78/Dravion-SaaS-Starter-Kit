@@ -271,4 +271,42 @@
 
 </form>
 
+{{-- Scheduler / Cron setup —outside the settings form --}}
+@can('edit settings')
+@php
+    $schedulerLastRun = \Illuminate\Support\Facades\Cache::get('scheduler_last_run');
+    $cronCommand = '* * * * * cd ' . base_path() . ' && php artisan schedule:run >> /dev/null 2>&1';
+@endphp
+<div class="mt-6 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-500"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </span>
+        <div>
+            <p class="text-sm font-semibold text-gray-800 dark:text-white/90">{{ __('dashboard.scheduler') }}</p>
+            <p class="text-xs mt-0.5">
+                @if($schedulerLastRun)
+                    <span class="text-success-600 dark:text-success-400">&#10003; {{ __('dashboard.scheduler_last_run') }}: {{ \Carbon\Carbon::parse($schedulerLastRun)->diffForHumans() }}</span>
+                @else
+                    <span class="text-warning-600 dark:text-warning-400">{{ __('dashboard.scheduler_not_detected') }}</span>
+                @endif
+            </p>
+        </div>
+    </div>
+    <div class="px-6 py-4">
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">{{ __('dashboard.scheduler_desc') }}</p>
+        <div x-data="{ copied: false }" class="flex items-center gap-2">
+            <code class="flex-1 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-xs font-mono text-gray-700 dark:text-gray-300 break-all select-all">{{ $cronCommand }}</code>
+            <button type="button"
+                @click="navigator.clipboard.writeText('{{ $cronCommand }}'); copied = true; setTimeout(() => copied = false, 2000)"
+                class="shrink-0 inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-transparent dark:text-gray-400 dark:hover:bg-gray-800 transition-colors">
+                <svg x-show="!copied" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                <svg x-show="copied" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" x-cloak><path d="M20 6L9 17l-5-5"/></svg>
+                <span x-text="copied ? '{{ __('app.copied') }}' : '{{ __('app.copy') }}'"></span>
+            </button>
+        </div>
+    </div>
+</div>
+@endcan
+
 </x-layouts.admin>
