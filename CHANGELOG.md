@@ -2,8 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.78] — 2026-06-20
+requires: 1.10.75
+
+### Fixed
+- Corrected `requires:` chain: v1.10.76 was never released as a GitHub Release (CI failure), so v1.10.77 was blocked for users on v1.10.75. Chain now points to v1.10.75 — the last published release before this one.
+
 ## [1.10.77] — 2026-06-20
-requires: 1.10.76
+requires: 1.10.75
 
 ### Added
 - **Sequential update chain enforcement**: each GitHub release can declare `requires: X.Y.Z` in its release body (parsed from CHANGELOG). `UpdaterService` marks releases as `blocked` if `requires > currentVersion`. `UpdateController::install()` validates and returns 422 if the chain is broken.
