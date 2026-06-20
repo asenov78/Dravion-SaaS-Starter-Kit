@@ -152,10 +152,13 @@
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ __('updates.check_failed_desc') }}</p>
                     </div>
                 </div>
-                <a href="{{ route('admin.updates') }}" class="self-start inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-                    {{ __('updates.check_again') }}
-                </a>
+                <form method="POST" action="{{ route('admin.updates.check-all') }}">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                        {{ __('updates.check_again') }}
+                    </button>
+                </form>
             </div>
 
         @elseif($update['has_update'])
@@ -250,11 +253,13 @@
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.up_to_date') }}</h3>
                         <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400">{{ __('updates.up_to_date_desc') }}</p>
                     </div>
-                    <a href="{{ route('admin.updates') }}"
-                        class="shrink-0 inline-flex items-center gap-2 rounded-lg border border-success-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-success-50 dark:border-success-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-success-500/10 transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-                        {{ __('updates.check_again') }}
-                    </a>
+                    <form method="POST" action="{{ route('admin.updates.check-all') }}" class="shrink-0">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-success-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-success-50 dark:border-success-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-success-500/10 transition-colors">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                            {{ __('updates.check_again') }}
+                        </button>
+                    </form>
                 </div>
             </div>
             @else
@@ -267,11 +272,13 @@
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.up_to_date') }}</h3>
                         <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400">{{ __('updates.up_to_date_desc') }}</p>
                     </div>
-                    <a href="{{ route('admin.updates') }}"
-                        class="shrink-0 inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:bg-transparent dark:text-gray-400 dark:hover:bg-gray-700 transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-                        {{ __('updates.check_again') }}
-                    </a>
+                    <form method="POST" action="{{ route('admin.updates.check-all') }}" class="shrink-0">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:bg-transparent dark:text-gray-400 dark:hover:bg-gray-700 transition-colors">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                            {{ __('updates.check_again') }}
+                        </button>
+                    </form>
                 </div>
             </div>
             @endif

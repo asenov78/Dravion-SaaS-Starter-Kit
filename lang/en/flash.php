@@ -40,4 +40,5 @@ return [
     '2fa_disabled'             => 'Two-factor authentication disabled.',
     'license_verified'         => 'License is active. You can now install updates.',
     'license_not_found'        => 'No active license found. Please activate a license key.',
+    'update_check_done'        => 'License and update status refreshed.',
 ];

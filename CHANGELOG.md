@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.73] — 2026-06-20
+
+### Fixed
+- **"Check again" now re-checks both license and updates**: replaced plain anchor links with POST forms pointing to new `POST /admin/updates/check-all` route; action clears `license.cache` and `github_latest_version` cache so LicenseCheck middleware does a live ping and `index()` fetches fresh GitHub releases
+- `index()` now writes `github_latest_version` cache after every GitHub fetch, keeping sidebar badge in sync without needing a webhook
+
+### Added
+- `POST /admin/updates/check-all` route (`admin.updates.check-all`) and `checkAll()` controller method
+- 7 new tests in `CheckAllTest` covering auth guards, cache clearing, flash message, and blade form rendering
+
 ## [1.10.72] — 2026-06-20
 
 ### Changed

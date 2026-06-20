@@ -12,6 +12,7 @@ use App\Support\DomainHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class UpdateController extends Controller
@@ -38,6 +39,11 @@ class UpdateController extends Controller
         $masked = $raw ? DomainHelper::maskKey($raw) : null;
         $valid  = $masked && ! session('license_warning');
 
+        // Keep sidebar badge in sync with the version we just fetched.
+        if ($update['latest'] !== null) {
+            Cache::put('github_latest_version', $update['latest'], now()->addHours(6));
+        }
+
         return view('admin.updates.index', [
             'licensed' => $licensed,
             'current'  => $updater->getCurrentVersion(),
@@ -63,6 +69,20 @@ class UpdateController extends Controller
 
         return redirect()->route('admin.updates')
             ->with('license_warning', __('flash.license_not_found'));
+    }
+
+    /**
+     * "Check again" — clears license cache + github_latest_version cache so
+     * LicenseCheck middleware does a live ping on the subsequent redirect and
+     * index() re-fetches GitHub releases fresh.
+     */
+    public function checkAll(): RedirectResponse
+    {
+        @unlink(storage_path('license.cache'));
+        Cache::forget('github_latest_version');
+
+        return redirect()->route('admin.updates')
+            ->with('success', __('flash.update_check_done'));
     }
 
     /**
