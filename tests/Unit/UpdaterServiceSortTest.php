@@ -11,6 +11,11 @@ class UpdaterServiceSortTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function svc(): UpdaterService
+    {
+        return app(UpdaterService::class);
+    }
+
     public function test_releases_sorted_by_semver_descending_not_publish_order(): void
     {
         Http::fake([
@@ -22,8 +27,7 @@ class UpdaterServiceSortTest extends TestCase
             ], 200),
         ]);
 
-        $svc      = new UpdaterService();
-        $releases = $svc->getReleases();
+        $releases = $this->svc()->getReleases();
 
         $this->assertSame('1.10.0', $releases[0]['version'], 'Highest semver must be first');
         $this->assertSame('1.4.0',  $releases[1]['version']);
@@ -39,14 +43,13 @@ class UpdaterServiceSortTest extends TestCase
             ], 200),
         ]);
 
-        $latest = (new UpdaterService())->getLatestRelease();
+        $latest = $this->svc()->getLatestRelease();
 
         $this->assertSame('1.10.0', $latest['version']);
     }
 
     public function test_has_update_true_when_installed_older_than_github(): void
     {
-        // Scenario: installed = 1.4.0, GitHub latest = 1.10.0
         config(['dravion.version' => '1.4.0']);
 
         Http::fake([
@@ -56,7 +59,7 @@ class UpdaterServiceSortTest extends TestCase
             ], 200),
         ]);
 
-        $info = (new UpdaterService())->checkForUpdate();
+        $info = $this->svc()->checkForUpdate();
 
         $this->assertSame('1.4.0',  $info['current']);
         $this->assertSame('1.10.0', $info['latest']);
@@ -73,7 +76,7 @@ class UpdaterServiceSortTest extends TestCase
             ], 200),
         ]);
 
-        $info = (new UpdaterService())->checkForUpdate();
+        $info = $this->svc()->checkForUpdate();
 
         $this->assertSame('1.10.0', $info['current']);
         $this->assertSame('1.10.0', $info['latest']);
@@ -89,7 +92,7 @@ class UpdaterServiceSortTest extends TestCase
             ], 200),
         ]);
 
-        $latest = (new UpdaterService())->getLatestRelease();
+        $latest = $this->svc()->getLatestRelease();
 
         $this->assertSame('1.5.0', $latest['version'], 'Draft releases must not appear');
     }

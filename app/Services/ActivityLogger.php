@@ -2,17 +2,18 @@
 
 namespace App\Services;
 
+use App\Contracts\ActivityLoggerInterface;
 use App\Models\Setting;
 use Illuminate\Database\Eloquent\Model;
 
-class ActivityLogger
+class ActivityLogger implements ActivityLoggerInterface
 {
-    public static function enabled(string $key): bool
+    public function enabled(string $key): bool
     {
         return Setting::get('activity_log_' . $key, '1') === '1';
     }
 
-    public static function log(
+    public function log(
         string $category,
         string $event,
         string $description,
@@ -21,7 +22,7 @@ class ActivityLogger
         string $descKey = '',
         array $descParams = []
     ): void {
-        if (! static::enabled($category)) {
+        if (! $this->enabled($category)) {
             return;
         }
 
@@ -46,5 +47,14 @@ class ActivityLogger
         }
 
         $builder->log($description);
+    }
+
+    /**
+     * Static shortcut — delegates to the container binding so tests can
+     * swap in NullActivityLogger without touching callers.
+     */
+    public static function __callStatic(string $method, array $args): mixed
+    {
+        return app(ActivityLoggerInterface::class)->$method(...$args);
     }
 }

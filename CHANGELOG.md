@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.51] — 2026-06-20
+### Arch
+- ActivityLogger: static → injectable via ActivityLoggerInterface contract
+- Static callers unchanged (__callStatic delegates to container) — zero diff in 9 caller files
+- NullActivityLogger (no-op): bind in tests to skip DB; eliminates spatie activitylog dependency from unit tests
+- AppServiceProvider: bind ActivityLoggerInterface → ActivityLogger (singleton-style via container)
+- UpdaterServiceSortTest: fix constructor call after UpdaterService became DI-injected
+
 ## [1.10.50] — 2026-06-20
 ### Arch
 - Decompose UpdaterService God object: extract ReleaseDownloader, ReleaseInstaller, UpdateHistory into app/Services/Updater/
