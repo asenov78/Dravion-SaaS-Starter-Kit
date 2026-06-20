@@ -19,8 +19,8 @@ class UpdateController extends Controller
 
     public function index(UpdaterService $updater): View
     {
-        // Page display uses cached status (fast) — install/check do live verification.
-        $licensed = $this->license->isValid();
+        // Live check on page load — catches suspended/revoked keys before showing download URLs.
+        $licensed = $this->license->isValidLive();
 
         $update = $updater->checkForUpdate();
         if (! $licensed) {

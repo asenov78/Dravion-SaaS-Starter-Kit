@@ -2,6 +2,21 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.57] — 2026-06-20
+
+### Added
+- GitHub release webhook (`POST /webhook/github/releases`) — GitHub pushes notification when a Release is published; admin header automatically shows a version badge without requiring "Check Again"
+- `GITHUB_WEBHOOK_SECRET` env var for HMAC-SHA256 signature verification of webhook payloads
+- `updates.new_version_available` translation key (EN + BG)
+- 8 `UpdateWebhookTest` tests covering signature verification, event filtering, cache behavior
+- 3 `LicensePageTest` flash message tests verifying `license_activated` ≠ `license_removed` in both locales
+
+### Changed
+- Updates page (`/admin/updates`) now uses `isValidLive()` — live license check on every page load catches suspended/revoked keys before showing download URLs
+
+### Security
+- Webhook HMAC-SHA256 verified via `hash_equals()` — rejects tampered or unsigned payloads when secret is configured
+
 ## [1.10.56] — 2026-06-20
 ### Fix
 - Add missing GET /dashboard route + DashboardController + view for regular users (fixed Route [dashboard] not defined in 7+ tests)

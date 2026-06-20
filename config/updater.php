@@ -11,6 +11,10 @@ return [
     // Where downloaded release archives are staged before extraction.
     'work_dir' => storage_path('app/updates'),
 
+    // HMAC-SHA256 secret for GitHub webhook signature verification.
+    // Set in GitHub repo → Settings → Webhooks → Secret. Leave empty to skip verification (dev only).
+    'webhook_secret' => env('GITHUB_WEBHOOK_SECRET', ''),
+
     // Paths never overwritten by an update (relative to project root).
     'protected_paths' => [
         '.env',

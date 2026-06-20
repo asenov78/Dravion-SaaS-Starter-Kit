@@ -372,6 +372,15 @@
                     {{ $devLicense ? 'Dev License' : 'Unlicensed' }}
                 </a>
                 @endif
+                @php($webhookUpdateAvailable ??= null)
+                @if($webhookUpdateAvailable)
+                <a href="{{ route('admin.updates') }}"
+                    title="{{ __('updates.new_version_available', ['version' => $webhookUpdateAvailable]) }}"
+                    class="hidden xl:inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors border-brand-200 bg-brand-50 text-brand-700 dark:border-brand-500/30 dark:bg-brand-500/10 dark:text-brand-400">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    v{{ $webhookUpdateAvailable }}
+                </a>
+                @endif
             </div>
 
             <!-- View Site link -->

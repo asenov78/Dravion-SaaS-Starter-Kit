@@ -9,8 +9,10 @@ use App\Observers\UserObserver;
 use App\Services\ActivityLogger as ActivityLoggerService;
 use App\Services\LicenseService;
 use App\Translation\DatabaseLoader;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,6 +33,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         User::observe(UserObserver::class);
+
+        // Pass webhook-cached latest version to the admin header so a badge appears
+        // automatically when GitHub pushes a release notification — no manual check needed.
+        View::composer('layouts.app-header', function ($view) {
+            $current = ltrim(config('dravion.version', '0.0.0'), 'v');
+            $latest  = Cache::get('github_latest_version');
+            $view->with('webhookUpdateAvailable', ($latest && version_compare($latest, $current, '>')) ? $latest : null);
+        });
 
         Schema::defaultStringLength(191);
 

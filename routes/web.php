@@ -23,7 +23,13 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DashboardController as UserDashboardController;
 use App\Http\Controllers\InstallController;
+use App\Http\Controllers\UpdateWebhookController;
 use Illuminate\Support\Facades\Route;
+
+// GitHub release webhook — public but HMAC-SHA256 signed when GITHUB_WEBHOOK_SECRET is set.
+// GitHub pushes here when a Release is published → caches latest version → header badge appears.
+Route::post('/webhook/github/releases', [UpdateWebhookController::class, 'handle'])
+    ->name('webhook.github.releases');
 
 // Serve public storage files via PHP — fallback when symlink is missing on shared hosting
 Route::get('/storage/{path}', function (string $path) {

@@ -137,4 +137,42 @@ class LicensePageTest extends TestCase
             ->assertRedirect(route('admin.license'))
             ->assertSessionMissing('license_warning');
     }
+
+    public function test_remove_license_shows_removed_flash_not_activated(): void
+    {
+        config(['dravion.license_key' => 'DRV-SOMEKEY']);
+
+        $this->actingAs($this->admin())
+            ->delete(route('admin.license.remove'))
+            ->assertSessionHas('success', __('flash.license_removed'))
+            ->assertSessionMissing('errors');
+
+        $this->assertNotEquals(__('flash.license_activated'), __('flash.license_removed'));
+    }
+
+    public function test_activate_license_shows_activated_flash_not_removed(): void
+    {
+        Http::fake([
+            '*/api/router.php*' => Http::response(['license_key' => 'DRV-NEWKEY', 'domain' => 'localhost'], 200),
+        ]);
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.license.update'), ['license_key' => 'PURCHASE-CODE-123'])
+            ->assertSessionHas('success', __('flash.license_activated'))
+            ->assertSessionMissing('errors');
+
+        $this->assertNotEquals(__('flash.license_activated'), __('flash.license_removed'));
+    }
+
+    public function test_flash_keys_are_distinct_in_both_locales(): void
+    {
+        $this->assertNotEquals(
+            \Illuminate\Support\Facades\Lang::get('flash.license_activated', [], 'en'),
+            \Illuminate\Support\Facades\Lang::get('flash.license_removed', [], 'en')
+        );
+        $this->assertNotEquals(
+            \Illuminate\Support\Facades\Lang::get('flash.license_activated', [], 'bg'),
+            \Illuminate\Support\Facades\Lang::get('flash.license_removed', [], 'bg')
+        );
+    }
 }
