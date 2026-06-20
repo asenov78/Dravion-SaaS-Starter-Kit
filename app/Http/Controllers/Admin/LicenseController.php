@@ -23,11 +23,12 @@ class LicenseController extends Controller
     {
         $request->validate(['license_key' => 'required|string|min:6']);
 
+        $backTo = $this->resolveRedirect($request);
         $domain = parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
         $result = $this->license->activate($request->license_key, $domain);
 
         if (isset($result['error'])) {
-            return redirect()->route('admin.license')->withErrors(['license_key' => $result['error']]);
+            return redirect()->to($backTo)->withErrors(['license_key' => $result['error']]);
         }
 
         $licenseKey = $result['license_key'];
@@ -45,11 +46,12 @@ class LicenseController extends Controller
             'activity.license_activated', ['domain' => $domain]
         );
 
-        return redirect()->route('admin.license')->with('success', __('flash.license_activated'));
+        return redirect()->to($backTo)->with('success', __('flash.license_activated'));
     }
 
-    public function remove(): RedirectResponse
+    public function remove(Request $request): RedirectResponse
     {
+        $backTo = $this->resolveRedirect($request);
         $domain = parse_url(config('app.url'), PHP_URL_HOST) ?? 'localhost';
 
         if (! app()->environment('testing')) {
@@ -65,7 +67,19 @@ class LicenseController extends Controller
             'activity.license_removed', ['domain' => $domain]
         );
 
-        return redirect()->route('admin.license')->with('success', __('flash.license_removed'));
+        return redirect()->to($backTo)->with('success', __('flash.license_removed'));
+    }
+
+    /**
+     * Determine where to redirect after a license action.
+     * Forms can pass a `_back` hidden field to override the default.
+     * Allowed values: admin.updates or admin.license routes only (whitelist).
+     */
+    private function resolveRedirect(Request $request): string
+    {
+        $allowed = [route('admin.license'), route('admin.updates')];
+        $back    = $request->input('_back');
+        return (in_array($back, $allowed, true)) ? $back : route('admin.license');
     }
 
     private function writeEnvKey(string $key, string $value): void

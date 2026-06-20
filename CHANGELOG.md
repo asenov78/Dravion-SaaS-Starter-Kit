@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.58] — 2026-06-20
+
+### Fixed
+- Updates+license page: activate/remove license form now redirects back to `/admin/updates` instead of `/admin/license` — combined page stays intact after license actions
+- Updates page: reverted to `isValid()` (cache, fast) on page load; live check stays only in `install()` and `check()` endpoints
+- Admin layout: license blur no longer applies on `/admin/license` route (content was blurred/unusable without a key)
+- `LicenseController`: `_back` hidden field (whitelist-validated) controls redirect target; unknown values fall back to `admin.license`
+
 ## [1.10.57] — 2026-06-20
 
 ### Added

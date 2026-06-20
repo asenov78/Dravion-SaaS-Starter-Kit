@@ -164,6 +164,24 @@ class LicensePageTest extends TestCase
         $this->assertNotEquals(__('flash.license_activated'), __('flash.license_removed'));
     }
 
+    public function test_back_param_from_updates_page_redirects_to_updates(): void
+    {
+        config(['dravion.license_key' => 'DRV-SOMEKEY']);
+
+        $this->actingAs($this->admin())
+            ->delete(route('admin.license.remove'), ['_back' => route('admin.updates')])
+            ->assertRedirect(route('admin.updates'));
+    }
+
+    public function test_back_param_unknown_value_redirects_to_license(): void
+    {
+        config(['dravion.license_key' => 'DRV-SOMEKEY']);
+
+        $this->actingAs($this->admin())
+            ->delete(route('admin.license.remove'), ['_back' => 'https://evil.com'])
+            ->assertRedirect(route('admin.license'));
+    }
+
     public function test_flash_keys_are_distinct_in_both_locales(): void
     {
         $this->assertNotEquals(

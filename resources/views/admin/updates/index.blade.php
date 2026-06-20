@@ -50,6 +50,7 @@
             <div class="p-6">
                 <form method="POST" action="{{ route('admin.license.update') }}">
                     @csrf
+                    <input type="hidden" name="_back" value="{{ route('admin.updates') }}">
                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('license.enter_key_desc') }}</p>
 
                     <div class="mb-5">
@@ -83,6 +84,7 @@
                 @if($masked)
                 <form id="remove-license-form" method="POST" action="{{ route('admin.license.remove') }}" class="hidden">
                     @csrf @method('DELETE')
+                    <input type="hidden" name="_back" value="{{ route('admin.updates') }}">
                 </form>
                 @endif
             </div>

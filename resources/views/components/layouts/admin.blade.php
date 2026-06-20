@@ -197,7 +197,8 @@
 
                 @php
                     $licenseBlur = empty(config('dravion.license_key'))
-                        && ! request()->routeIs('admin.updates');
+                        && ! request()->routeIs('admin.updates')
+                        && ! request()->routeIs('admin.license');
                 @endphp
                 <div @if($licenseBlur) style="filter:blur(2px);pointer-events:none;user-select:none;" @endif>
                     {{ $slot }}
