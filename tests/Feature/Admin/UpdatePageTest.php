@@ -36,28 +36,18 @@ class UpdatePageTest extends TestCase
         config(['dravion.license_key' => '']);
     }
 
-    private function fakeLicenseServer(bool $valid): void
+    private function fakeRelease(string $tag, ?bool $licenseValid = null): void
     {
-        $key = config('dravion.license_key', '');
-        $response = $valid
-            ? ['valid' => true,  'license_key' => $key ?: 'DRV-VALID', 'domain' => 'localhost']
-            : ['valid' => false, 'error' => 'License suspended'];
-
-        Http::fake([
-            config('dravion.license_server', '*') . '/*' => Http::response($response, $valid ? 200 : 403),
-            '*/api/router.php*' => Http::response($response, $valid ? 200 : 403),
-        ]);
+        $this->fakeReleases([$tag], $licenseValid);
     }
 
-    private function fakeRelease(string $tag): void
+    /**
+     * @param string[] $tags newest first
+     * @param bool|null $licenseValid null = don't fake license server (no live check expected)
+     */
+    private function fakeReleases(array $tags, ?bool $licenseValid = null): void
     {
-        $this->fakeReleases([$tag]);
-    }
-
-    /** @param string[] $tags newest first */
-    private function fakeReleases(array $tags): void
-    {
-        Http::fake([
+        $patterns = [
             'api.github.com/*' => Http::response(array_map(fn ($tag) => [
                 'tag_name'    => $tag,
                 'body'        => "Release notes for {$tag}",
@@ -65,7 +55,18 @@ class UpdatePageTest extends TestCase
                 'draft'       => false,
                 'prerelease'  => false,
             ], $tags), 200),
-        ]);
+        ];
+
+        if ($licenseValid !== null) {
+            $key      = config('dravion.license_key', '');
+            $body     = $licenseValid
+                ? ['valid' => true,  'license_key' => $key ?: 'DRV-VALID', 'domain' => 'localhost']
+                : ['valid' => false, 'error' => 'License suspended'];
+            $status   = $licenseValid ? 200 : 403;
+            $patterns['*/api/router.php*'] = Http::response($body, $status);
+        }
+
+        Http::fake($patterns);
         config(['updater.owner' => 'o', 'updater.repo' => 'r']);
     }
 
@@ -115,8 +116,7 @@ class UpdatePageTest extends TestCase
     {
         config(['dravion.version' => '1.2.29']);
         $this->licensed();
-        $this->fakeLicenseServer(valid: true);
-        $this->fakeRelease('v1.3.0');
+        $this->fakeRelease('v1.3.0', licenseValid: true);
 
         $data = $this->actingAs($this->admin())
             ->getJson('/admin/updates/check')
@@ -133,7 +133,7 @@ class UpdatePageTest extends TestCase
     {
         config(['dravion.version' => '1.2.29']);
         $this->unlicensed();
-        $this->fakeLicenseServer(valid: false);
+        // empty key → isValidLive() returns false immediately, no HTTP request needed
         $this->fakeRelease('v1.3.0');
 
         $data = $this->actingAs($this->admin())
@@ -153,8 +153,7 @@ class UpdatePageTest extends TestCase
         // Key exists in config (cached as valid) but live server says suspended
         config(['dravion.version' => '1.2.29', 'dravion.license_key' => 'DRV-SUSPENDED']);
         @unlink(storage_path('license.cache'));
-        $this->fakeLicenseServer(valid: false);
-        $this->fakeRelease('v1.3.0');
+        $this->fakeRelease('v1.3.0', licenseValid: false);
 
         $data = $this->actingAs($this->admin())
             ->getJson('/admin/updates/check')
@@ -171,8 +170,7 @@ class UpdatePageTest extends TestCase
     {
         config(['dravion.version' => '1.3.0']);
         $this->licensed();
-        $this->fakeLicenseServer(valid: true);
-        $this->fakeRelease('v1.3.0');
+        $this->fakeRelease('v1.3.0', licenseValid: true);
 
         $this->actingAs($this->admin())
             ->getJson('/admin/updates/check')
@@ -201,7 +199,6 @@ class UpdatePageTest extends TestCase
     {
         config(['dravion.version' => '1.2.29']);
         $this->unlicensed();
-        $this->fakeLicenseServer(valid: false);
         $this->fakeRelease('v1.3.0');
 
         $this->actingAs($this->admin())
