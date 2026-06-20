@@ -2,12 +2,20 @@
 
 namespace App\Services;
 
+use App\Services\Updater\ReleaseDownloader;
+use App\Services\Updater\ReleaseInstaller;
+use App\Services\Updater\UpdateHistory;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
-use ZipArchive;
 
 class UpdaterService
 {
+    public function __construct(
+        private ReleaseDownloader $downloader,
+        private ReleaseInstaller  $installer,
+        private UpdateHistory     $history,
+    ) {}
+
     public function getCurrentVersion(): string
     {
         return (string) config('dravion.version', '0.0.0');
@@ -61,7 +69,6 @@ class UpdaterService
             ];
         }
 
-        // Sort by semver descending — GitHub API orders by publish date, not version.
         usort($releases, fn ($a, $b) => version_compare($b['version'], $a['version']));
 
         return $releases;
@@ -78,10 +85,7 @@ class UpdaterService
     }
 
     /**
-     * Compare current version against published releases. `newer` holds every
-     * release newer than the current version (newest first) with its changelog.
-     *
-     * @return array{current:string,latest:?string,has_update:bool,changelog:?string,zip_url:?string,newer:array<int,array{version:string,tag:string,changelog:string,zip_url:string}>}
+     * @return array{current:string,latest:?string,has_update:bool,changelog:?string,zip_url:?string,newer:array,older:array}
      */
     public function checkForUpdate(): array
     {
@@ -121,10 +125,9 @@ class UpdaterService
     }
 
     /**
-     * Download a release ZIP, extract it, copy non-protected files over the
-     * installation, run migrations and clear caches.
+     * Download and install a release ZIP.
      *
-     * @return array{ok:bool,message:string}
+     * @return array{ok:bool,message:string,version?:string}
      */
     public function downloadAndInstall(string $zipUrl, string $changelog = ''): array
     {
@@ -140,62 +143,23 @@ class UpdaterService
             $fromVersion = $this->getCurrentVersion();
             Artisan::call('down');
 
-            // Download
-            $headers = ['User-Agent' => 'Dravion-Updater'];
-            if ($token = config('updater.token')) {
-                $headers['Authorization'] = 'Bearer ' . $token;
-            }
-            $response = Http::withHeaders($headers)->timeout(120)->get($zipUrl);
-            if (! $response->successful()) {
+            $download = $this->downloader->download($zipUrl, $zipPath);
+            if (! $download['ok']) {
                 Artisan::call('up');
-                return ['ok' => false, 'message' => 'Download failed (HTTP ' . $response->status() . ').'];
+                return ['ok' => false, 'message' => $download['message']];
             }
-            file_put_contents($zipPath, $response->body());
 
-            // Extract
-            $zip = new ZipArchive();
-            if ($zip->open($zipPath) !== true) {
+            $install = $this->installer->install($zipPath, $extractPath, $changelog);
+            if (! $install['ok']) {
                 Artisan::call('up');
-                return ['ok' => false, 'message' => 'Could not open downloaded archive.'];
-            }
-            @mkdir($extractPath, 0775, true);
-            $zip->extractTo($extractPath);
-            $zip->close();
-
-            // GitHub zipballs wrap files in a single top-level folder.
-            $root = $this->locateExtractedRoot($extractPath);
-
-            // Copy files, skipping protected paths.
-            $this->copyTree($root, base_path(), (array) config('updater.protected_paths', []));
-
-            // Write new version into the protected config/dravion.php BEFORE
-            // cache clear — so getCurrentVersion() returns the new version immediately.
-            $newVersion = $this->detectVersionFromExtract($root);
-            if ($newVersion) {
-                $this->writeVersionToConfig($newVersion);
+                return ['ok' => false, 'message' => $install['message']];
             }
 
-            // Prefer changelog from CHANGELOG.md in the ZIP over the (often empty) GitHub release body.
-            $installedVersion  = $newVersion ?? $this->getCurrentVersion();
-            $resolvedChangelog = $changelog ?: $this->detectChangelogFromExtract($root, $installedVersion);
-
-            // Migrate + clear caches
-            Artisan::call('migrate', ['--force' => true]);
-            Artisan::call('config:clear');
-            Artisan::call('view:clear');
-            Artisan::call('cache:clear');
-            @unlink(storage_path('license.cache'));
-
-            // Reset opcache so updated PHP files are served immediately.
-            if (function_exists('opcache_reset')) {
-                @opcache_reset();
-            }
-
-            $this->appendToHistory($fromVersion, $installedVersion, $resolvedChangelog);
+            $this->history->append($fromVersion, $install['version'] ?? $fromVersion, $install['changelog']);
 
             Artisan::call('up');
 
-            return ['ok' => true, 'message' => 'Update installed successfully.', 'version' => $installedVersion];
+            return ['ok' => true, 'message' => 'Update installed successfully.', 'version' => $install['version']];
         } catch (\Throwable $e) {
             Artisan::call('up');
             return ['ok' => false, 'message' => $e->getMessage()];
@@ -205,145 +169,14 @@ class UpdaterService
         }
     }
 
-    /**
-     * Bootstrap history.json if it doesn't exist yet — records the currently
-     * running version as "installed" so the accordion isn't empty after a
-     * manual ZIP deploy that predates history tracking.
-     */
     public function ensureHistoryExists(): void
     {
-        $path = storage_path('app/updates/history.json');
-        if (file_exists($path)) {
-            return;
-        }
-        // Only seed if the installer has already run (install.lock present).
-        if (! file_exists(storage_path('install.lock'))) {
-            return;
-        }
-        $this->appendToHistory('—', $this->getCurrentVersion());
+        $this->history->ensureExists($this->getCurrentVersion());
     }
 
     public function getUpdateHistory(): array
     {
-        $path = storage_path('app/updates/history.json');
-        if (! file_exists($path)) {
-            return [];
-        }
-        $data = json_decode(file_get_contents($path), true);
-        return is_array($data) ? $data : [];
-    }
-
-    private function appendToHistory(string $fromVersion, string $toVersion, string $changelog = ''): void
-    {
-        $dir = storage_path('app/updates');
-        if (! is_dir($dir)) {
-            @mkdir($dir, 0775, true);
-        }
-        $history   = $this->getUpdateHistory();
-        $history[] = [
-            'from'         => $fromVersion,
-            'to'           => $toVersion,
-            'changelog'    => $changelog,
-            'installed_at' => now()->toIso8601String(),
-        ];
-        file_put_contents($dir . '/history.json', json_encode($history, JSON_PRETTY_PRINT));
-    }
-
-    private function detectChangelogFromExtract(string $root, string $version): string
-    {
-        $file = $root . '/CHANGELOG.md';
-        if (! file_exists($file)) {
-            return '';
-        }
-        $content = file_get_contents($file);
-        // Match the section for this version: ## [1.2.3] ... up to the next ## heading.
-        $escaped = preg_quote($version, '/');
-        if (preg_match('/^##\s+\[' . $escaped . '\][^\n]*\n(.*?)(?=^##\s+\[|\z)/ms', $content, $m)) {
-            return trim($m[1]);
-        }
-        return '';
-    }
-
-    private function detectVersionFromExtract(string $root): ?string
-    {
-        $configFile = $root . '/config/dravion.php';
-        if (! file_exists($configFile)) {
-            return null;
-        }
-        $content = file_get_contents($configFile);
-        if (preg_match("/'version'\s*=>\s*'([^']+)'/", $content, $m)) {
-            return $m[1];
-        }
-        return null;
-    }
-
-    private function writeVersionToConfig(string $version): void
-    {
-        $configFile = base_path('config/dravion.php');
-        if (! file_exists($configFile)) {
-            return;
-        }
-        $content = file_get_contents($configFile);
-        $updated = preg_replace(
-            "/'version'\s*=>\s*'[^']+'/",
-            "'version' => '{$version}'",
-            $content
-        );
-        if ($updated && $updated !== $content) {
-            file_put_contents($configFile, $updated);
-        }
-    }
-
-    private function locateExtractedRoot(string $extractPath): string
-    {
-        $entries = array_values(array_filter(
-            scandir($extractPath) ?: [],
-            fn ($e) => $e !== '.' && $e !== '..'
-        ));
-
-        if (count($entries) === 1 && is_dir($extractPath . '/' . $entries[0])) {
-            return $extractPath . '/' . $entries[0];
-        }
-
-        return $extractPath;
-    }
-
-    private function copyTree(string $from, string $to, array $protected): void
-    {
-        $items = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($from, \FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
-
-        foreach ($items as $item) {
-            $relative = ltrim(str_replace($from, '', $item->getPathname()), '\\/');
-            $relative = str_replace('\\', '/', $relative);
-
-            // Skip protected paths.
-            foreach ($protected as $p) {
-                $p = trim($p, '/');
-                if ($relative === $p || str_starts_with($relative, $p . '/')) {
-                    continue 2;
-                }
-            }
-
-            $target   = $to . DIRECTORY_SEPARATOR . $relative;
-            $realTo   = realpath($to);
-            $realTarget = realpath(dirname($target)) ?: dirname($target);
-
-            // Reject path traversal — target must stay inside base_path.
-            if ($realTo && ! str_starts_with($realTarget . DIRECTORY_SEPARATOR, $realTo . DIRECTORY_SEPARATOR)) {
-                continue;
-            }
-
-            if ($item->isDir()) {
-                if (! is_dir($target)) {
-                    @mkdir($target, 0775, true);
-                }
-            } else {
-                @copy($item->getPathname(), $target);
-            }
-        }
+        return $this->history->all();
     }
 
     private function rrmdir(string $dir): void

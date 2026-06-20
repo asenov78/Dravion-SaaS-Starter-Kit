@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.50] — 2026-06-20
+### Arch
+- Decompose UpdaterService God object: extract ReleaseDownloader, ReleaseInstaller, UpdateHistory into app/Services/Updater/
+- UpdaterService becomes thin orchestrator (~80 lines, was 363) delegating to focused collaborators
+- UpdateHistory: 4 unit tests covering append/accumulation/empty-changelog
+- Each collaborator has single responsibility — testable in isolation without mocking Laravel internals
+
 ## [1.10.49] — 2026-06-18
 ### Arch
 - Extract HtmlSanitizer service (app/Services/HtmlSanitizer.php) from PagesController private method — 17 unit tests, covers XSS/CSS-exfil/javascript:/data: vectors
