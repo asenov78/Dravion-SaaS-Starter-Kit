@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.52] — 2026-06-20
+### Arch
+- Setting::get() request-scoped static cache — eliminates repeated DB queries per request (31 call-sites, up to 20 per admin settings page)
+- Setting::set() / setMany() invalidate cache on write — no stale reads
+- Setting::flushCache() helper for test isolation between assertions
+- app/Support/Settings.php: typed constants for all 20+ known setting keys
+
 ## [1.10.51] — 2026-06-20
 ### Arch
 - ActivityLogger: static → injectable via ActivityLoggerInterface contract
