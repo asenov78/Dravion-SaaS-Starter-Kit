@@ -11,6 +11,11 @@ class UpdaterServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function svc(): UpdaterService
+    {
+        return app(UpdaterService::class);
+    }
+
     private function fakeRelease(string $tag): void
     {
         $this->fakeReleases([$tag]);
@@ -34,7 +39,7 @@ class UpdaterServiceTest extends TestCase
     public function test_get_current_version_reads_config(): void
     {
         config(['dravion.version' => '1.2.29']);
-        $this->assertSame('1.2.29', (new UpdaterService)->getCurrentVersion());
+        $this->assertSame('1.2.29', $this->svc()->getCurrentVersion());
     }
 
     public function test_check_detects_newer_version(): void
@@ -42,7 +47,7 @@ class UpdaterServiceTest extends TestCase
         config(['dravion.version' => '1.2.29']);
         $this->fakeRelease('v1.3.0');
 
-        $result = (new UpdaterService)->checkForUpdate();
+        $result = $this->svc()->checkForUpdate();
 
         $this->assertTrue($result['has_update']);
         $this->assertSame('1.3.0', $result['latest']);
@@ -56,7 +61,7 @@ class UpdaterServiceTest extends TestCase
         config(['dravion.version' => '1.2.29']);
         $this->fakeReleases(['v1.4.0', 'v1.3.0', 'v1.2.0']);
 
-        $result = (new UpdaterService)->checkForUpdate();
+        $result = $this->svc()->checkForUpdate();
 
         // Only versions newer than current, newest first.
         $versions = array_column($result['newer'], 'version');
@@ -73,7 +78,7 @@ class UpdaterServiceTest extends TestCase
         config(['dravion.version' => '1.4.0']);
         $this->fakeReleases(['v1.4.0', 'v1.3.0']);
 
-        $this->assertSame([], (new UpdaterService)->checkForUpdate()['newer']);
+        $this->assertSame([], $this->svc()->checkForUpdate()['newer']);
     }
 
     public function test_check_no_update_when_same_version(): void
@@ -81,7 +86,7 @@ class UpdaterServiceTest extends TestCase
         config(['dravion.version' => '1.3.0']);
         $this->fakeRelease('v1.3.0');
 
-        $result = (new UpdaterService)->checkForUpdate();
+        $result = $this->svc()->checkForUpdate();
 
         $this->assertFalse($result['has_update']);
     }
@@ -91,7 +96,7 @@ class UpdaterServiceTest extends TestCase
         config(['dravion.version' => '1.4.0']);
         $this->fakeRelease('v1.3.0');
 
-        $this->assertFalse((new UpdaterService)->checkForUpdate()['has_update']);
+        $this->assertFalse($this->svc()->checkForUpdate()['has_update']);
     }
 
     public function test_check_handles_github_error_gracefully(): void
@@ -100,7 +105,7 @@ class UpdaterServiceTest extends TestCase
         Http::fake(['api.github.com/*' => Http::response('nope', 404)]);
         config(['updater.owner' => 'o', 'updater.repo' => 'r']);
 
-        $result = (new UpdaterService)->checkForUpdate();
+        $result = $this->svc()->checkForUpdate();
 
         $this->assertFalse($result['has_update']);
         $this->assertNull($result['latest']);

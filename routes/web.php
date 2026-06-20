@@ -21,17 +21,18 @@ use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\DashboardController as UserDashboardController;
 use App\Http\Controllers\InstallController;
 use Illuminate\Support\Facades\Route;
 
 // Serve public storage files via PHP — fallback when symlink is missing on shared hosting
 Route::get('/storage/{path}', function (string $path) {
-    $base     = storage_path('app/public');
+    $base     = realpath(storage_path('app/public'));
     $fullPath = realpath($base . DIRECTORY_SEPARATOR . $path);
 
     // Block path traversal: resolved path must stay inside storage/app/public/
     abort_if(
-        $fullPath === false || !str_starts_with($fullPath, $base . DIRECTORY_SEPARATOR),
+        $base === false || $fullPath === false || !str_starts_with($fullPath, $base . DIRECTORY_SEPARATOR),
         404
     );
     abort_if(!is_file($fullPath), 404);
@@ -108,6 +109,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
     Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->middleware('throttle:6,1')->name('verification.send');
+});
+
+// User dashboard
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 });
 
 // Session management
@@ -196,6 +202,7 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     Route::get('/updates/check',   [UpdateController::class, 'check'])->name('updates.check')->middleware('role:admin');
     Route::post('/updates/install',[UpdateController::class, 'install'])->name('updates.install')->middleware('role:admin');
 
+    Route::get('/license',    [LicenseController::class, 'show'])->name('license');
     Route::post('/license',   [LicenseController::class, 'update'])->name('license.update');
     Route::delete('/license', [LicenseController::class, 'remove'])->name('license.remove');
 

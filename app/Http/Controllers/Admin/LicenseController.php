@@ -8,10 +8,16 @@ use App\Facades\ActivityLogger;
 use App\Services\EnvWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class LicenseController extends Controller
 {
     public function __construct(private LicenseServiceInterface $license) {}
+
+    public function show(): View
+    {
+        return view('admin.license');
+    }
 
     public function update(Request $request): RedirectResponse
     {
@@ -21,7 +27,7 @@ class LicenseController extends Controller
         $result = $this->license->activate($request->license_key, $domain);
 
         if (isset($result['error'])) {
-            return redirect()->back()->withErrors(['license_key' => $result['error']]);
+            return redirect()->route('admin.license')->withErrors(['license_key' => $result['error']]);
         }
 
         $licenseKey = $result['license_key'];
@@ -39,7 +45,7 @@ class LicenseController extends Controller
             'activity.license_activated', ['domain' => $domain]
         );
 
-        return redirect()->back()->with('success', __('flash.license_activated'));
+        return redirect()->route('admin.license')->with('success', __('flash.license_activated'));
     }
 
     public function remove(): RedirectResponse
@@ -59,7 +65,7 @@ class LicenseController extends Controller
             'activity.license_removed', ['domain' => $domain]
         );
 
-        return redirect()->back()->with('success', __('flash.license_removed'));
+        return redirect()->route('admin.license')->with('success', __('flash.license_removed'));
     }
 
     private function writeEnvKey(string $key, string $value): void

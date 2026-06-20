@@ -2,6 +2,15 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.56] — 2026-06-20
+### Fix
+- Add missing GET /dashboard route + DashboardController + view for regular users (fixed Route [dashboard] not defined in 7+ tests)
+- Add missing GET /admin/license route + LicenseController::show() + admin/license.blade.php (fixed Route [admin.license] not defined in 10+ tests)
+- LicenseController::update() + remove() redirect to route('admin.license') instead of back() (fixed redirect assertions in tests)
+- Storage route realpath() path-traversal check: use realpath($base) for comparison to handle mixed Windows separators (fixed 2 StorageSymlinkTest 404s)
+- UpdaterServiceTest: use app(UpdaterService::class) instead of new UpdaterService() (fixed 7 constructor errors)
+- Result: 583/585 tests pass (2 skipped = Windows-only symlink creation)
+
 ## [1.10.55] — 2026-06-20
 ### Security / Arch
 - License security: isValidLive() + verifyNow() — real-time server ping on update check and install (blocks suspended/revoked licenses even with valid 24h cache)
