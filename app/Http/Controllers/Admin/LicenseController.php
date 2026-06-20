@@ -8,15 +8,14 @@ use App\Facades\ActivityLogger;
 use App\Services\EnvWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class LicenseController extends Controller
 {
     public function __construct(private LicenseServiceInterface $license) {}
 
-    public function show(): View
+    public function show(): RedirectResponse
     {
-        return view('admin.license');
+        return redirect()->route('admin.updates');
     }
 
     public function update(Request $request): RedirectResponse

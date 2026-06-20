@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.59] — 2026-06-20
+
+### Fixed
+- `GET /admin/license` now redirects to `admin.updates` — combined License & Updates page is the single entry point; separate license-only page no longer exists as a destination
+
 ## [1.10.58] — 2026-06-20
 
 ### Fixed

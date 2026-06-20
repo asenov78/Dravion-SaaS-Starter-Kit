@@ -349,10 +349,9 @@ class TranslationPagesTest extends TestCase
         $this->seedLanguages();
         $this->actingAs($this->admin())
             ->withSession(['locale' => 'bg'])
-            ->get('/admin/license')
+            ->get('/admin/updates')
             ->assertStatus(200)
             ->assertSee('Лиценз')
-            ->assertSee('Управлявайте лицензния ключ на Dravion')
             ->assertSee('Статус на лиценза')
             ->assertSee('Активирайте лиценза');
     }
@@ -500,7 +499,7 @@ class TranslationPagesTest extends TestCase
         $this->seedLanguages();
         $response = $this->actingAs($this->admin())
             ->withSession(['locale' => 'bg'])
-            ->get('/admin/license')
+            ->get('/admin/updates')
             ->assertStatus(200);
         $content = $response->getContent();
         $this->assertEquals(1, substr_count($content, 'Въведете лицензен ключ'),

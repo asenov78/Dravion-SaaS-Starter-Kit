@@ -18,12 +18,11 @@ class LicensePageTest extends TestCase
         return $user;
     }
 
-    public function test_admin_can_view_license_page(): void
+    public function test_admin_license_route_redirects_to_updates(): void
     {
         $this->actingAs($this->admin())
             ->get(route('admin.license'))
-            ->assertStatus(200)
-            ->assertSee('License');
+            ->assertRedirect(route('admin.updates'));
     }
 
     public function test_non_admin_cannot_view_license_page(): void
@@ -36,32 +35,32 @@ class LicensePageTest extends TestCase
             ->assertStatus(403);
     }
 
-    public function test_license_page_shows_masked_key_when_set(): void
+    public function test_updates_page_shows_masked_key_when_set(): void
     {
         config(['dravion.license_key' => 'DRV-ABCDEF123456789012345678']);
 
         $this->actingAs($this->admin())
-            ->get(route('admin.license'))
+            ->get(route('admin.updates'))
             ->assertSee('DRV-****');
     }
 
-    public function test_license_page_shows_unlicensed_when_no_key(): void
+    public function test_updates_page_shows_unlicensed_when_no_key(): void
     {
         config(['dravion.license_key' => '']);
 
         $this->actingAs($this->admin())
-            ->get(route('admin.license'))
+            ->get(route('admin.updates'))
             ->assertSee('No license key configured')
             ->assertDontSee('Licensed');
     }
 
-    public function test_license_page_shows_invalid_status_when_warning_in_session(): void
+    public function test_updates_page_shows_invalid_status_when_warning_in_session(): void
     {
         config(['dravion.license_key' => 'DRV-SOMEKEY']);
 
         $this->actingAs($this->admin())
             ->withSession(['license_warning' => 'License invalid.'])
-            ->get(route('admin.license'))
+            ->get(route('admin.updates'))
             ->assertSee('Invalid')
             ->assertDontSee('Licensed');
     }
