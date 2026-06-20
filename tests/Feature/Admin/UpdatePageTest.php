@@ -36,6 +36,19 @@ class UpdatePageTest extends TestCase
         config(['dravion.license_key' => '']);
     }
 
+    private function fakeLicenseServer(bool $valid): void
+    {
+        $key = config('dravion.license_key', '');
+        $response = $valid
+            ? ['valid' => true,  'license_key' => $key ?: 'DRV-VALID', 'domain' => 'localhost']
+            : ['valid' => false, 'error' => 'License suspended'];
+
+        Http::fake([
+            config('dravion.license_server', '*') . '/*' => Http::response($response, $valid ? 200 : 403),
+            '*/api/router.php*' => Http::response($response, $valid ? 200 : 403),
+        ]);
+    }
+
     private function fakeRelease(string $tag): void
     {
         $this->fakeReleases([$tag]);
@@ -94,22 +107,101 @@ class UpdatePageTest extends TestCase
             ->assertSee('1.3.0');
     }
 
-    public function test_check_endpoint_returns_json(): void
+    // ------------------------------------------------------------------ //
+    // check() endpoint — verifies BOTH update availability AND license   //
+    // ------------------------------------------------------------------ //
+
+    public function test_check_licensed_returns_update_with_zip_url(): void
     {
         config(['dravion.version' => '1.2.29']);
         $this->licensed();
+        $this->fakeLicenseServer(valid: true);
+        $this->fakeRelease('v1.3.0');
+
+        $data = $this->actingAs($this->admin())
+            ->getJson('/admin/updates/check')
+            ->assertOk()
+            ->assertJson(['has_update' => true, 'latest' => '1.3.0'])
+            ->json();
+
+        // zip_url must be present so the frontend can trigger install
+        $this->assertNotNull($data['zip_url']);
+        $this->assertNotNull($data['newer'][0]['zip_url'] ?? null);
+    }
+
+    public function test_check_no_license_key_hides_zip_url(): void
+    {
+        config(['dravion.version' => '1.2.29']);
+        $this->unlicensed();
+        $this->fakeLicenseServer(valid: false);
+        $this->fakeRelease('v1.3.0');
+
+        $data = $this->actingAs($this->admin())
+            ->getJson('/admin/updates/check')
+            ->assertOk()
+            ->assertJson(['has_update' => true, 'latest' => '1.3.0', 'zip_url' => null])
+            ->json();
+
+        // All newer[] entries must also have zip_url hidden
+        foreach ($data['newer'] ?? [] as $rel) {
+            $this->assertNull($rel['zip_url'], "newer[].zip_url must be null when unlicensed");
+        }
+    }
+
+    public function test_check_suspended_license_hides_zip_url(): void
+    {
+        // Key exists in config (cached as valid) but live server says suspended
+        config(['dravion.version' => '1.2.29', 'dravion.license_key' => 'DRV-SUSPENDED']);
+        @unlink(storage_path('license.cache'));
+        $this->fakeLicenseServer(valid: false);
+        $this->fakeRelease('v1.3.0');
+
+        $data = $this->actingAs($this->admin())
+            ->getJson('/admin/updates/check')
+            ->assertOk()
+            ->json();
+
+        $this->assertNull($data['zip_url'], 'zip_url must be null when live license check fails');
+        foreach ($data['newer'] ?? [] as $rel) {
+            $this->assertNull($rel['zip_url']);
+        }
+    }
+
+    public function test_check_returns_no_update_when_up_to_date(): void
+    {
+        config(['dravion.version' => '1.3.0']);
+        $this->licensed();
+        $this->fakeLicenseServer(valid: true);
         $this->fakeRelease('v1.3.0');
 
         $this->actingAs($this->admin())
             ->getJson('/admin/updates/check')
             ->assertOk()
-            ->assertJson(['has_update' => true, 'latest' => '1.3.0']);
+            ->assertJson(['has_update' => false]);
     }
 
+    public function test_check_requires_auth(): void
+    {
+        $this->getJson('/admin/updates/check')
+            ->assertStatus(302);
+    }
+
+    public function test_check_requires_admin_role(): void
+    {
+        $manager = User::factory()->create();
+        $manager->assignRole('manager');
+
+        $this->actingAs($manager)
+            ->getJson('/admin/updates/check')
+            ->assertStatus(403);
+    }
+
+    /** @deprecated kept for compat — use test_check_no_license_key_hides_zip_url */
     public function test_unlicensed_check_hides_zip_url(): void
     {
         config(['dravion.version' => '1.2.29']);
         $this->unlicensed();
+        $this->fakeLicenseServer(valid: false);
         $this->fakeRelease('v1.3.0');
 
         $this->actingAs($this->admin())
