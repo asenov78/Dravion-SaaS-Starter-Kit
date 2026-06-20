@@ -181,6 +181,45 @@ class LicensePageTest extends TestCase
             ->assertRedirect(route('admin.license'));
     }
 
+    // --- Blur behaviour ---
+
+    public function test_dashboard_is_blurred_when_no_license(): void
+    {
+        config(['dravion.license_key' => '']);
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('filter:blur', $html);
+        $this->assertStringContainsString('pointer-events:none', $html);
+    }
+
+    public function test_updates_page_is_NOT_blurred_when_no_license(): void
+    {
+        config(['dravion.license_key' => '']);
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringNotContainsString('pointer-events:none', $html);
+    }
+
+    public function test_no_blur_when_license_present(): void
+    {
+        config(['dravion.license_key' => 'DRV-VALID']);
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringNotContainsString('pointer-events:none', $html);
+    }
+
     public function test_flash_keys_are_distinct_in_both_locales(): void
     {
         $this->assertNotEquals(

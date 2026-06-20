@@ -101,6 +101,42 @@ Update `config/dravion.php` `version` + `CHANGELOG.md` on every release commit.
 
 ---
 
+## Release Gate — Tests Must Pass Before Any Update Ships
+
+**Standard procedure — mandatory, no exceptions:**
+
+```
+php artisan test --no-coverage   ← всички 600+ теста трябва да са зелени
+```
+
+Run before EVERY version bump + push. If any test fails → fix first, then bump.
+
+### CI enforcement (`.github/workflows/release.yml`)
+
+GitHub Actions автоматично изпълнява два jobs при push към `main` с промяна в `config/dravion.php`:
+
+1. **`test` job** — пуска `php artisan test --no-coverage` на PHP 8.3 + SQLite
+2. **`release` job** — `needs: test` → **блокиран ако тестовете фейлват**
+
+Ако CI е червен → GitHub Release НЕ се създава → потребителите не виждат update бутон.
+
+### Blur behaviour (license guard)
+
+`$licenseBlur` в `resources/views/components/layouts/admin.blade.php`:
+- `filter:blur(2px) + pointer-events:none` на **всички** admin страници без лиценз
+- Изключени от blur: само `admin.updates` (страницата за активиране)
+- `admin.license` redirect-ва към `admin.updates` — не е отделна дестинация
+- Тестове: `LicensePageTest::test_dashboard_is_blurred_when_no_license` и `test_updates_page_is_NOT_blurred_when_no_license`
+
+### Documentation update procedure
+
+При всяка промяна в поведение:
+1. Обнови `CHANGELOG.md` с версия + описание
+2. Обнови засегнатите `CLAUDE.md` файлове в директориите
+3. Обнови `.claude/STATE.md` в края на сесията
+
+---
+
 ## Caveman Mode — Always Active
 
 Direct, compressed. No filler. Technical precision kept.
