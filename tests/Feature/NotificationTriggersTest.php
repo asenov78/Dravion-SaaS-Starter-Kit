@@ -103,11 +103,18 @@ class NotificationTriggersTest extends TestCase
             ->once()
             ->andReturn(['ok' => true, 'version' => '1.4.0']);
 
-        // LicenseService::isValid() reads config — fake a valid license key
-        config(['dravion.license_key' => 'DEV-TEST']);
+        config([
+            'dravion.license_key' => 'DEV-TEST',
+            'updater.owner'       => 'acme',
+            'updater.repo'        => 'my-app',
+        ]);
+
+        Http::fake([
+            '*/api/router.php*' => Http::response(['valid' => true, 'domain' => 'localhost'], 200),
+        ]);
 
         $this->actingAs($admin)
-            ->post('/admin/updates/install', ['zip_url' => 'https://api.github.com/repos/asenov78/Dravion-SaaS-Starter-Kit/zipball/v1.4.0'])
+            ->postJson('/admin/updates/install', ['zip_url' => 'https://api.github.com/repos/acme/my-app/zipball/v1.4.0'])
             ->assertOk();
 
         Notification::assertSentTo($admin, UpdateInstalledNotification::class);

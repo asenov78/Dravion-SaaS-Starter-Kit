@@ -222,6 +222,10 @@ class UpdatePageTest extends TestCase
         config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
         $validZipUrl = 'https://api.github.com/repos/acme/my-app/zipball/v1.3.0';
 
+        Http::fake([
+            '*/api/router.php*' => Http::response(['valid' => true, 'domain' => 'localhost'], 200),
+        ]);
+
         $mock = $this->mock(UpdaterService::class);
         $mock->shouldReceive('downloadAndInstall')
             ->once()
@@ -264,6 +268,10 @@ class UpdatePageTest extends TestCase
         $this->licensed();
         config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
         $validZipUrl = 'https://api.github.com/repos/acme/my-app/zipball/v1.3.0';
+
+        Http::fake([
+            '*/api/router.php*' => Http::response(['valid' => true, 'domain' => 'localhost'], 200),
+        ]);
 
         // Hold the lock so the second request cannot acquire it
         $lock = cache()->lock('dravion-update-install', 120);

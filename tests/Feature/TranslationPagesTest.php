@@ -519,15 +519,15 @@ class TranslationPagesTest extends TestCase
             ->assertSee('Email Address');
     }
 
-    public function test_empty_bg_value_falls_back_to_english(): void
+    public function test_bg_locale_applies_translations_from_files(): void
     {
         $this->seedLanguages();
-        // nav.license not in bg seeds → should show EN 'License'
         app('translator')->setLoaded([]);
 
         $this->actingAs($this->admin())
             ->withSession(['locale' => 'bg'])
             ->get('/admin/settings')
-            ->assertSee('License'); // EN fallback
+            ->assertSee('Настройки')   // nav.settings → lang/bg/nav.php
+            ->assertSee('Обновявания'); // nav.updates → lang/bg/nav.php
     }
 }
