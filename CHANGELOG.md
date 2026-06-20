@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.79] — 2026-06-20
+requires: 1.10.78
+
+### Fixed
+- Activity log: `LicenseController` was using wrong `descKey` (`activity.license_activated`) instead of `activity.log.license_activated` — license events now show translated descriptions
+- Activity log event badges now translated via `activity.events.*` keys (en + bg) instead of raw event strings
+
 ## [1.10.78] — 2026-06-20
 requires: 1.10.75
 

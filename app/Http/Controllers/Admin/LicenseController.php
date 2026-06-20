@@ -42,7 +42,7 @@ class LicenseController extends Controller
             'license', 'activated',
             'License activated for domain ' . ($domain),
             null, null,
-            'activity.license_activated', ['domain' => $domain]
+            'activity.log.license_activated', ['domain' => $domain]
         );
 
         return redirect()->to($backTo)->with('success', __('flash.license_activated'));
@@ -63,7 +63,7 @@ class LicenseController extends Controller
             'license', 'removed',
             'License removed for domain ' . $domain,
             null, null,
-            'activity.license_removed', ['domain' => $domain]
+            'activity.log.license_removed', ['domain' => $domain]
         );
 
         return redirect()->to($backTo)->with('success', __('flash.license_removed'));

@@ -16,6 +16,18 @@ return [
     'subject'     => 'Subject',
     'when'        => 'When',
     'system'      => 'System',
+    'events'      => [
+        'created'   => 'Created',
+        'updated'   => 'Updated',
+        'deleted'   => 'Deleted',
+        'suspended' => 'Suspended',
+        'activated' => 'Activated',
+        'restored'  => 'Restored',
+        'removed'   => 'Removed',
+        'login'     => 'Login',
+        'logout'    => 'Logout',
+        'failed'    => 'Failed',
+    ],
     'log'         => [
         'user_created'        => 'Created user :name (:email)',
         'user_updated'        => 'Updated user :name (:email)',

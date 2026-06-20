@@ -193,7 +193,7 @@ class ActivityLogTest extends TestCase
         $this->actingAs($admin)
             ->get('/admin/activity')
             ->assertStatus(200)
-            ->assertSee('login');
+            ->assertSee('Login');
     }
 
     // --- Filters ---

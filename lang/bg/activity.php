@@ -16,6 +16,18 @@ return [
     'subject'     => 'Обект',
     'when'        => 'Кога',
     'system'      => 'Система',
+    'events'      => [
+        'created'   => 'Създаден',
+        'updated'   => 'Обновен',
+        'deleted'   => 'Изтрит',
+        'suspended' => 'Спрян',
+        'activated' => 'Активиран',
+        'restored'  => 'Възстановен',
+        'removed'   => 'Премахнат',
+        'login'     => 'Вход',
+        'logout'    => 'Изход',
+        'failed'    => 'Неуспешен',
+    ],
     'log'         => [
         'user_created'        => 'Създаден потребител :name (:email)',
         'user_updated'        => 'Обновен потребител :name (:email)',

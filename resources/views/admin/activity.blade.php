@@ -73,7 +73,10 @@
             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                 @foreach($activities as $activity)
                 @php
-                    $eventColor = match($activity->event) {
+                    $eventRaw = $activity->event ?? $activity->log_name;
+                    $eventTransKey = 'activity.events.' . $eventRaw;
+                    $eventLabel = __($eventTransKey) !== $eventTransKey ? __($eventTransKey) : $eventRaw;
+                    $eventColor = match($eventRaw) {
                         'created' => 'success',
                         'updated' => 'warning',
                         'deleted' => 'error',
@@ -89,7 +92,7 @@
                 <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                     <td class="px-6 py-3">
                         <span class="inline-block px-2.5 py-0.5 text-xs font-medium rounded-full {{ $eventClasses }}">
-                            {{ $activity->event ?? $activity->log_name }}
+                            {{ $eventLabel }}
                         </span>
                     </td>
                     @php
