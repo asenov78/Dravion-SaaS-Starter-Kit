@@ -75,7 +75,7 @@ class UpdateController extends Controller
     {
         // Live check: re-verify right now, not from 24h-old cache.
         if (! $this->license->isValidLive()) {
-            abort(403, __('updates.license_required'));
+            return response()->json(['ok' => false, 'message' => __('updates.license_required')], 403);
         }
 
         $data = $request->validate([
@@ -83,7 +83,11 @@ class UpdateController extends Controller
             'changelog' => ['nullable', 'string', 'max:10000'],
         ]);
 
-        $result = $updater->downloadAndInstall($data['zip_url'], $data['changelog'] ?? '');
+        try {
+            $result = $updater->downloadAndInstall($data['zip_url'], $data['changelog'] ?? '');
+        } catch (\Throwable $e) {
+            return response()->json(['ok' => false, 'message' => $e->getMessage()], 500);
+        }
 
         if ($result['ok'] ?? false) {
             try {
@@ -92,6 +96,6 @@ class UpdateController extends Controller
             } catch (\Throwable) {}
         }
 
-        return response()->json($result, $result['ok'] ? 200 : 500);
+        return response()->json($result, ($result['ok'] ?? false) ? 200 : 500);
     }
 }
