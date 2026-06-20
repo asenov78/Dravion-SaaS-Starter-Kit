@@ -139,12 +139,20 @@ class MenuHelper
 
         // Updates are admin-only (route guarded by role:admin).
         if (auth()->check() && auth()->user()->hasRole('admin')) {
-            $items[] = [
+            $item = [
                 'icon'  => 'updates',
                 'name'  => __('nav.updates'),
                 'path'  => route('admin.updates'),
                 'route' => 'admin.updates',
             ];
+
+            $current = ltrim(config('dravion.version', '0.0.0'), 'v');
+            $latest  = \Illuminate\Support\Facades\Cache::get('github_latest_version');
+            if ($latest && version_compare($latest, $current, '>')) {
+                $item['badge'] = 'v' . $latest;
+            }
+
+            $items[] = $item;
         }
 
         return $items;

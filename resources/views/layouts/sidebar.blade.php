@@ -143,6 +143,9 @@
                                         @if (!empty($item['new']))
                                             <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-brand-500 text-white">new</span>
                                         @endif
+                                        @if (!empty($item['badge']))
+                                            <x-ta.badge variant="solid" color="warning" size="sm">{{ $item['badge'] }}</x-ta.badge>
+                                        @endif
                                     </span>
                                 </a>
                             @endif
