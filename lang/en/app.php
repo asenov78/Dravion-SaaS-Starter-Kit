@@ -48,4 +48,6 @@ return [
     'preview'             => 'Preview',
     'default'             => 'Default',
     'settings'            => 'Settings',
+    'copy'                => 'Copy',
+    'copied'              => 'Copied!',
 ];

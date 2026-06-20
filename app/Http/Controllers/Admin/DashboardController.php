@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Activity;
 
 class DashboardController extends Controller
@@ -49,8 +50,10 @@ class DashboardController extends Controller
             'disk_used_pct'   => $diskUsedPct,
             'disk_free_gb'    => $diskFree > 0 ? round($diskFree / 1024 / 1024 / 1024, 1) : 0,
             'db_size_kb'      => round($dbSize / 1024, 1),
-            'cache_driver'    => config('cache.default'),
-            'queue_driver'    => config('queue.default'),
+            'cache_driver'      => config('cache.default'),
+            'queue_driver'      => config('queue.default'),
+            'scheduler_last_run'=> Cache::get('scheduler_last_run'),
+            'cron_command'      => '* * * * * cd ' . base_path() . ' && php artisan schedule:run >> /dev/null 2>&1',
         ];
     }
 }

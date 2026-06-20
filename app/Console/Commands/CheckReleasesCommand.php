@@ -21,6 +21,7 @@ class CheckReleasesCommand extends Command
         }
 
         Cache::put('github_latest_version', $latest['version'], now()->addHours(6));
+        Cache::put('scheduler_last_run', now()->toIso8601String(), now()->addHours(8));
 
         $this->info("Latest release: v{$latest['version']} — cached for 6 hours.");
         return self::SUCCESS;

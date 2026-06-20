@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.75] — 2026-06-20
+
+### Added
+- **Scheduler status card on dashboard**: shows last run time + copyable cron command so admins know exactly what to add on shared hosting; green tick when scheduler is detected, warning when not
+- `updates:check-releases` now also writes `scheduler_last_run` cache key (TTL 8h) for status detection
+- `app.copy` / `app.copied` + `dashboard.scheduler*` translation keys in en + bg
+
 ## [1.10.74] — 2026-06-20
 
 ### Fixed
