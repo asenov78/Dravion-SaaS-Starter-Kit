@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.74] — 2026-06-20
+
+### Fixed
+- **Sidebar "UPDATE" badge now appears automatically**: added `updates:check-releases` Artisan command that fetches the latest GitHub release and writes `github_latest_version` to cache; scheduled every 4 hours via Laravel scheduler — badge no longer requires a webhook or a manual visit to the Updates page
+
+### Added
+- `app/Console/Commands/CheckReleasesCommand.php` — `php artisan updates:check-releases`
+- Schedule in `routes/console.php`: `everyFourHours()`
+- 5 new tests in `CheckReleasesCommandTest` covering cache write, version stripping, unreachable GitHub, and missing config
+
 ## [1.10.73] — 2026-06-20
 
 ### Fixed
