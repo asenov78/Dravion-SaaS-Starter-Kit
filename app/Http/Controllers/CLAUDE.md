@@ -8,6 +8,7 @@ HTTP layer only. Controllers validate input, call services/models, and return vi
 Controllers/
 ├── Controller.php              # Base class (extends Laravel's base)
 ├── ApiTokenController.php      # Sanctum personal access tokens (list/create/revoke)
+├── DashboardController.php     # User portal dashboard (GET /dashboard → view('dashboard'))
 ├── HomeController.php          # Public website: index() + show($slug) for CMS pages
 ├── SessionController.php       # Active sessions list + logout other devices (password confirm)
 ├── LocaleController.php        # Switches session locale
@@ -66,13 +67,18 @@ Controllers/
 - `smtpTest()` returns JSON `{ok, message}` — consumed by Alpine.js on the settings page.
 
 ### Admin/LicenseController
-- `update()` posts to `dravion.license_server` to activate a purchase code → receives a `license_key` → writes it to `.env` via regex replace.
-- `remove()` clears the key from `.env` and deletes `storage/license.cache`.
+- `show()` — `GET /admin/license` (name: `admin.license`) — displays the license management page.
+- `update()` posts to `dravion.license_server` to activate a purchase code → receives a `license_key` → writes it to `.env` via regex replace. Redirects to `route('admin.license')` (not `back()`).
+- `remove()` clears the key from `.env` and deletes `storage/license.cache`. Redirects to `route('admin.license')`.
 - Skips `.env` writes in `testing` environment.
 
 ### Admin/UpdateController
 - Uses `UpdaterService` to fetch GitHub releases and apply updates.
 - ZIP URL validated with `GitHubZipUrl` rule before download.
+- `install()` always returns JSON (`response()->json()`), wrapped in try-catch. Sequential install enforced via cache lock — concurrent install calls are rejected.
+
+### DashboardController (user portal)
+- `index()` → `GET /dashboard` (name: `dashboard`) — renders `views/dashboard.blade.php` for authenticated verified users.
 
 ### ApiTokenController
 - `index()` passes `$tokens` (user's tokens) + `$new_token` (session flash — plaintext shown once).

@@ -6,7 +6,7 @@ Dravion SaaS Starter Kit · Laravel 13 · PHP 8.3 · Blade · Alpine.js v3 · Ta
 
 ```
 views/
-  dashboard.blade.php      — Authenticated user dashboard (auth middleware)
+  dashboard.blade.php      — User portal dashboard (auth + verified, route: dashboard)
   welcome.blade.php        — Public landing / marketing page
   admin/                   — Admin panel pages (see admin/CLAUDE.md)
   components/              — Reusable Blade components (see components/CLAUDE.md)

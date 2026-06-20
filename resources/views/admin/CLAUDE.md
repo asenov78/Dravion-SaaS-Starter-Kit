@@ -21,7 +21,7 @@ Roles with elevated access:
 | `dashboard.blade.php` | `admin.dashboard` | Stats, recent activity, cache clear |
 | `activity.blade.php` | `admin.activity` | Activity log table with search |
 | `settings.blade.php` | `admin.settings` | App settings form + SMTP test |
-| `license.blade.php` | `admin.license` | License key management |
+| `license.blade.php` | `admin.license` | License key management — show current key (masked), activate new key, remove key |
 
 ### users/
 | File | Purpose |

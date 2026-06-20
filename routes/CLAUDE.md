@@ -66,7 +66,7 @@ POST   /email/verification-notification  verification.send
 ```
 middleware: auth, verified
 
-GET    /dashboard            dashboard
+GET    /dashboard            dashboard          → DashboardController@index (user portal)
 GET    /sessions                    sessions.index
 POST   /sessions/logout-others      sessions.logout-others
 GET    /api-tokens           api-tokens.index
@@ -98,8 +98,10 @@ Fine-grained permission gates are added per-route with `can:` middleware:
 Certain sections are additionally restricted to `role:admin` only:
 - `/admin/roles/*` — role & permission management
 - `/admin/updates/*` — self-updater
-- `/admin/license` GET is accessible to all admin roles; POST/DELETE are not
-  separately guarded but the page itself checks role in the view.
+- `GET /admin/license` (name: `admin.license`) — license management page, accessible to all admin roles
+- `POST/DELETE /admin/license` — not separately guarded at route level; page checks role in view.
+
+Storage route uses `realpath()` fix for shared hosting symlink compatibility.
 
 ### UI Showcase
 ```

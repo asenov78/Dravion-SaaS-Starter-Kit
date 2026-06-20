@@ -7,7 +7,7 @@ Eloquent models. Thin by design — no business logic, only relationships, casts
 | File | Purpose |
 |---|---|
 | `User.php` | Core auth model. Uses `HasApiTokens` (Sanctum), `HasRoles` (Spatie), `SoftDeletes`, `Notifiable`, `HasFactory`. Implements `MustVerifyEmail`. Fillable and hidden fields declared via PHP 8 attributes (`#[Fillable]`, `#[Hidden]`). `locale` column drives `SetLocale` middleware. `avatar` holds a relative path on the `public` disk. |
-| `Setting.php` | Key-value store for app-wide configuration. Three static helpers: `get(key, default)`, `set(key, value)`, `setMany([key => value])`. All settings are strings stored in the `settings` table. |
+| `Setting.php` | Key-value store for app-wide configuration. Static helpers: `get(key, default)`, `set(key, value)`, `setMany([key => value])`, `flushCache()`. Request-scoped in-memory cache (`static $cache`) avoids repeated DB hits per request. All settings are strings in `settings` table. |
 | `Language.php` | Represents a UI language (code, name, flag emoji, is_default). Has many `LanguageLine`. |
 | `LanguageLine.php` | A single translation line: `language_id`, `key` (dot-notation, e.g. `auth.failed`), `value`. Belongs to `Language`. |
 
@@ -18,7 +18,7 @@ Eloquent models. Thin by design — no business logic, only relationships, casts
 - Relationships are defined with return-typed methods (`HasMany`, `BelongsTo`, etc.).
 - No business logic in models. If you need more than a cast or a relationship, put it in a Service.
 - All boolean-like settings stored in `Setting` use the string `'1'` / `'0'` convention — never PHP `true`/`false` in the DB.
-- `Setting::get()` hits the DB every call — no built-in cache. Wrap in `once()` or cache manually in performance-critical code.
+- `Setting` has a request-scoped in-memory cache (`static $cache`). Call `Setting::flushCache()` in tests after DB rollback — static properties survive across test methods. `TestCase::setUp()` does this automatically.
 
 ## Gotchas
 
