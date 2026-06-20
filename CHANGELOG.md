@@ -2,6 +2,11 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.53] — 2026-06-20
+### Arch
+- Extract DomainHelper (app/Support/DomainHelper.php): isDevDomain() + fromAppUrl() — eliminates duplicated private method in LicenseService and LicenseCheck
+- LicenseService + LicenseCheck: replace private isDevDomain() with DomainHelper::isDevDomain()
+
 ## [1.10.52] — 2026-06-20
 ### Arch
 - Setting::get() request-scoped static cache — eliminates repeated DB queries per request (31 call-sites, up to 20 per admin settings page)

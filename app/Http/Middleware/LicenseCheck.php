@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Contracts\LicenseServiceInterface;
+use App\Support\DomainHelper;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,7 @@ class LicenseCheck
 
         // Dev key: valid on dev domains only
         if (str_starts_with($licenseKey, 'DEV-')) {
-            if (! $this->isDevDomain(parse_url(config('app.url'), PHP_URL_HOST) ?? '')) {
+            if (! DomainHelper::isDevDomain(DomainHelper::fromAppUrl())) {
                 session()->flash('license_warning', 'You are using a development license key. Please re-activate with your purchase code.');
             }
             return $next($request);
@@ -79,11 +80,5 @@ class LicenseCheck
         ];
     }
 
-    private function isDevDomain(string $domain): bool
-    {
-        return in_array($domain, ['localhost', '127.0.0.1'], true)
-            || str_ends_with($domain, '.local')
-            || str_ends_with($domain, '.test')
-            || str_ends_with($domain, '.dev');
-    }
+
 }

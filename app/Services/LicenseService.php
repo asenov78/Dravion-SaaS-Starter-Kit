@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\LicenseServiceInterface;
+use App\Support\DomainHelper;
 use Illuminate\Support\Facades\Http;
 
 class LicenseService implements LicenseServiceInterface
@@ -44,8 +45,7 @@ class LicenseService implements LicenseServiceInterface
         }
 
         if (str_starts_with($key, 'DEV-')) {
-            $host = parse_url((string) config('app.url'), PHP_URL_HOST) ?? '';
-            return $this->isDevDomain($host);
+            return DomainHelper::isDevDomain(DomainHelper::fromAppUrl());
         }
 
         $cache = $this->readCache();
@@ -97,11 +97,5 @@ class LicenseService implements LicenseServiceInterface
         return hash('sha256', config('app.key', 'fallback'));
     }
 
-    private function isDevDomain(string $domain): bool
-    {
-        return in_array($domain, ['localhost', '127.0.0.1'], true)
-            || str_ends_with($domain, '.local')
-            || str_ends_with($domain, '.test')
-            || str_ends_with($domain, '.dev');
-    }
+
 }
