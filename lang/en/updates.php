@@ -39,4 +39,8 @@ return [
     'install_in_progress'    => 'An update is already being installed. Please wait and try again.',
     'new_version_available'  => 'Version :version is available',
     'more_pending'           => 'more pending',
+    'blocked'                => 'Blocked',
+    'update_blocked'         => 'Update chain blocked',
+    'update_blocked_desc'    => 'This update requires v:version to be installed first. That version is not yet available as a release.',
+    'requires_version'       => 'This update requires v:version to be installed first.',
 ];

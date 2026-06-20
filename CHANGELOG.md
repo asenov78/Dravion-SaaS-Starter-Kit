@@ -2,6 +2,18 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.77] — 2026-06-20
+requires: 1.10.76
+
+### Added
+- **Sequential update chain enforcement**: each GitHub release can declare `requires: X.Y.Z` in its release body (parsed from CHANGELOG). `UpdaterService` marks releases as `blocked` if `requires > currentVersion`. `UpdateController::install()` validates and returns 422 if the chain is broken.
+- UI shows "Update chain blocked" warning with the missing prerequisite version instead of the install button
+- JS filters blocked releases from the install queue; passes `requires` in the install payload
+- 10 new tests across `UpdaterServiceTest` and `UpdatePageTest` covering chain logic, blocked releases, satisfied requires, null requires
+
+### Changed
+- CHANGELOG format now includes `requires: prev_version` line after version header — mandatory for every new release
+
 ## [1.10.76] — 2026-06-20
 
 ### Fixed

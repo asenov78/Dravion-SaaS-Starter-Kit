@@ -180,9 +180,9 @@
                         </div>
                     </div>
 
-                    {{-- Next version to install (oldest pending, one at a time) --}}
+                    {{-- Next version to install (oldest non-blocked, one at a time) --}}
                     @if(!empty($update['newer']))
-                    @php $nextVersion = end($update['newer']); @endphp
+                    @php $nextVersion = $update['next_installable'] ?? end($update['newer']); @endphp
                     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                         <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{{ __('updates.whats_new') }}</p>
                         <div class="py-2">
@@ -191,6 +191,11 @@
                                 @if(count($update['newer']) > 1)
                                 <span class="px-1.5 py-0.5 text-[10px] font-medium rounded bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
                                     +{{ count($update['newer']) - 1 }} {{ __('updates.more_pending') }}
+                                </span>
+                                @endif
+                                @if(!empty($nextVersion['blocked']))
+                                <span class="px-1.5 py-0.5 text-[10px] font-semibold rounded bg-warning-100 text-warning-700 dark:bg-warning-500/20 dark:text-warning-400 uppercase tracking-wide">
+                                    {{ __('updates.blocked') }}
                                 </span>
                                 @endif
                             </div>
@@ -202,10 +207,22 @@
                     {{-- Actions --}}
                     <div class="px-6 py-4">
                         @if($licensed)
+                            @php $nextVersion = $update['next_installable'] ?? end($update['newer'] ?? []); @endphp
+                            @if(!empty($nextVersion['blocked']))
+                            {{-- Blocked: chain broken — a required predecessor version is missing --}}
+                            <div class="flex items-start gap-3 rounded-xl border border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-500/10 p-4">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning-600 dark:text-warning-400 mt-0.5 shrink-0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ __('updates.update_blocked') }}</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                                        {{ __('updates.update_blocked_desc', ['version' => $nextVersion['requires']]) }}
+                                    </p>
+                                </div>
+                            </div>
+                            @else
                             <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">{{ __('updates.install_warning') }}</p>
                             <div class="flex items-center gap-4 flex-wrap">
-                                @if(!empty($update['newer']))
-                                @php $nextVersion = $nextVersion ?? end($update['newer']); @endphp
+                                @if(!empty($nextVersion))
                                 <button type="button" @click="install()" :disabled="loading"
                                     class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-60 transition-colors"
                                     data-install-btn="1">
@@ -218,6 +235,7 @@
                                     :class="ok ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'"
                                     class="text-sm"></p>
                             </div>
+                            @endif
                         @else
                             <div class="flex items-start gap-3 rounded-xl border border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-500/10 p-4">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-warning-600 dark:text-warning-400 mt-0.5 shrink-0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
@@ -367,7 +385,10 @@ function updateInstaller() {
     // After success the page reloads so the next pending version is shown.
     // NEVER loop through all versions — migrations must run in order and
     // each version's post-install state is the base for the next version.
-    const queue = @json(array_reverse($update['newer'] ?? []));
+    // Only queue non-blocked releases; blocked ones cannot be installed until
+    // their required predecessor is available and installed.
+    const allNewer = @json(array_reverse($update['newer'] ?? []));
+    const queue = allNewer.filter(r => !r.blocked);
 
     return {
         loading: false,
@@ -397,6 +418,7 @@ function updateInstaller() {
                     body: JSON.stringify({
                         zip_url:   rel.zip_url,
                         changelog: rel.changelog || '',
+                        requires:  rel.requires  || null,
                     }),
                 });
                 const data = await res.json();

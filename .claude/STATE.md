@@ -1,41 +1,50 @@
 # Session State — Dravion SaaS Starter Kit
 
-> Updated: 2026-06-16 (session 7 end) | Version: 1.10.0
+> Updated: 2026-06-20 (session 8 end) | Version: 1.10.77
 
 ## Current State
 
-- **Tests:** 493 total, 492 passing, 1 skipped (MySQL integration)
+- **Tests:** 655 total, 653 passing, 2 skipped
 - **Branch:** main, up to date with origin
-- **Last commit:** d0b82e4 — feat: v1.10.0 installer tests, shared hosting fixes, security patches
-- **Release archive:** `C:\Users\p.karolev\Documents\Claude\dravion-v1.10.0.tar.gz` (4.11 MB)
+- **Last commit:** (pending push) — feat: sequential update chain enforcement via requires: (v1.10.77)
+- **CI note:** v1.10.73, 74, 76 did not create GitHub Releases — likely Vite build failures in CI. Not yet investigated.
 
 ## Completed This Session
 
-1. **Installer tests** (38 tests):
-   - `InstallGuardTest` — lock file blocks all routes (404), accessible without lock
-   - `InstallFlowTest` — all 5 steps: GET views, POST validation, session flow, admin creation, lock, cleanup
-   - Key fixes that emerged from tests:
-     - `User#[Fillable]`: added `email_verified_at` — `firstOrCreate()` was silently dropping it
-     - Test mock: `Artisan::shouldReceive('call')->andReturn(0)` + manual seeder run instead of `andCallOriginal()`
+1. **v1.10.76 — Badge auto-fetch + Cron in Settings:**
+   - `MenuHelper::resolveLatestVersion()` now auto-fetches from GitHub if `github_latest_version` cache is empty
+   - `github_check_failed` cache (5min) prevents hammering on repeated misses
+   - Scheduler/cron card moved to Settings page (correct location)
+   - 11 tests in `UpdateNavBadgeTest`
 
-2. **Shared hosting installer hardening:**
-   - `bootstrapEnv()`: auto-creates `.env` from `.env.example`, forces `SESSION_DRIVER=file` before DB exists
-   - `seedDefaultLanguage()`: inserts default `en` row into `languages` on finish
-   - Storage dirs auto-created on finish (framework/sessions, cache/data, views, logs, app)
-   - `storage:link` attempt on finish (non-fatal)
-   - `writeEnv()`: full MAIL_* defaults, APP_LOCALE, APP_FALLBACK_LOCALE, FILESYSTEM_DISK=local
+2. **v1.10.77 — Sequential update chain enforcement:**
+   - Each GitHub release can declare `requires: X.Y.Z` in release body
+   - `UpdaterService::getReleases()` parses `requires` field
+   - `checkForUpdate()` adds `blocked: bool` + `next_installable` to result
+   - `UpdateController::install()` validates and returns 422 if `requires > currentVersion`
+   - UI shows "Update chain blocked" warning when chain is broken
+   - JS only queues non-blocked releases, passes `requires` in payload
+   - 10 new tests across `UpdaterServiceTest` and `UpdatePageTest`
+   - CHANGELOG format documented: `requires: prev_version` mandatory on every release
 
-3. **CSO Audit + Security fixes:**
-   - `RegisterController::store()`: checks `Setting::get('registration')` — prevents bypass via direct POST
-   - Language routes: `can:manage languages` permission middleware (admin-only)
-   - `RolesAndPermissionsSeeder`: added `manage languages` permission
-   - Lang: `auth.registration_disabled` in en + bg
+3. **Architecture Review HTML report** generated at `%TEMP%\architecture-review-20260620.html`
+   - 5 candidates identified; #1 (UpdaterServiceInterface) and #2 (ActivityLogger fluent builder) are top priorities
 
 ## Pending / Next Steps
 
-- None critical. All TODO tasks complete (#5 ionCube — optional, separate effort).
-- CSO medium finding not fixed: CMS page `{!! $content !!}` — intentional rich text. Could add HTMLPurifier later.
-- CSO medium finding not fixed: 2FA session fixation window (pre-2FA session ID not rotated at challenge entry) — low exploitability, good hardening candidate.
+### Architecture Candidates (from `/improve-codebase-architecture`):
+- **① UpdaterServiceInterface** (Strong) — extract interface, bind in AppServiceProvider, update 4 callers
+- **② ActivityLogger fluent builder** (Strong) — 18 call sites, 7 positional params → named fluent chain
+- **③ GlobalSearch Searchable contract** (Worth exploring) — when 6th entity appears
+- **④ Typed SettingReader** (Worth exploring) — when setting keys proliferate further
+- **Task #34** — mark as done (LicenseServiceInterface already exists)
+
+### Security (`/cso`):
+- Not yet run — user asked for it after architecture review
+
+### Feature backlog:
+- **Auth — 2FA / TOTP** (#21, in_progress) — existing implementation, needs completion
+- **CI investigation** — why v1.10.73/74/76 didn't produce GitHub Releases
 
 ## Architecture Snapshot
 
@@ -45,23 +54,22 @@ Public:   GET / → HomeController; GET /p/{slug} → HomeController@show
 Auth:     LoginController (suspend check, failed-login logging, 2FA gate)
           TwoFactorController (TOTP setup/confirm/disable/challenge/verify)
           RegisterController (registration setting gate)
-          MustVerifyEmail enforced
 Admin:    UserController, PagesController, RoleController, SettingsController
           LicenseController, UpdateController, ActivityController, GlobalSearchController
           LanguageController (requires can:manage languages — admin only)
 Contracts: LicenseServiceInterface → LicenseService (DI via AppServiceProvider)
-Services: LicenseService (activate + HMAC cache), UpdaterService (GitHub ZIP)
-          AvatarService (GD), ActivityLogger (Spatie wrapper)
-          EnvWriter — atomic .env writes with flock() + proper value escaping
+           UpdaterServiceInterface — PENDING (arch candidate #1)
+Services: LicenseService (activate + HMAC cache), UpdaterService (GitHub ZIP + requires chain)
+          AvatarService (GD), ActivityLogger (Spatie wrapper, 18 call sites, 7 positional params)
+          EnvWriter — atomic .env writes
 Observers: UserObserver — created/updated/deleted/restored → ActivityLogger
 Middleware: InstallGuard, LicenseCheck (DI), SetLocale, MaintenanceMode
 Roles:    Spatie: admin/manager/editor/user + fine-grained can: gates per route
 i18n:     DB-driven + lang/en/ + lang/bg/ (17 files)
-Install:  5-step wizard → bootstrapEnv → write .env → migrate → seed → admin → install.lock
-          Requirements: PHP 8.3, PDO, MySQL, Mbstring, OpenSSL, JSON, BCMath, cURL, GD
-Tests:    SQLite in-memory, 492 passing (493 total, 1 MySQL skip), 46 test files
-2FA:      /profile/two-factor (setup/manage), /two-factor/challenge (login gate)
-Perms:    manage languages (new, admin-only), seeded in RolesAndPermissionsSeeder
+Updates:  Sequential chain: requires: field in CHANGELOG → GitHub release body → UpdaterService parses
+          Blocked releases: next_installable = oldest non-blocked; 422 if requires > currentVersion
+Tests:    SQLite in-memory, 655 total (653 pass, 2 skip)
+Scheduler: updates:check-releases every 4h; cron info on Settings page + Dashboard
 ```
 
 ## Standing Instructions (always active)
@@ -72,3 +80,4 @@ Perms:    manage languages (new, admin-only), seeded in RolesAndPermissionsSeede
 - End every task with "Готов съм!"
 - All UI strings via `__()`, never hardcoded in Blade
 - Update STATE.md at session end
+- Every CHANGELOG entry MUST include `requires: prev_version` after version header

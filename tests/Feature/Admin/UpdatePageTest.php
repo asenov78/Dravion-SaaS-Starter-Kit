@@ -320,6 +320,81 @@ class UpdatePageTest extends TestCase
             ->assertStatus(302);
     }
 
+    // --- requires / sequential chain install gate ---
+
+    public function test_install_blocked_when_requires_not_satisfied(): void
+    {
+        // current = 1.0.0, release requires 1.0.5 (not yet installed)
+        config(['dravion.version' => '1.0.0', 'updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+        $this->licensed();
+        $validZipUrl = 'https://api.github.com/repos/acme/my-app/zipball/v1.0.6';
+
+        Http::fake([
+            '*/api/router.php*' => Http::response(['valid' => true, 'domain' => 'localhost'], 200),
+        ]);
+
+        $this->actingAs($this->admin())
+            ->postJson('/admin/updates/install', [
+                'zip_url'  => $validZipUrl,
+                'requires' => '1.0.5', // requires 1.0.5 > current 1.0.0 → blocked
+            ])
+            ->assertStatus(422)
+            ->assertJson(['ok' => false]);
+    }
+
+    public function test_install_allowed_when_requires_satisfied(): void
+    {
+        // current = 1.0.5, release requires 1.0.5 → satisfied
+        config(['dravion.version' => '1.0.5', 'updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+        $this->licensed();
+        $validZipUrl = 'https://api.github.com/repos/acme/my-app/zipball/v1.0.6';
+
+        Http::fake([
+            '*/api/router.php*' => Http::response(['valid' => true, 'domain' => 'localhost'], 200),
+        ]);
+
+        $mock = $this->mock(UpdaterService::class);
+        $mock->shouldReceive('isValidLive')->andReturn(true)->byDefault();
+        $mock->shouldReceive('getCurrentVersion')->andReturn('1.0.5');
+        $mock->shouldReceive('downloadAndInstall')
+            ->once()
+            ->andReturn(['ok' => true, 'message' => 'done']);
+
+        $this->actingAs($this->admin())
+            ->postJson('/admin/updates/install', [
+                'zip_url'  => $validZipUrl,
+                'requires' => '1.0.5', // satisfied: current >= requires
+            ])
+            ->assertOk()
+            ->assertJson(['ok' => true]);
+    }
+
+    public function test_install_allowed_when_requires_is_null(): void
+    {
+        // No requires field — always allowed (no chain constraint)
+        config(['dravion.version' => '1.0.0', 'updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+        $this->licensed();
+        $validZipUrl = 'https://api.github.com/repos/acme/my-app/zipball/v1.0.1';
+
+        Http::fake([
+            '*/api/router.php*' => Http::response(['valid' => true, 'domain' => 'localhost'], 200),
+        ]);
+
+        $mock = $this->mock(UpdaterService::class);
+        $mock->shouldReceive('getCurrentVersion')->andReturn('1.0.0');
+        $mock->shouldReceive('downloadAndInstall')
+            ->once()
+            ->andReturn(['ok' => true, 'message' => 'done']);
+
+        $this->actingAs($this->admin())
+            ->postJson('/admin/updates/install', [
+                'zip_url'  => $validZipUrl,
+                // no requires field
+            ])
+            ->assertOk()
+            ->assertJson(['ok' => true]);
+    }
+
     public function test_concurrent_install_rejected_with_409(): void
     {
         $this->licensed();

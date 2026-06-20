@@ -61,11 +61,19 @@ class UpdaterService
             if ($tag === '') {
                 continue;
             }
+            $body = (string) ($item['body'] ?? '');
+
+            // Parse "requires: X.Y.Z" — declares the minimum predecessor version.
+            // If set, this release cannot be installed unless currentVersion >= requires.
+            preg_match('/^requires:\s*v?(\d+\.\d+\.\d+)/mi', $body, $m);
+            $requires = $m[1] ?? null;
+
             $releases[] = [
                 'tag'       => $tag,
                 'version'   => ltrim($tag, 'vV'),
-                'changelog' => (string) ($item['body'] ?? ''),
+                'changelog' => $body,
                 'zip_url'   => (string) ($item['zipball_url'] ?? ''),
+                'requires'  => $requires,
             ];
         }
 
@@ -113,14 +121,44 @@ class UpdaterService
             fn ($r) => version_compare($r['version'], $current, '<=')
         ));
 
+        // Mark each release in $newer as blocked if its requires > currentVersion.
+        // Once one is blocked, all subsequent (older-ordered) ones are also blocked
+        // because the chain is broken. $newer is sorted newest→oldest, so we
+        // reverse to process oldest→newest and propagate blocking forward.
+        $chainBroken = false;
+        $newerOldestFirst = array_reverse($newer);
+        foreach ($newerOldestFirst as &$rel) {
+            if ($chainBroken) {
+                $rel['blocked'] = true;
+            } elseif ($rel['requires'] !== null
+                && version_compare($rel['requires'], $current, '>')) {
+                $rel['blocked']    = true;
+                $chainBroken       = true;
+            } else {
+                $rel['blocked'] = false;
+            }
+        }
+        unset($rel);
+        $newer = array_reverse($newerOldestFirst); // restore newest→oldest
+
+        // The next version to install is the oldest non-blocked release.
+        $nextInstallable = null;
+        foreach (array_reverse($newer) as $rel) { // oldest→newest
+            if (! $rel['blocked']) {
+                $nextInstallable = $rel;
+                break;
+            }
+        }
+
         return [
-            'current'    => $current,
-            'latest'     => $latest['version'],
-            'has_update' => version_compare($latest['version'], $current, '>'),
-            'changelog'  => $latest['changelog'],
-            'zip_url'    => $latest['zip_url'],
-            'newer'      => $newer,
-            'older'      => $older,
+            'current'          => $current,
+            'latest'           => $latest['version'],
+            'has_update'       => version_compare($latest['version'], $current, '>'),
+            'changelog'        => $latest['changelog'],
+            'zip_url'          => $latest['zip_url'],
+            'newer'            => $newer,
+            'older'            => $older,
+            'next_installable' => $nextInstallable,
         ];
     }
 

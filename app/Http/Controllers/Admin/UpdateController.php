@@ -126,7 +126,18 @@ class UpdateController extends Controller
         $data = $request->validate([
             'zip_url'   => ['required', 'string', 'url', new GitHubZipUrl],
             'changelog' => ['nullable', 'string', 'max:10000'],
+            'requires'  => ['nullable', 'string', 'regex:/^\d+\.\d+\.\d+$/'],
         ]);
+
+        // Sequential install gate: refuse if this release requires a version
+        // greater than what is currently installed.
+        if (! empty($data['requires'])
+            && version_compare($data['requires'], $updater->getCurrentVersion(), '>')) {
+            return response()->json([
+                'ok'      => false,
+                'message' => __('updates.requires_version', ['version' => $data['requires']]),
+            ], 422);
+        }
 
         $lock = cache()->lock('dravion-update-install', 120);
         if (! $lock->get()) {
