@@ -6,6 +6,10 @@ use App\Contracts\ActivityLoggerInterface;
 use App\Models\Setting;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Concrete implementation of ActivityLoggerInterface.
+ * Injected via DI or resolved via ActivityLoggerFacade::log().
+ */
 class ActivityLogger implements ActivityLoggerInterface
 {
     public function enabled(string $key): bool
@@ -47,14 +51,5 @@ class ActivityLogger implements ActivityLoggerInterface
         }
 
         $builder->log($description);
-    }
-
-    /**
-     * Static shortcut — delegates to the container binding so tests can
-     * swap in NullActivityLogger without touching callers.
-     */
-    public static function __callStatic(string $method, array $args): mixed
-    {
-        return app(ActivityLoggerInterface::class)->$method(...$args);
     }
 }

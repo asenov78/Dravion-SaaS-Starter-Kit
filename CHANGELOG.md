@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.55] — 2026-06-20
+### Security / Arch
+- License security: isValidLive() + verifyNow() — real-time server ping on update check and install (blocks suspended/revoked licenses even with valid 24h cache)
+- UpdateController::check() hides zip_url when license invalid; install() aborts 403 immediately
+- LicenseService: fail-open on server unreachable (cached=valid → allow; no cache → block)
+- ActivityLogger Facade (App\Facades\ActivityLogger) — proper Laravel Facade replaces broken __callStatic pattern (PHP 8.3 incompatible)
+- All 7 callers migrated from App\Services\ActivityLogger to App\Facades\ActivityLogger
+- NullActivityLogger bound in tests via AppServiceProvider — no stray DB writes in test suite
+- 56 new tests in LicenseSecurityTest: isValid, verifyNow, isValidLive, critical activate→suspend→block scenario, check/install endpoints, activate(), cache integrity (HMAC tamper), access control
+
 ## [1.10.54] — 2026-06-20
 ### Arch
 - AvatarService: guard imagecreatefromstring() false return — throw RuntimeException instead of fatal error on corrupt upload (Candidate 6)

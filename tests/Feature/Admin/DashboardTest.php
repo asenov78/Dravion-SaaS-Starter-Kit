@@ -3,7 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\User;
-use App\Services\ActivityLogger;
+use App\Facades\ActivityLogger;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -57,3 +57,4 @@ class DashboardTest extends TestCase
             ->assertSee('PHP');
     }
 }
+

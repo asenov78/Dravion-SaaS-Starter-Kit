@@ -19,10 +19,9 @@ class UpdateController extends Controller
 
     public function index(UpdaterService $updater): View
     {
+        // Page display uses cached status (fast) — install/check do live verification.
         $licensed = $this->license->isValid();
 
-        // Always check for the latest version so the user can SEE a new release
-        // exists — but downloading/installing is gated by a valid license.
         $update = $updater->checkForUpdate();
         if (! $licensed) {
             $update['zip_url'] = null;
@@ -48,27 +47,34 @@ class UpdateController extends Controller
         ]);
     }
 
-
-
+    /**
+     * AJAX check for new version — live license verification to catch
+     * suspended/revoked keys before revealing download URLs.
+     */
     public function check(UpdaterService $updater): JsonResponse
     {
-        $update = $updater->checkForUpdate();
-
-        // Hide download URLs from unlicensed installs (both top-level and per-release).
-        if (! $this->license->isValid()) {
+        // Live check: catches suspend/revoke that happened after the last cache refresh.
+        if (! $this->license->isValidLive()) {
+            $update = $updater->checkForUpdate();
             $update['zip_url'] = null;
             $update['newer']   = array_map(function ($r) {
                 $r['zip_url'] = null;
                 return $r;
-            }, $update['newer']);
+            }, $update['newer'] ?? []);
+            return response()->json($update);
         }
 
-        return response()->json($update);
+        return response()->json($updater->checkForUpdate());
     }
 
+    /**
+     * Install an update — live license verification immediately before download
+     * to prevent installs on suspended/revoked licenses.
+     */
     public function install(Request $request, UpdaterService $updater): JsonResponse
     {
-        if (! $this->license->isValid()) {
+        // Live check: re-verify right now, not from 24h-old cache.
+        if (! $this->license->isValidLive()) {
             abort(403, __('updates.license_required'));
         }
 

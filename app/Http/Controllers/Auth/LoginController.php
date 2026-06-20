@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\ActivityLogger;
+use App\Facades\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -45,7 +45,7 @@ class LoginController extends Controller
                 ->onlyInput('email');
         }
 
-        // 2FA challenge — store user ID in session, redirect to challenge page
+        // 2FA challenge â€” store user ID in session, redirect to challenge page
         if ($user->two_factor_confirmed_at) {
             $request->session()->put('2fa_user_id', $user->id);
             return redirect()->route('two-factor.challenge');
@@ -75,3 +75,4 @@ class LoginController extends Controller
         return redirect()->route('login');
     }
 }
+

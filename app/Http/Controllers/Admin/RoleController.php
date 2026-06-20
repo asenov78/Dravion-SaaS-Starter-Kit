@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\ActivityLogger;
+use App\Facades\ActivityLogger;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -79,3 +79,4 @@ class RoleController extends Controller
         return redirect()->route('admin.roles.index')->with('success', __('flash.permissions_saved'));
     }
 }
+

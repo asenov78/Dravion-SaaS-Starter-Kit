@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Notifications\AccountActivatedNotification;
 use App\Notifications\AccountSuspendedNotification;
 use App\Notifications\NewUserRegisteredNotification;
-use App\Services\ActivityLogger;
+use App\Facades\ActivityLogger;
 use App\Services\AvatarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -271,3 +271,4 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', __('flash.user_deleted'));
     }
 }
+

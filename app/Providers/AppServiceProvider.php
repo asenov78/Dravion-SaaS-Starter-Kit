@@ -6,7 +6,7 @@ use App\Contracts\ActivityLoggerInterface;
 use App\Contracts\LicenseServiceInterface;
 use App\Models\User;
 use App\Observers\UserObserver;
-use App\Services\ActivityLogger;
+use App\Services\ActivityLogger as ActivityLoggerService;
 use App\Services\LicenseService;
 use App\Translation\DatabaseLoader;
 use Illuminate\Support\Facades\Schema;
@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(LicenseServiceInterface::class, LicenseService::class);
-        $this->app->bind(ActivityLoggerInterface::class, ActivityLogger::class);
+        $this->app->bind(ActivityLoggerInterface::class, ActivityLoggerService::class);
     }
 
     /**

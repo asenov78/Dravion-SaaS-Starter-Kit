@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Contracts\LicenseServiceInterface;
 use App\Http\Controllers\Controller;
-use App\Services\ActivityLogger;
+use App\Facades\ActivityLogger;
 use App\Services\EnvWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,3 +67,4 @@ class LicenseController extends Controller
         EnvWriter::set(base_path('.env'), $key, $value);
     }
 }
+

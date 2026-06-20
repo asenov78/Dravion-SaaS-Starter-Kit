@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
-use App\Services\ActivityLogger;
+use App\Facades\ActivityLogger;
 
 class UserObserver
 {
@@ -78,3 +78,4 @@ class UserObserver
         );
     }
 }
+

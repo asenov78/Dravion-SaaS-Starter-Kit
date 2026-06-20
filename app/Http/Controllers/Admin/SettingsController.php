@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\SmtpTestMail;
 use App\Models\Setting;
-use App\Services\ActivityLogger;
+use App\Facades\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +38,7 @@ class SettingsController extends Controller
             'header_tagline'         => Setting::get('header_tagline', ''),
         ];
 
-        $availableLocales = ['en' => 'English', 'bg' => 'Български'];
+        $availableLocales = ['en' => 'English', 'bg' => 'Ð‘ÑŠÐ»Ð³Ð°Ñ€ÑÐºÐ¸'];
 
         return view('admin.settings', compact('settings', 'timezones', 'availableLocales'));
     }
@@ -105,3 +105,4 @@ class SettingsController extends Controller
         }
     }
 }
+

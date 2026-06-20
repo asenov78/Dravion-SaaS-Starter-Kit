@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\ActivityLogger;
+use App\Facades\ActivityLogger;
 use App\Services\AvatarService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -48,3 +48,4 @@ class ProfileController extends Controller
         return redirect()->route('admin.ui.profile')->with('success', __('flash.profile_updated'));
     }
 }
+
