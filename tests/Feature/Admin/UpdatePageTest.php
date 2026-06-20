@@ -169,4 +169,24 @@ class UpdatePageTest extends TestCase
             ->get('/admin/updates')
             ->assertStatus(403);
     }
+
+    public function test_concurrent_install_rejected_with_409(): void
+    {
+        $this->licensed();
+        config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+        $validZipUrl = 'https://api.github.com/repos/acme/my-app/zipball/v1.3.0';
+
+        // Hold the lock so the second request cannot acquire it
+        $lock = cache()->lock('dravion-update-install', 120);
+        $lock->get();
+
+        try {
+            $this->actingAs($this->admin())
+                ->postJson('/admin/updates/install', ['zip_url' => $validZipUrl])
+                ->assertStatus(409)
+                ->assertJson(['ok' => false]);
+        } finally {
+            $lock->release();
+        }
+    }
 }

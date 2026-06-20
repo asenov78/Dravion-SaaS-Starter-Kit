@@ -77,10 +77,14 @@ class HtmlSanitizer
                 }
             }
 
-            // Strip CSS data-exfiltration vectors from style attribute
+            // Strip CSS data-exfiltration vectors from style attribute.
+            // Blocks: url(), expression(), behavior(), vbscript(), @-rules, and -moz-binding property.
             if ($child->hasAttribute('style')) {
-                $clean = preg_replace('/\b(url|expression|behavior|vbscript)\s*\(/i', 'BLOCKED(', $child->getAttribute('style'));
-                $child->setAttribute('style', $clean ?? '');
+                $style = $child->getAttribute('style');
+                $style = preg_replace('/-moz-binding\s*:[^;]*/i', '', $style);
+                $style = preg_replace('/\b(url|expression|behavior|vbscript)\s*\(/i', 'BLOCKED(', $style ?? '');
+                $style = preg_replace('/@\w+/i', 'BLOCKED', $style ?? '');
+                $child->setAttribute('style', $style ?? '');
             }
 
             foreach (array_unique($attrRemove) as $a) {

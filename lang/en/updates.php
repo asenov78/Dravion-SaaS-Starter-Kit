@@ -35,4 +35,5 @@ return [
     'show_changelog'      => 'Show changelog',
     'hide_changelog'      => 'Hide changelog',
     'no_history'          => 'No updates have been installed yet.',
+    'install_in_progress' => 'An update is already being installed. Please wait and try again.',
 ];

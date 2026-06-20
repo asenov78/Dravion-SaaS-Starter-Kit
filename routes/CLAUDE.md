@@ -134,8 +134,9 @@ Never remove `throttle:N,M` from auth POST routes.
 - Reset-password: `throttle:5,1`
 
 ## Gotchas
-- The locale switcher (`locale.switch`) requires `auth` middleware — it is not
-  available to guests.
+- The locale switcher (`locale.switch`) is **intentionally public** — guests can
+  switch language on the public website. It only sets a session key; there is no
+  data exposure. Do not add `auth` middleware to it.
 - `/logout` is POST only (CSRF-protected) — do not change it to GET.
 - The root `/` route checks for `install.lock` at runtime; do not cache this
   route via `php artisan route:cache` during development.

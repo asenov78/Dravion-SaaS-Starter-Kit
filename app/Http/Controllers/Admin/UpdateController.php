@@ -90,10 +90,17 @@ class UpdateController extends Controller
             'changelog' => ['nullable', 'string', 'max:10000'],
         ]);
 
+        $lock = cache()->lock('dravion-update-install', 120);
+        if (! $lock->get()) {
+            return response()->json(['ok' => false, 'message' => __('updates.install_in_progress')], 409);
+        }
+
         try {
             $result = $updater->downloadAndInstall($data['zip_url'], $data['changelog'] ?? '');
         } catch (\Throwable $e) {
             return response()->json(['ok' => false, 'message' => $e->getMessage()], 500);
+        } finally {
+            $lock->release();
         }
 
         if ($result['ok'] ?? false) {

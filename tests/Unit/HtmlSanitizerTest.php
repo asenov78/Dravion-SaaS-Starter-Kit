@@ -125,4 +125,16 @@ class HtmlSanitizerTest extends TestCase
     {
         $this->assertSame('   ', $this->s->sanitize('   '));
     }
+
+    public function test_css_moz_binding_blocked(): void
+    {
+        $out = $this->s->sanitize('<p style="-moz-binding:url(evil.xml#xss)">text</p>');
+        $this->assertStringNotContainsString('-moz-binding', $out);
+    }
+
+    public function test_css_import_in_style_blocked(): void
+    {
+        $out = $this->s->sanitize('<p style="@import url(evil.css)">text</p>');
+        $this->assertStringNotContainsString('@import', $out);
+    }
 }
