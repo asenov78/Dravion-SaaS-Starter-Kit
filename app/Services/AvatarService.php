@@ -16,7 +16,16 @@ class AvatarService
             Storage::disk('public')->delete($oldPath);
         }
 
-        $image = imagecreatefromstring(file_get_contents($file->getRealPath()));
+        $contents = file_get_contents($file->getRealPath());
+        if ($contents === false) {
+            throw new \RuntimeException('Could not read uploaded avatar file.');
+        }
+
+        $image = imagecreatefromstring($contents);
+        if ($image === false) {
+            throw new \RuntimeException('Uploaded file is not a valid image.');
+        }
+
         $w = imagesx($image);
         $h = imagesy($image);
 

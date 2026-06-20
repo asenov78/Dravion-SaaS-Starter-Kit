@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Notifications\UpdateInstalledNotification;
 use App\Rules\GitHubZipUrl;
 use App\Services\UpdaterService;
+use App\Support\DomainHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -34,7 +35,7 @@ class UpdateController extends Controller
         $updater->ensureHistoryExists();
 
         $raw    = config('dravion.license_key', '');
-        $masked = $raw ? $this->mask($raw) : null;
+        $masked = $raw ? DomainHelper::maskKey($raw) : null;
         $valid  = $masked && ! session('license_warning');
 
         return view('admin.updates.index', [
@@ -47,11 +48,7 @@ class UpdateController extends Controller
         ]);
     }
 
-    private function mask(string $key): string
-    {
-        $parts = explode('-', $key, 2);
-        return ($parts[0] ?? 'DRV') . '-****';
-    }
+
 
     public function check(UpdaterService $updater): JsonResponse
     {

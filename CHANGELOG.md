@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.54] — 2026-06-20
+### Arch
+- AvatarService: guard imagecreatefromstring() false return — throw RuntimeException instead of fatal error on corrupt upload (Candidate 6)
+- DomainHelper::maskKey(): dedup mask() from LicenseController + UpdateController — single source of truth (Candidate 7)
+- UpdateController: use DomainHelper::maskKey(), remove private mask()
+- LicenseController: remove dead private mask() method
+
 ## [1.10.53] — 2026-06-20
 ### Arch
 - Extract DomainHelper (app/Support/DomainHelper.php): isDevDomain() + fromAppUrl() — eliminates duplicated private method in LicenseService and LicenseCheck

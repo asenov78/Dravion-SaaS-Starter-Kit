@@ -27,4 +27,11 @@ final class DomainHelper
     {
         return parse_url((string) config('app.url'), PHP_URL_HOST) ?? '';
     }
+
+    /** Masks a license key for display: "DRV-XXXXX" → "DRV-****" */
+    public static function maskKey(string $key): string
+    {
+        $parts = explode('-', $key, 2);
+        return ($parts[0] ?? 'DRV') . '-****';
+    }
 }

@@ -62,12 +62,6 @@ class LicenseController extends Controller
         return redirect()->back()->with('success', __('flash.license_removed'));
     }
 
-    private function mask(string $key): string
-    {
-        $parts = explode('-', $key, 2);
-        return ($parts[0] ?? 'DRV') . '-****';
-    }
-
     private function writeEnvKey(string $key, string $value): void
     {
         EnvWriter::set(base_path('.env'), $key, $value);
