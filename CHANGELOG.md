@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.71] — 2026-06-20
+
+### Added
+- **Updates nav badge**: pulse green dot + "UPDATE" badge in sidebar next to Updates link when a newer version is available in cache (`github_latest_version`)
+- 8 new tests in `UpdateNavBadgeTest` covering badge presence/absence, version comparison, v-prefix handling, non-admin exclusion, and blade rendering
+
 ## [1.10.70] — 2026-06-20
 
 ### Added

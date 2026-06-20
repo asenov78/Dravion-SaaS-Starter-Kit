@@ -143,7 +143,15 @@
                                         @if (!empty($item['new']))
                                             <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-brand-500 text-white">new</span>
                                         @endif
-                                        @if (!empty($item['badge']))
+                                        @if (!empty($item['update_available']))
+                                            <span class="ml-auto flex items-center gap-1.5" data-update-badge="1">
+                                                <span class="relative flex h-2 w-2">
+                                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success-400 opacity-75"></span>
+                                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-success-500"></span>
+                                                </span>
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wide bg-success-500 text-white uppercase">UPDATE</span>
+                                            </span>
+                                        @elseif (!empty($item['badge']))
                                             <x-ta.badge variant="solid" color="warning" size="sm">{{ $item['badge'] }}</x-ta.badge>
                                         @endif
                                     </span>

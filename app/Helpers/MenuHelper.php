@@ -148,8 +148,8 @@ class MenuHelper
 
             $current = ltrim(config('dravion.version', '0.0.0'), 'v');
             $latest  = \Illuminate\Support\Facades\Cache::get('github_latest_version');
-            if ($latest && version_compare($latest, $current, '>')) {
-                $item['badge'] = 'v' . $latest;
+            if ($latest && version_compare(ltrim($latest, 'v'), $current, '>')) {
+                $item['update_available'] = true;
             }
 
             $items[] = $item;
