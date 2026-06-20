@@ -263,6 +263,63 @@ class UpdatePageTest extends TestCase
             ->assertStatus(403);
     }
 
+    // --- one-version-per-click rule ---
+
+    public function test_page_shows_only_next_version_when_multiple_pending(): void
+    {
+        // GitHub returns v1.10.2 and v1.10.3 (both newer than current)
+        $this->licensed();
+        $this->fakeReleases(['v1.10.3', 'v1.10.2']);
+        config(['dravion.version' => '1.10.1']);
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk()
+            ->getContent();
+
+        // Only the NEXT (oldest) version should appear in the install button
+        $this->assertStringContainsString('v1.10.2', $html); // next to install
+        $this->assertStringContainsString('data-install-btn="1"', $html);
+
+        // The button label includes the specific version
+        $this->assertStringContainsString('Install Update v1.10.2', $html);
+    }
+
+    public function test_page_shows_pending_count_when_multiple_pending(): void
+    {
+        $this->licensed();
+        $this->fakeReleases(['v1.10.4', 'v1.10.3', 'v1.10.2']);
+        config(['dravion.version' => '1.10.1']);
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk()
+            ->getContent();
+
+        // Shows "+2 more pending" badge since 3 total, 1 shown
+        $this->assertStringContainsString('+2', $html);
+        $this->assertStringContainsString(__('updates.more_pending'), $html);
+    }
+
+    public function test_install_endpoint_rejects_foreign_host_url(): void
+    {
+        // GitHubZipUrl rule must reject any URL not from the configured repo.
+        $this->licensed();
+        config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+
+        Http::fake([
+            '*/api/router.php*' => Http::response(['valid' => true, 'domain' => 'localhost'], 200),
+        ]);
+
+        // Validation error on admin route → 302 redirect (not /api/*, no JSON exception rendering)
+        $this->actingAs($this->admin())
+            ->post('/admin/updates/install', [
+                '_token'  => csrf_token(),
+                'zip_url' => 'https://evil.example.com/backdoor.zip',
+            ])
+            ->assertStatus(302);
+    }
+
     public function test_concurrent_install_rejected_with_409(): void
     {
         $this->licensed();

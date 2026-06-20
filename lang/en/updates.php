@@ -38,4 +38,5 @@ return [
     'no_history'          => 'No updates have been installed yet.',
     'install_in_progress'    => 'An update is already being installed. Please wait and try again.',
     'new_version_available'  => 'Version :version is available',
+    'more_pending'           => 'more pending',
 ];

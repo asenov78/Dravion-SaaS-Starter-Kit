@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.72] — 2026-06-20
+
+### Changed
+- **One version per click**: Updates page now installs exactly one version per button press; shows only the next (oldest) pending version with its changelog; displays "+N more pending" badge when multiple updates are queued; on successful install reloads the page to show the next version
+- `zip_url` validation now explicitly requires `string` type to prevent batch payloads
+- 3 new tests in `UpdatePageTest` covering single-version display, pending count badge, and foreign-host URL rejection
+
 ## [1.10.71] — 2026-06-20
 
 ### Added

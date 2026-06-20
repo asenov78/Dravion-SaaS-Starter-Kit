@@ -159,34 +159,12 @@
             </div>
 
         @elseif($update['has_update'])
-            {{-- Update available — sequential AJAX install (oldest first), no page reload --}}
+            {{-- Update available — one version per button click, page reloads after each install --}}
             <div @if($licensed) x-data="updateInstaller()" @endif
                 class="rounded-2xl border border-brand-200 bg-white dark:border-brand-500/30 dark:bg-gray-900">
 
-                {{-- "All done" banner replaces the panel when all installs complete --}}
-                @if($licensed)
-                <template x-if="allDone">
-                    <div class="rounded-2xl border border-success-200 bg-success-50 dark:border-success-800 dark:bg-success-500/10 p-6">
-                        <div class="flex items-center gap-4">
-                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-success-100 dark:bg-success-500/20">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-success-600 dark:text-success-400"><path d="M20 6L9 17l-5-5"/></svg>
-                            </span>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.up_to_date') }}</h3>
-                                <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400" x-text="message"></p>
-                            </div>
-                            <a href="{{ route('admin.updates') }}"
-                                class="shrink-0 inline-flex items-center gap-2 rounded-lg border border-success-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-success-50 dark:border-success-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-success-500/10 transition-colors">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-                                {{ __('updates.check_again') }}
-                            </a>
-                        </div>
-                    </div>
-                </template>
-                @endif
-
-                {{-- Main update panel — hidden when allDone --}}
-                <div @if($licensed) x-show="!allDone" @endif>
+                {{-- Main update panel --}}
+                <div>
 
                     {{-- Header --}}
                     <div class="flex items-center gap-3 px-6 py-4 border-b border-brand-100 dark:border-brand-500/20">
@@ -199,22 +177,21 @@
                         </div>
                     </div>
 
-                    {{-- Per-version changelogs (all newer versions) --}}
+                    {{-- Next version to install (oldest pending, one at a time) --}}
                     @if(!empty($update['newer']))
+                    @php $nextVersion = end($update['newer']); @endphp
                     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                         <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{{ __('updates.whats_new') }}</p>
-                        <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
-                            @foreach($update['newer'] as $rel)
-                            <div class="py-4 first:pt-0 last:pb-0">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90">v{{ $rel['version'] }}</span>
-                                    @if($rel['version'] === $update['latest'])
-                                    <span class="px-1.5 py-0.5 text-[10px] font-semibold uppercase rounded bg-brand-500 text-white leading-none">{{ __('updates.latest') }}</span>
-                                    @endif
-                                </div>
-                                <div class="rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">{{ trim($rel['changelog']) ?: '—' }}</div>
+                        <div class="py-2">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90">v{{ $nextVersion['version'] }}</span>
+                                @if(count($update['newer']) > 1)
+                                <span class="px-1.5 py-0.5 text-[10px] font-medium rounded bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+                                    +{{ count($update['newer']) - 1 }} {{ __('updates.more_pending') }}
+                                </span>
+                                @endif
                             </div>
-                            @endforeach
+                            <div class="rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">{{ trim($nextVersion['changelog']) ?: '—' }}</div>
                         </div>
                     </div>
                     @endif
@@ -224,12 +201,16 @@
                         @if($licensed)
                             <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">{{ __('updates.install_warning') }}</p>
                             <div class="flex items-center gap-4 flex-wrap">
+                                @if(!empty($update['newer']))
+                                @php $nextVersion = $nextVersion ?? end($update['newer']); @endphp
                                 <button type="button" @click="install()" :disabled="loading"
-                                    class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-60 transition-colors">
+                                    class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-60 transition-colors"
+                                    data-install-btn="1">
                                     <svg x-show="!loading" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     <svg x-show="loading" class="animate-spin" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
-                                    <span x-text="loading ? currentMessage : '{{ __('updates.install') }}'"></span>
+                                    <span x-text="loading ? currentMessage : '{{ __('updates.install') }} v{{ $nextVersion['version'] }}'"></span>
                                 </button>
+                                @endif
                                 <p x-show="message && !loading" x-text="message" x-cloak
                                     :class="ok ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'"
                                     class="text-sm"></p>
@@ -374,11 +355,11 @@
 @if($licensed && $update['has_update'])
 <script>
 function updateInstaller() {
-    // RULE: installs are always sequential, oldest version first.
-    // Each POST /admin/updates/install waits for the previous one to complete
-    // before starting the next. NEVER change the for-await loop to Promise.all()
-    // or any parallel pattern — migrations must run in order and each install
-    // produces a new app state that the next install depends on.
+    // RULE: one button press = exactly one version installed.
+    // queue is sorted oldest-first; we always install queue[0].
+    // After success the page reloads so the next pending version is shown.
+    // NEVER loop through all versions — migrations must run in order and
+    // each version's post-install state is the base for the next version.
     const queue = @json(array_reverse($update['newer'] ?? []));
 
     return {
@@ -386,61 +367,46 @@ function updateInstaller() {
         ok: null,
         message: '',
         currentMessage: '',
-        allDone: false,
 
         async install() {
             if (this.loading || !queue.length) return;
+
+            const rel = queue[0];
+            if (!rel.zip_url) return;
+
             this.loading = true;
             this.ok = null;
             this.message = '';
+            this.currentMessage = `{{ __('updates.installing') }} v${rel.version}`;
 
-            const installed = [];
+            try {
+                const res  = await fetch('{{ route('admin.updates.install') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        zip_url:   rel.zip_url,
+                        changelog: rel.changelog || '',
+                    }),
+                });
+                const data = await res.json();
 
-            for (const rel of queue) {
-                if (!rel.zip_url) continue;
-
-                this.currentMessage = `{{ __('updates.installing') }} v${rel.version}`;
-
-                try {
-                    const res  = await fetch('{{ route('admin.updates.install') }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            zip_url:   rel.zip_url,
-                            changelog: rel.changelog || '',
-                        }),
-                    });
-                    const data = await res.json();
-
-                    if (data.ok) {
-                        installed.push(rel.version);
-                        // update version display in sidebar card
-                        const el = document.getElementById('current-version-display');
-                        if (el) el.textContent = 'v' + (data.version || rel.version);
-                    } else {
-                        this.loading = false;
-                        this.ok = false;
-                        this.message = data.message || '{{ __('updates.install_failed') }}';
-                        return;
-                    }
-                } catch (e) {
+                if (data.ok) {
+                    // Reload so the next pending version (if any) is shown fresh.
+                    window.location.reload();
+                } else {
                     this.loading = false;
                     this.ok = false;
-                    this.message = e.message;
-                    return;
+                    this.message = data.message || '{{ __('updates.install_failed') }}';
                 }
+            } catch (e) {
+                this.loading = false;
+                this.ok = false;
+                this.message = e.message;
             }
-
-            this.loading = false;
-            this.ok = true;
-            this.allDone = true;
-            this.message = installed.length === 1
-                ? `v${installed[0]} {{ __('updates.install_success') }}`
-                : `${installed.length} {{ __('updates.versions_installed') }}: v${installed.join(', v')}`;
         },
     };
 }
