@@ -24,6 +24,7 @@ return [
         'user_deleted'        => 'Deleted user :name (:email)',
         'user_restored'       => 'Restored user :name (:email)',
         'role_created'        => "Role ':role' created",
+        'role_renamed'        => "Role ':old' renamed to ':new'",
         'role_deleted'        => "Role ':role' deleted",
         'permissions_updated' => 'Permissions matrix updated by :name',
         'settings_updated'    => 'System settings updated by :name',

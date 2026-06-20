@@ -46,4 +46,6 @@ return [
     'dark_mode'           => 'Dark mode',
     'switch_language'     => 'Switch language',
     'preview'             => 'Preview',
+    'default'             => 'Default',
+    'settings'            => 'Settings',
 ];

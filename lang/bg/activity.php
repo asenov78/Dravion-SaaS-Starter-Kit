@@ -24,6 +24,7 @@ return [
         'user_deleted'        => 'Изтрит потребител :name (:email)',
         'user_restored'       => 'Възстановен потребител :name (:email)',
         'role_created'        => "Ролята ':role' е създадена",
+        'role_renamed'        => "Ролята ':old' е преименувана на ':new'",
         'role_deleted'        => "Ролята ':role' е изтрита",
         'permissions_updated' => 'Матрицата с права е обновена от :name',
         'settings_updated'    => 'Системните настройки са обновени от :name',

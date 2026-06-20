@@ -46,4 +46,6 @@ return [
     'dark_mode'           => 'Тъмен режим',
     'switch_language'     => 'Смяна на език',
     'preview'             => 'Преглед',
+    'default'             => 'По подразбиране',
+    'settings'            => 'Настройки',
 ];
