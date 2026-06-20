@@ -36,6 +36,15 @@ jobs:
       - name: Copy .env for tests
         run: cp .env.example .env && php artisan key:generate --quiet
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Build frontend assets
+        run: npm ci --quiet && npm run build
+
       - name: Run full test suite
         run: php artisan test --no-coverage
         env:
