@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.70] — 2026-06-20
+
+### Added
+- **Check License button** on Updates page: replaces "Go to License" link with a POST form that clears `storage/license.cache` and does a live license ping; redirects with success flash if license is now active, or warning flash if not
+- `POST /admin/updates/check-license` route (`admin.updates.check-license`)
+- `UpdateController::checkLicense()` method
+- 7 new tests in `CheckLicenseTest` covering auth, role guard, stale cache bypass, success and warning redirects, and blade button presence
+
 ## [1.10.59] — 2026-06-20
 
 ### Fixed

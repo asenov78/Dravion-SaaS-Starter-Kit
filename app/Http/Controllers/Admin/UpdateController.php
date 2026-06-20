@@ -10,6 +10,7 @@ use App\Rules\GitHubZipUrl;
 use App\Services\UpdaterService;
 use App\Support\DomainHelper;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -45,6 +46,23 @@ class UpdateController extends Controller
             'masked'   => $masked,
             'valid'    => $valid,
         ]);
+    }
+
+    /**
+     * Clear license cache and do a live ping to see if the key is now valid.
+     * Redirects back to updates page with success or warning flash.
+     */
+    public function checkLicense(): RedirectResponse
+    {
+        @unlink(storage_path('license.cache'));
+
+        if ($this->license->isValidLive()) {
+            return redirect()->route('admin.updates')
+                ->with('success', __('flash.license_verified'));
+        }
+
+        return redirect()->route('admin.updates')
+            ->with('license_warning', __('flash.license_not_found'));
     }
 
     /**

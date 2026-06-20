@@ -38,4 +38,6 @@ return [
     'page_deleted'             => 'Page deleted.',
     '2fa_enabled'              => 'Two-factor authentication enabled.',
     '2fa_disabled'             => 'Two-factor authentication disabled.',
+    'license_verified'         => 'License is active. You can now install updates.',
+    'license_not_found'        => 'No active license found. Please activate a license key.',
 ];

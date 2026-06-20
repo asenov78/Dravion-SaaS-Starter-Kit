@@ -240,10 +240,14 @@
                                 <div class="min-w-0 flex-1">
                                     <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ __('updates.locked_title') }}</p>
                                     <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ __('updates.locked_desc') }}</p>
-                                    <a href="{{ route('admin.updates') }}"
-                                        class="mt-3 inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 transition-colors">
-                                        {{ __('updates.go_to_license') }}
-                                    </a>
+                                    <form method="POST" action="{{ route('admin.updates.check-license') }}" class="mt-3">
+                                        @csrf
+                                        <button type="submit"
+                                            class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 transition-colors">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                                            {{ __('updates.check_license') }}
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         @endif

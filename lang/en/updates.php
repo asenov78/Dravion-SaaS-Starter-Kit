@@ -12,6 +12,7 @@ return [
     'locked_title'        => 'Updates Locked',
     'locked_desc'         => 'You need an active license to check for and install updates.',
     'go_to_license'       => 'Go to License',
+    'check_license'       => 'Check License',
     'up_to_date'          => "You're on the latest version",
     'up_to_date_desc'     => 'No updates available right now.',
     'update_available'    => 'Update available',

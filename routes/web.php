@@ -204,9 +204,10 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     Route::get('/search',     [GlobalSearchController::class, 'search'])->name('search');
 
     // Self-updater — admin only
-    Route::get('/updates',         [UpdateController::class, 'index'])->name('updates')->middleware('role:admin');
-    Route::get('/updates/check',   [UpdateController::class, 'check'])->name('updates.check')->middleware('role:admin');
-    Route::post('/updates/install',[UpdateController::class, 'install'])->name('updates.install')->middleware('role:admin');
+    Route::get('/updates',                  [UpdateController::class, 'index'])->name('updates')->middleware('role:admin');
+    Route::get('/updates/check',            [UpdateController::class, 'check'])->name('updates.check')->middleware('role:admin');
+    Route::post('/updates/check-license',   [UpdateController::class, 'checkLicense'])->name('updates.check-license')->middleware('role:admin');
+    Route::post('/updates/install',         [UpdateController::class, 'install'])->name('updates.install')->middleware('role:admin');
 
     Route::get('/license',    [LicenseController::class, 'show'])->name('license');
     Route::post('/license',   [LicenseController::class, 'update'])->name('license.update');
