@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.80] — 2026-06-20
+requires: 1.10.79
+
+### Fixed
+- CI: `UpdatePageTest::licensed()` used `DRV-VALID` key which requires `license.cache` for `isValid()` — switched to `DEV-TEST` key (domain-only check, no cache file needed). Fixes `test_page_shows_only_next_version_when_multiple_pending` failure in clean CI environments.
+
 ## [1.10.79] — 2026-06-20
 requires: 1.10.78
 

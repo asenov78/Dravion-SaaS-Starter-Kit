@@ -27,7 +27,9 @@ class UpdatePageTest extends TestCase
 
     private function licensed(): void
     {
-        config(['dravion.license_key' => 'DRV-VALID']);
+        // DEV- prefix: isValid() checks domain only (localhost = dev domain),
+        // no license.cache file needed — avoids CI failures where cache doesn't exist.
+        config(['dravion.license_key' => 'DEV-TEST']);
         @unlink(storage_path('license.cache'));
     }
 
