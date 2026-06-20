@@ -245,7 +245,7 @@ class GlobalSearchTest extends TestCase
 
     // --- Blur overlay & cache clear button ---
 
-    public function test_header_contains_teleport_blur_overlay(): void
+    public function test_header_contains_teleport_overlay_without_blur(): void
     {
         $html = $this->actingAs($this->admin)
             ->get('/admin/dashboard')
@@ -253,8 +253,20 @@ class GlobalSearchTest extends TestCase
             ->getContent();
 
         $this->assertStringContainsString('x-teleport="body"', $html);
-        $this->assertStringContainsString('backdrop-blur-sm', $html);
         $this->assertStringContainsString('focused', $html);
+        $this->assertStringNotContainsString('backdrop-blur-sm', $html);
+    }
+
+    public function test_search_uses_route_helper_not_hardcoded_path(): void
+    {
+        $html = $this->actingAs($this->admin)
+            ->get('/admin/dashboard')
+            ->assertStatus(200)
+            ->getContent();
+
+        // Hardcoded '/admin/search' breaks subdirectory installs (e.g. /dravion/)
+        $this->assertStringNotContainsString("fetch('/admin/search?", $html);
+        $this->assertStringContainsString(route('admin.search'), $html);
     }
 
     public function test_header_contains_cache_clear_button(): void

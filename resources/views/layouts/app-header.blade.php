@@ -127,7 +127,7 @@
                         try {
                             const params = new URLSearchParams({ q: this.query });
                             this.activeGroups.forEach(g => params.append('groups[]', g));
-                            const res = await fetch('/admin/search?' + params.toString(), {
+                            const res = await fetch('{{ route('admin.search') }}?' + params.toString(), {
                                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                             });
                             const data = await res.json();
@@ -168,7 +168,7 @@
                         x-transition:leave="transition-opacity ease-in duration-150"
                         x-transition:leave-start="opacity-100"
                         x-transition:leave-end="opacity-0"
-                        class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm"
+                        class="fixed inset-0 bg-gray-900/40"
                         style="z-index:99990;"
                         @click="close(); $refs.searchInput.blur()"></div>
                 </template>
