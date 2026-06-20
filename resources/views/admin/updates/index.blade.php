@@ -349,7 +349,11 @@
 @if($licensed && $update['has_update'])
 <script>
 function updateInstaller() {
-    // queue = all pending releases, oldest first
+    // RULE: installs are always sequential, oldest version first.
+    // Each POST /admin/updates/install waits for the previous one to complete
+    // before starting the next. NEVER change the for-await loop to Promise.all()
+    // or any parallel pattern — migrations must run in order and each install
+    // produces a new app state that the next install depends on.
     const queue = @json(array_reverse($update['newer'] ?? []));
 
     return {

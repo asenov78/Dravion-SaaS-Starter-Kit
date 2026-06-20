@@ -68,8 +68,15 @@ class UpdateController extends Controller
     }
 
     /**
-     * Install an update — live license verification immediately before download
-     * to prevent installs on suspended/revoked licenses.
+     * Install a single update version.
+     *
+     * RULE: the frontend calls this endpoint once per version, sequentially
+     * (oldest version first). Each call blocks until the install completes.
+     * NEVER batch multiple versions in one call — migrations must run in order
+     * and each version's post-install state is the base for the next version.
+     *
+     * Live license verification runs on every call to catch suspensions that
+     * occurred after the initial page load cache was written.
      */
     public function install(Request $request, UpdaterService $updater): JsonResponse
     {
