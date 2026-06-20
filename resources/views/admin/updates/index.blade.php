@@ -108,7 +108,7 @@
             <div class="divide-y divide-gray-100 dark:divide-gray-800">
                 <div class="flex items-center justify-between px-5 py-3.5">
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('updates.current_version') }}</p>
-                    <p class="text-sm font-semibold font-mono text-gray-800 dark:text-white/90" id="current-version-display">v{{ $current }}</p>
+                    <p class="text-sm font-semibold font-mono {{ $licensed ? 'text-gray-800 dark:text-white/90' : 'text-error-600 dark:text-error-400' }}" id="current-version-display">v{{ $current }}</p>
                 </div>
                 <div class="flex items-center justify-between px-5 py-3.5">
                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('updates.latest_version') }}</p>
@@ -255,6 +255,7 @@
 
         @else
             {{-- Up to date --}}
+            @if($licensed)
             <div class="rounded-2xl border border-success-200 bg-success-50 dark:border-success-800 dark:bg-success-500/10 p-6">
                 <div class="flex items-center gap-4">
                     <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-success-100 dark:bg-success-500/20">
@@ -271,6 +272,24 @@
                     </a>
                 </div>
             </div>
+            @else
+            <div class="rounded-2xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50 p-6">
+                <div class="flex items-center gap-4">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-400 dark:text-gray-500"><path d="M20 6L9 17l-5-5"/></svg>
+                    </span>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('updates.up_to_date') }}</h3>
+                        <p class="mt-0.5 text-sm text-gray-600 dark:text-gray-400">{{ __('updates.up_to_date_desc') }}</p>
+                    </div>
+                    <a href="{{ route('admin.updates') }}"
+                        class="shrink-0 inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:bg-transparent dark:text-gray-400 dark:hover:bg-gray-700 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+                        {{ __('updates.check_again') }}
+                    </a>
+                </div>
+            </div>
+            @endif
         @endif
 
     </div>{{-- /right --}}
