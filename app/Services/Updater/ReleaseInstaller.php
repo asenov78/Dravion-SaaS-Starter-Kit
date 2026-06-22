@@ -37,6 +37,7 @@ class ReleaseInstaller
 
         Artisan::call('migrate', ['--force' => true]);
         Artisan::call('config:clear');
+        Artisan::call('route:clear');
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
         Artisan::call('lang:seed');

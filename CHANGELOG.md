@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.82] — 2026-06-22
+requires: 1.10.81
+
+### Fixed
+- ReleaseInstaller: run `route:clear` after every update so stale route cache does not hide newly added routes (caused `Route [admin.license] not defined` 500 on production after updates)
+
 ## [1.10.81] — 2026-06-22
 requires: 1.10.80
 
