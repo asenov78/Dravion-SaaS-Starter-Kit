@@ -30,7 +30,7 @@ class StorageLinkTest extends TestCase
         Storage::fake('public');
 
         $file = UploadedFile::fake()->image('avatar.jpg', 300, 300);
-        $path = \App\Services\AvatarService::store($file);
+        $path = (new \App\Services\AvatarService())->store($file);
 
         Storage::disk('public')->assertExists($path);
         $this->assertStringStartsWith('avatars/', $path);
@@ -42,7 +42,7 @@ class StorageLinkTest extends TestCase
         Storage::fake('public');
 
         $file = UploadedFile::fake()->image('avatar.jpg', 100, 100);
-        $path = \App\Services\AvatarService::store($file);
+        $path = (new \App\Services\AvatarService())->store($file);
 
         $url = Storage::disk('public')->url($path);
         $this->assertNotEmpty($url);

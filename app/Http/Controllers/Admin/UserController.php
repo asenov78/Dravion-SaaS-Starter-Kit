@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Contracts\AvatarServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Mail\WelcomeMail;
 use App\Models\Setting;
@@ -10,7 +11,6 @@ use App\Notifications\AccountActivatedNotification;
 use App\Notifications\AccountSuspendedNotification;
 use App\Notifications\NewUserRegisteredNotification;
 use App\Facades\ActivityLogger;
-use App\Services\AvatarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -21,6 +21,7 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    public function __construct(private AvatarServiceInterface $avatar) {}
     public function index(Request $request)
     {
         $search  = $request->input('search', '');
@@ -177,7 +178,7 @@ class UserController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            $data['avatar'] = AvatarService::store($request->file('avatar'), $user->avatar);
+            $data['avatar'] = $this->avatar->store($request->file('avatar'), $user->avatar);
         } else {
             unset($data['avatar']);
         }

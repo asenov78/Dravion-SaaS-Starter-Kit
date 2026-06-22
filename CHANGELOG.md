@@ -2,6 +2,25 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.93] — 2026-06-22
+requires: 1.10.92
+
+### Security
+- **CVE fixes**: `composer update guzzlehttp/guzzle guzzlehttp/psr7` — patched CVE-2026-55767 (CRLF injection), CVE-2026-55568 (HTTPS downgrade), CVE-2026-55766 (cookie bypass).
+- **CSP header**: Added `Content-Security-Policy` header to `SecurityHeaders` middleware.
+- **Webhook hardening**: `UpdateWebhookController` now returns 401 when `GITHUB_WEBHOOK_SECRET` is not configured — prevents unauthenticated cache poisoning.
+- **SMTP test**: Raw exception message no longer returned to browser; full error logged server-side, generic `settings.smtp_test_fail` returned to client.
+- **GitHub Actions**: All action refs pinned to full commit SHAs (A08 Software Integrity Failures).
+
+### Architecture
+- **`AvatarServiceInterface`**: Extracted interface at `app/Contracts/AvatarServiceInterface.php`; bound in `AppServiceProvider`; `AvatarService::store()` converted from static to instance method; `ProfileController` and `UserController` now inject via interface.
+- **`UpdateController::redactZipUrls()`**: Eliminated duplicated ZIP URL redaction code from `index()` and `check()` — extracted to private method.
+- **`SettingsController::settingSchema()`**: Extracted 19-key settings map to single private method — single source of truth for setting keys and defaults.
+
+### Tests
+- Updated `UpdateWebhookTest` to use HMAC-signed requests by default; added `test_no_secret_configured_rejects_request_with_401`.
+- Updated `AvatarServiceTest` and `StorageLinkTest` to instantiate `AvatarService` (no longer static).
+
 ## [1.10.92] — 2026-06-22
 requires: 1.10.91
 

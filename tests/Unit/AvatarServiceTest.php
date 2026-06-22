@@ -17,7 +17,7 @@ class AvatarServiceTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessageMatches('/2MB/i');
 
-        AvatarService::store($file, null);
+        (new AvatarService())->store($file, null);
     }
 
     public function test_accepts_file_at_exactly_2mb(): void
@@ -31,6 +31,6 @@ class AvatarServiceTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessageMatches('/read|image/i');
 
-        AvatarService::store($file, null);
+        (new AvatarService())->store($file, null);
     }
 }

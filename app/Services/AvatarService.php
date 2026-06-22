@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
+use App\Contracts\AvatarServiceInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class AvatarService
+class AvatarService implements AvatarServiceInterface
 {
     private const MAX_SIZE  = 200;
     private const MAX_BYTES = 2 * 1024 * 1024; // 2MB
 
-    public static function store(UploadedFile $file, ?string $oldPath = null): string
+    public function store(UploadedFile $file, ?string $oldPath = null): string
     {
         if ($file->getSize() > self::MAX_BYTES) {
             throw new \RuntimeException('Avatar file exceeds maximum size of 2MB.');

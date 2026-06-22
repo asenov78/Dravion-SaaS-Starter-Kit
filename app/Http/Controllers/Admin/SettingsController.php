@@ -16,32 +16,41 @@ class SettingsController extends Controller
     {
         $timezones = \DateTimeZone::listIdentifiers();
 
-        $settings = [
-            'app_name'               => Setting::get('app_name', config('app.name')),
-            'app_url'                => Setting::get('app_url', config('app.url')),
-            'mail_from'              => Setting::get('mail_from', ''),
-            'mail_from_name'         => Setting::get('mail_from_name', ''),
-            'mail_welcome'           => Setting::get('mail_welcome', '1'),
-            'registration'           => Setting::get('registration', '1'),
-            'timezone'               => Setting::get('timezone', 'UTC'),
-            'date_format'            => Setting::get('date_format', 'd/m/Y'),
-            'maintenance'            => Setting::get('maintenance', '0'),
-            'logo'                   => Setting::get('logo', ''),
-            'default_language'       => Setting::get('default_language', 'en'),
-            'week_start'             => Setting::get('week_start', '1'),
-            'activity_log_auth'      => Setting::get('activity_log_auth', '1'),
-            'activity_log_users'     => Setting::get('activity_log_users', '1'),
-            'activity_log_profile'   => Setting::get('activity_log_profile', '1'),
-            'activity_log_settings'  => Setting::get('activity_log_settings', '1'),
-            'broadcast_banner'       => Setting::get('broadcast_banner', ''),
-            'footer_text'            => Setting::get('footer_text', ''),
-            'footer_copyright'       => Setting::get('footer_copyright', ''),
-            'header_tagline'         => Setting::get('header_tagline', ''),
-        ];
+        $settings = array_map(
+            static fn($default) => Setting::get(...(is_array($default) ? $default : [$default])),
+            $this->settingSchema()
+        );
 
         $availableLocales = ['en' => 'English', 'bg' => 'Български'];
 
         return view('admin.settings', compact('settings', 'timezones', 'availableLocales'));
+    }
+
+    /** Single source of truth for all setting keys + their defaults. */
+    private function settingSchema(): array
+    {
+        return [
+            'app_name'              => ['app_name',             config('app.name')],
+            'app_url'               => ['app_url',              config('app.url')],
+            'mail_from'             => ['mail_from',            ''],
+            'mail_from_name'        => ['mail_from_name',       ''],
+            'mail_welcome'          => ['mail_welcome',         '1'],
+            'registration'          => ['registration',         '1'],
+            'timezone'              => ['timezone',             'UTC'],
+            'date_format'           => ['date_format',          'd/m/Y'],
+            'maintenance'           => ['maintenance',          '0'],
+            'logo'                  => ['logo',                 ''],
+            'default_language'      => ['default_language',     'en'],
+            'week_start'            => ['week_start',           '1'],
+            'activity_log_auth'     => ['activity_log_auth',    '1'],
+            'activity_log_users'    => ['activity_log_users',   '1'],
+            'activity_log_profile'  => ['activity_log_profile', '1'],
+            'activity_log_settings' => ['activity_log_settings','1'],
+            'broadcast_banner'      => ['broadcast_banner',     ''],
+            'footer_text'           => ['footer_text',          ''],
+            'footer_copyright'      => ['footer_copyright',     ''],
+            'header_tagline'        => ['header_tagline',       ''],
+        ];
     }
 
     public function update(Request $request)
@@ -104,7 +113,8 @@ class SettingsController extends Controller
             Mail::to(auth()->user()->email)->send(new SmtpTestMail());
             return response()->json(['ok' => true, 'message' => __('settings.smtp_test_ok')]);
         } catch (\Throwable $e) {
-            return response()->json(['ok' => false, 'message' => $e->getMessage()]);
+            \Illuminate\Support\Facades\Log::error('SMTP test failed', ['error' => $e->getMessage()]);
+            return response()->json(['ok' => false, 'message' => __('settings.smtp_test_fail')]);
         }
     }
 }

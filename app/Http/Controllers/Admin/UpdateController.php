@@ -41,11 +41,7 @@ class UpdateController extends Controller
             ];
         }
         if (! $licensed) {
-            $update['zip_url'] = null;
-            $update['newer']   = array_map(function ($r) {
-                $r['zip_url'] = null;
-                return $r;
-            }, $update['newer'] ?? []);
+            $update = $this->redactZipUrls($update);
         }
 
         $updater->ensureHistoryExists();
@@ -109,13 +105,7 @@ class UpdateController extends Controller
         try {
             // Live check: catches suspend/revoke that happened after the last cache refresh.
             if (! $this->license->isValidLive()) {
-                $update = $updater->checkForUpdate();
-                $update['zip_url'] = null;
-                $update['newer']   = array_map(function ($r) {
-                    $r['zip_url'] = null;
-                    return $r;
-                }, $update['newer'] ?? []);
-                return response()->json($update);
+                return response()->json($this->redactZipUrls($updater->checkForUpdate()));
             }
 
             return response()->json($updater->checkForUpdate());
@@ -179,5 +169,15 @@ class UpdateController extends Controller
         }
 
         return response()->json($result, ($result['ok'] ?? false) ? 200 : 500);
+    }
+
+    private function redactZipUrls(array $update): array
+    {
+        $update['zip_url'] = null;
+        $update['newer']   = array_map(static function (array $r): array {
+            $r['zip_url'] = null;
+            return $r;
+        }, $update['newer'] ?? []);
+        return $update;
     }
 }
