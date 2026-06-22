@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'version' => '1.10.91',
+    'version' => '1.10.92',
 
     'license_server' => env('DRAVION_LICENSE_SERVER', 'https://apsbg.com/dravion-server'),
     'updates_server' => env('DRAVION_UPDATES_SERVER', 'https://apsbg.com/dravion-server'),

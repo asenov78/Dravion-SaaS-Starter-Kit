@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.92] — 2026-06-22
+requires: 1.10.91
+
+### Fixed
+- Added missing `permissions.manage languages` translation (en + bg).
+
 ## [1.10.91] — 2026-06-22
 requires: 1.10.87
 

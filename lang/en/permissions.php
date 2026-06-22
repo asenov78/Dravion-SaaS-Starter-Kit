@@ -13,4 +13,5 @@ return [
     'create pages'      => 'Create Pages',
     'edit pages'        => 'Edit Pages',
     'delete pages'      => 'Delete Pages',
+    'manage languages'  => 'Manage Languages',
 ];
