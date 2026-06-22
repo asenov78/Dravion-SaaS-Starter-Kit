@@ -7,10 +7,13 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { Bulgarian } from 'flatpickr/dist/l10n/bg.js';
 
-// Apply locale + first day of week before Alpine starts (instances created in x-init)
-const _fpLocale = window.appLocale === 'bg' ? { ...Bulgarian } : {};
-_fpLocale.firstDayOfWeek = typeof window.appFirstDayOfWeek === 'number' ? window.appFirstDayOfWeek : 1;
-flatpickr.localize(_fpLocale);
+// Build explicit locale config — passed directly to every flatpickr instance.
+// DO NOT rely on flatpickr.localize() — it modifies a shared object that may
+// be read before this module runs in some environments.
+const _firstDay = typeof window.appFirstDayOfWeek === 'number' ? window.appFirstDayOfWeek : 1;
+window.fpConfig = window.appLocale === 'bg'
+    ? { ...Bulgarian, firstDayOfWeek: _firstDay }
+    : { firstDayOfWeek: _firstDay };
 // FullCalendar
 import { Calendar } from '@fullcalendar/core';
 // Popper (for table dropdowns)

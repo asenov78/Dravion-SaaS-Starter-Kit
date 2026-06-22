@@ -2,6 +2,15 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.87] — 2026-06-22
+requires: 1.10.86
+
+### Fixed
+- Flatpickr locale and first-day-of-week now applied via explicit `locale: window.fpConfig` on every instance instead of unreliable `flatpickr.localize()`. Affects `<x-form.date-picker>`, activity log date filters, and the statistics chart date range.
+
+### Tests
+- Added `DatePickerLocaleTest` (8 tests) — verifies `window.appLocale` and `window.appFirstDayOfWeek` are correctly output in HTML, and that activity page uses flatpickr inputs (not native `<input type="date">`).
+
 ## [1.10.86] — 2026-06-22
 requires: 1.10.85
 

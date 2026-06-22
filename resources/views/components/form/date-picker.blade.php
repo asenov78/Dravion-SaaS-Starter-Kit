@@ -18,6 +18,7 @@
                 monthSelectorType: 'static',
                 dateFormat: '{{ $dateFormat }}',
                 defaultDate: {{ $defaultDate ? (is_array($defaultDate) ? json_encode($defaultDate) : "'" . $defaultDate . "'") : 'null' }},
+                locale: window.fpConfig ?? { firstDayOfWeek: 1 },
                 onChange: (selectedDates, dateStr, instance) => {
                     this.$dispatch('date-change', {
                         selectedDates,

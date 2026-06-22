@@ -33,12 +33,12 @@
         @endforeach
     </select>
 
-    <div x-data="{ fp: null, init() { this.fp = flatpickr(this.$refs.el, { dateFormat: 'Y-m-d', defaultDate: '{{ $dateFrom }}' || null }); }, destroy() { this.fp?.destroy(); } }" x-init="init()" x-destroy="destroy()">
+    <div x-data="{ fp: null, init() { this.fp = flatpickr(this.$refs.el, { dateFormat: 'Y-m-d', locale: window.fpConfig ?? { firstDayOfWeek: 1 }, defaultDate: '{{ $dateFrom }}' || null }); }, destroy() { this.fp?.destroy(); } }" x-init="init()" x-destroy="destroy()">
         <input x-ref="el" type="text" name="date_from" placeholder="{{ __('activity.filter_date_from') }}" autocomplete="off"
             class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
     </div>
 
-    <div x-data="{ fp: null, init() { this.fp = flatpickr(this.$refs.el, { dateFormat: 'Y-m-d', defaultDate: '{{ $dateTo }}' || null }); }, destroy() { this.fp?.destroy(); } }" x-init="init()" x-destroy="destroy()">
+    <div x-data="{ fp: null, init() { this.fp = flatpickr(this.$refs.el, { dateFormat: 'Y-m-d', locale: window.fpConfig ?? { firstDayOfWeek: 1 }, defaultDate: '{{ $dateTo }}' || null }); }, destroy() { this.fp?.destroy(); } }" x-init="init()" x-destroy="destroy()">
         <input x-ref="el" type="text" name="date_to" placeholder="{{ __('activity.filter_date_to') }}" autocomplete="off"
             class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
     </div>
