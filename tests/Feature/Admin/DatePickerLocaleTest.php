@@ -122,6 +122,46 @@ class DatePickerLocaleTest extends TestCase
     // Activity log — flatpickr inputs present (not native type="date")    //
     // ------------------------------------------------------------------ //
 
+    public function test_layout_outputs_fpconfig_object_inline(): void
+    {
+        // window.fpConfig must be set by the inline <script> tag, NOT by app.js bundle
+        // This is critical: if fpConfig comes from the bundle, old cached bundles break locale
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('window.fpConfig', $html);
+    }
+
+    public function test_layout_fpconfig_contains_bulgarian_when_locale_bg(): void
+    {
+        Setting::set('default_language', 'bg');
+        Setting::flushCache();
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->getContent();
+
+        // Must contain Bulgarian month/day names in the inline script
+        $this->assertStringContainsString('window.fpConfig', $html);
+        $this->assertStringContainsString('Януари', $html);
+    }
+
+    public function test_layout_fpconfig_contains_first_day_of_week(): void
+    {
+        Setting::set('week_start', '0');
+        Setting::flushCache();
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('firstDayOfWeek:0', str_replace(' ', '', $html));
+    }
+
     public function test_activity_page_has_no_native_date_inputs(): void
     {
         $html = $this->actingAs($this->admin())

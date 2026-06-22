@@ -7,7 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }} — {{ \App\Models\Setting::get('app_name', config('app.name')) }}</title>
-    <script>window.appLocale = '{{ session('locale') ?? \App\Models\Setting::get('default_language', 'en') }}'; window.appFirstDayOfWeek = {{ (int) \App\Models\Setting::get('week_start', '1') }};</script>
+    @php
+        $fpLocale   = session('locale') ?? \App\Models\Setting::get('default_language', 'en');
+        $fpFirstDay = (int) \App\Models\Setting::get('week_start', '1');
+    @endphp
+    <script>
+    window.appLocale = '{{ $fpLocale }}';
+    window.appFirstDayOfWeek = {{ $fpFirstDay }};
+    @if($fpLocale === 'bg')
+    window.fpConfig={weekdays:{shorthand:['Нед','Пон','Вт','Ср','Чет','Пет','Съб'],longhand:['Неделя','Понеделник','Вторник','Сряда','Четвъртък','Петък','Събота']},months:{shorthand:['Яну','Фев','Мар','Апр','Май','Юни','Юли','Авг','Сеп','Окт','Ное','Дек'],longhand:['Януари','Февруари','Март','Април','Май','Юни','Юли','Август','Септември','Октомври','Ноември','Декември']},firstDayOfWeek:{{ $fpFirstDay }},ordinal:function(){return'.';}};
+    @else
+    window.fpConfig={firstDayOfWeek:{{ $fpFirstDay }}};
+    @endif
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Alpine stores --}}

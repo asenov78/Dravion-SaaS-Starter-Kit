@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.91] — 2026-06-22
+requires: 1.10.87
+
+### Fixed
+- Flatpickr locale and week start definitive fix: `window.fpConfig` is now built entirely in the inline `<script>` tag (server-side PHP), not in `app.js`. Bulgarian month/day names are rendered directly from Blade. This eliminates dependency on the JS bundle being current — the fix works with any version of `public/build`.
+
 ## [1.10.90] — 2026-06-22
 requires: 1.10.87
 
