@@ -63,7 +63,13 @@
                     {{ strtoupper(substr($appName, 0, 1)) }}
                 </div>
             @endif
-            <span class="text-base font-bold text-gray-800 dark:text-white/90 tracking-tight">{{ $appName }}</span>
+            <div class="flex flex-col leading-tight">
+                <span class="text-base font-bold text-gray-800 dark:text-white/90 tracking-tight">{{ $appName }}</span>
+                @php $tagline = \App\Models\Setting::getLocalized('header_tagline', ''); @endphp
+                @if($tagline)
+                <span class="text-xs text-gray-500 dark:text-gray-400">{{ $tagline }}</span>
+                @endif
+            </div>
         </a>
 
         {{-- Desktop nav --}}
