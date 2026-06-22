@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.95] — 2026-06-22
+requires: 1.10.92
+
+### Fixed
+- **GitHub Actions**: Reverted SHA-pinned action refs back to version tags (`@v4`, `@v2`) — the SHAs used in v1.10.93/94 were incorrect and broke CI for both releases. SHA pinning requires verified hashes; reverted to tags until they can be verified via `gh api`.
+- This release contains all changes from v1.10.93 and v1.10.94 (CSO fixes, arch improvements, localized settings, header tagline display).
+
 ## [1.10.94] — 2026-06-22
 requires: 1.10.93
 
