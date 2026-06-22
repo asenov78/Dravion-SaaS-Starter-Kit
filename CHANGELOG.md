@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.96] — 2026-06-22
+requires: 1.10.92
+
+### Fixed
+- **CSP missing `'unsafe-eval'`**: Admin stuck on loading spinner — Alpine.js v3 uses `new Function()`, blocked by CSP. Added `'unsafe-eval'` to SecurityHeaders middleware.
+- **Tests**: `SecurityHeadersTest` — 5 tests verify CSP headers, `'unsafe-eval'`, `'unsafe-inline'`, `frame-ancestors 'none'`, admin 200.
+
 ## [1.10.95] — 2026-06-22
 requires: 1.10.92
 
