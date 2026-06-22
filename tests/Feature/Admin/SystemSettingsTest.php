@@ -214,4 +214,55 @@ class SystemSettingsTest extends TestCase
 
         $this->assertSame('Maintenance tonight', Setting::get('broadcast_banner'));
     }
+
+    public function test_week_start_defaults_to_monday(): void
+    {
+        $this->assertSame('1', Setting::get('week_start', '1'));
+    }
+
+    public function test_week_start_can_be_saved_as_sunday(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'app_name'   => 'Test',
+                'app_url'    => 'https://example.com',
+                'week_start' => '0',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('0', Setting::get('week_start'));
+    }
+
+    public function test_week_start_can_be_saved_as_monday(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'app_name'   => 'Test',
+                'app_url'    => 'https://example.com',
+                'week_start' => '1',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('1', Setting::get('week_start'));
+    }
+
+    public function test_week_start_rejects_invalid_value(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'app_name'   => 'Test',
+                'app_url'    => 'https://example.com',
+                'week_start' => '5',
+            ])
+            ->assertSessionHasErrors('week_start');
+    }
+
+    public function test_settings_page_shows_week_start_select(): void
+    {
+        $this->actingAs($this->admin())
+            ->get('/admin/settings')
+            ->assertOk()
+            ->assertSee('week_start')
+            ->assertSee(__('settings.week_start'));
+    }
 }

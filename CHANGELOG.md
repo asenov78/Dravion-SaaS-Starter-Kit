@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.85] — 2026-06-22
+requires: 1.10.84
+
+### Added
+- Settings: "First Day of Week" (Monday/Sunday) — controls all flatpickr date pickers
+- Flatpickr locale now correctly applied (BG/EN) from `window.appLocale` before Alpine init
+- `window.appFirstDayOfWeek` exposed from admin layout, read from `week_start` setting
+
 ## [1.10.84] — 2026-06-22
 requires: 1.10.83
 

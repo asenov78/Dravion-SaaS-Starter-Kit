@@ -89,6 +89,15 @@
                     </select>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('settings.default_language_desc') }}</p>
                 </div>
+                <div>
+                    <label for="week_start" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.week_start') }}</label>
+                    <select name="week_start" id="week_start"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white/90">
+                        <option value="1" {{ ($settings['week_start'] ?? '1') === '1' ? 'selected' : '' }}>{{ __('settings.week_start_monday') }}</option>
+                        <option value="0" {{ ($settings['week_start'] ?? '1') === '0' ? 'selected' : '' }}>{{ __('settings.week_start_sunday') }}</option>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('settings.week_start_desc') }}</p>
+                </div>
                 <div class="flex items-center justify-between">
                     <div>
                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('settings.maintenance') }}</label>
