@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.84] — 2026-06-22
+requires: 1.10.83
+
+### Fixed
+- Date pickers in Activity Log now use app locale (not browser OS locale) — replaced native `<input type="date">` with Flatpickr
+- Flatpickr global locale set from `window.appLocale` (BG locale loaded when app language is Bulgarian)
+
 ## [1.10.83] — 2026-06-22
 requires: 1.10.82
 

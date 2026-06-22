@@ -33,13 +33,15 @@
         @endforeach
     </select>
 
-    <input type="date" name="date_from" value="{{ $dateFrom }}"
-        title="{{ __('activity.filter_date_from') }}"
-        class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+    <div x-data="{ fp: null, init() { this.fp = flatpickr(this.$refs.el, { dateFormat: 'Y-m-d', defaultDate: '{{ $dateFrom }}' || null }); }, destroy() { this.fp?.destroy(); } }" x-init="init()" x-destroy="destroy()">
+        <input x-ref="el" type="text" name="date_from" placeholder="{{ __('activity.filter_date_from') }}" autocomplete="off"
+            class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+    </div>
 
-    <input type="date" name="date_to" value="{{ $dateTo }}"
-        title="{{ __('activity.filter_date_to') }}"
-        class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+    <div x-data="{ fp: null, init() { this.fp = flatpickr(this.$refs.el, { dateFormat: 'Y-m-d', defaultDate: '{{ $dateTo }}' || null }); }, destroy() { this.fp?.destroy(); } }" x-init="init()" x-destroy="destroy()">
+        <input x-ref="el" type="text" name="date_to" placeholder="{{ __('activity.filter_date_to') }}" autocomplete="off"
+            class="h-10 rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+    </div>
 
     <button type="submit" class="h-10 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600 transition-colors">
         {{ __('app.search') }}

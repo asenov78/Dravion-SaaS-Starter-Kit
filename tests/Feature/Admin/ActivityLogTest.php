@@ -288,4 +288,28 @@ class ActivityLogTest extends TestCase
             ->assertSee('old entry')
             ->assertDontSee('recent entry');
     }
+
+    public function test_activity_page_renders_without_500_on_any_locale(): void
+    {
+        $admin = $this->admin();
+
+        foreach (['en', 'bg'] as $locale) {
+            app()->setLocale($locale);
+
+            $this->actingAs($admin)
+                ->get('/admin/activity')
+                ->assertOk();
+        }
+    }
+
+    public function test_activity_page_date_filters_render_with_values(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get('/admin/activity?date_from=2026-01-01&date_to=2026-06-30')
+            ->assertOk()
+            ->assertSee('2026-01-01')
+            ->assertSee('2026-06-30');
+    }
 }
