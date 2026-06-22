@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.86] — 2026-06-22
+requires: 1.10.85
+
+### Fixed
+- `public/build` removed from `protected_paths` — CI builds JS/CSS assets and includes them in the release ZIP, so they must be updated on install. Without this fix, flatpickr locale and all JS changes never reached production.
+
 ## [1.10.85] — 2026-06-22
 requires: 1.10.84
 

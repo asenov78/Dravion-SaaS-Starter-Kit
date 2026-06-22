@@ -24,6 +24,5 @@ return [
         'vendor',
         'node_modules',
         'public/storage',
-        'public/build',
     ],
 ];
