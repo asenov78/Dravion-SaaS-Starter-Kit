@@ -33,6 +33,24 @@ class Setting extends Model
         }
     }
 
+    /**
+     * Get a locale-aware setting value.
+     * Tries "{key}_{locale}" first; falls back to "{key}" (the EN/default value).
+     */
+    public static function getLocalized(string $key, mixed $default = ''): mixed
+    {
+        $locale = app()->getLocale();
+
+        if ($locale !== 'en') {
+            $localized = static::get("{$key}_{$locale}", '');
+            if ($localized !== '') {
+                return $localized;
+            }
+        }
+
+        return static::get($key, $default);
+    }
+
     /** Flush the in-memory cache (useful in tests between assertions). */
     public static function flushCache(): void
     {

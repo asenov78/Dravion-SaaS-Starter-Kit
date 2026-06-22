@@ -64,7 +64,7 @@
             });
 
             Alpine.store('broadcast', {
-                content: @js(\App\Models\Setting::get('broadcast_banner', '')),
+                content: @js(\App\Models\Setting::getLocalized('broadcast_banner', '')),
                 dismissed: false,
                 init() {
                     this.dismissed = sessionStorage.getItem('banner_dismissed') === this.content;
@@ -188,7 +188,7 @@
                 @endif
 
                 {{-- Broadcast Banner --}}
-                @if(\App\Models\Setting::get('broadcast_banner', ''))
+                @if(\App\Models\Setting::getLocalized('broadcast_banner', ''))
                 <div id="broadcast-banner"
                      x-data
                      x-show="$store.broadcast.content && !$store.broadcast.dismissed"

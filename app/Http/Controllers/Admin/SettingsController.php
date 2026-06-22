@@ -47,9 +47,13 @@ class SettingsController extends Controller
             'activity_log_profile'  => ['activity_log_profile', '1'],
             'activity_log_settings' => ['activity_log_settings','1'],
             'broadcast_banner'      => ['broadcast_banner',     ''],
+            'broadcast_banner_bg'   => ['broadcast_banner_bg',  ''],
             'footer_text'           => ['footer_text',          ''],
+            'footer_text_bg'        => ['footer_text_bg',       ''],
             'footer_copyright'      => ['footer_copyright',     ''],
+            'footer_copyright_bg'   => ['footer_copyright_bg',  ''],
             'header_tagline'        => ['header_tagline',       ''],
+            'header_tagline_bg'     => ['header_tagline_bg',    ''],
         ];
     }
 
@@ -65,10 +69,14 @@ class SettingsController extends Controller
             'default_language'  => 'nullable|in:en,bg',
             'week_start'        => 'nullable|in:0,1',
             'logo'              => 'nullable|image|max:2048',
-            'broadcast_banner'  => 'nullable|string|max:500',
-            'footer_text'       => 'nullable|string|max:500',
-            'footer_copyright'  => 'nullable|string|max:200',
-            'header_tagline'    => 'nullable|string|max:200',
+            'broadcast_banner'    => 'nullable|string|max:500',
+            'broadcast_banner_bg' => 'nullable|string|max:500',
+            'footer_text'         => 'nullable|string|max:500',
+            'footer_text_bg'      => 'nullable|string|max:500',
+            'footer_copyright'    => 'nullable|string|max:200',
+            'footer_copyright_bg' => 'nullable|string|max:200',
+            'header_tagline'      => 'nullable|string|max:200',
+            'header_tagline_bg'   => 'nullable|string|max:200',
         ]);
 
         $logoPath = Setting::get('logo', '');
@@ -99,9 +107,13 @@ class SettingsController extends Controller
             'activity_log_profile'  => $request->boolean('activity_log_profile') ? '1' : '0',
             'activity_log_settings' => $request->boolean('activity_log_settings') ? '1' : '0',
             'broadcast_banner'      => $request->input('broadcast_banner', ''),
+            'broadcast_banner_bg'   => $request->input('broadcast_banner_bg', ''),
             'footer_text'           => $request->input('footer_text', ''),
+            'footer_text_bg'        => $request->input('footer_text_bg', ''),
             'footer_copyright'      => $request->input('footer_copyright', ''),
+            'footer_copyright_bg'   => $request->input('footer_copyright_bg', ''),
             'header_tagline'        => $request->input('header_tagline', ''),
+            'header_tagline_bg'     => $request->input('header_tagline_bg', ''),
         ]);
 
         return redirect()->route('admin.settings')->with('success', __('flash.settings_saved'));

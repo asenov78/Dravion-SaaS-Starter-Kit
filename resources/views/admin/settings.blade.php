@@ -47,11 +47,17 @@
                         <div class="h-6 w-11 rounded-full border border-gray-200 bg-gray-100 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all peer-checked:bg-brand-500 peer-checked:after:translate-x-full peer-checked:border-brand-500 dark:border-gray-700 dark:bg-gray-700"></div>
                     </label>
                 </div>
-                <div>
-                    <label for="broadcast_banner" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.broadcast_banner') }}</label>
-                    <textarea name="broadcast_banner" id="broadcast_banner" rows="2" maxlength="500"
+                <div x-data="{ tab: 'en' }">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('settings.broadcast_banner') }}</label>
+                        <x-ui.lang-tabs />
+                    </div>
+                    <textarea x-show="tab === 'en'" name="broadcast_banner" rows="2" maxlength="500"
                         placeholder="{{ __('settings.broadcast_banner_desc') }}"
                         class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90">{{ $settings['broadcast_banner'] }}</textarea>
+                    <textarea x-show="tab === 'bg'" x-cloak name="broadcast_banner_bg" rows="2" maxlength="500"
+                        placeholder="{{ __('settings.broadcast_banner_desc') }}"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90">{{ $settings['broadcast_banner_bg'] }}</textarea>
                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('settings.broadcast_banner_desc') }}</p>
                 </div>
             </div>
@@ -151,19 +157,35 @@
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('settings.public_site') }}</h3>
             </div>
             <div class="p-6 flex flex-col gap-5">
-                <div>
-                    <label for="header_tagline" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.header_tagline') }}</label>
-                    <input type="text" name="header_tagline" id="header_tagline" value="{{ $settings['header_tagline'] }}" maxlength="200"
+                <div x-data="{ tab: 'en' }">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('settings.header_tagline') }}</label>
+                        <x-ui.lang-tabs />
+                    </div>
+                    <input x-show="tab === 'en'" type="text" name="header_tagline" value="{{ $settings['header_tagline'] }}" maxlength="200"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" />
+                    <input x-show="tab === 'bg'" x-cloak type="text" name="header_tagline_bg" value="{{ $settings['header_tagline_bg'] }}" maxlength="200"
                         class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" />
                 </div>
-                <div>
-                    <label for="footer_text" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.footer_text') }}</label>
-                    <textarea name="footer_text" id="footer_text" rows="2" maxlength="500"
+                <div x-data="{ tab: 'en' }">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('settings.footer_text') }}</label>
+                        <x-ui.lang-tabs />
+                    </div>
+                    <textarea x-show="tab === 'en'" name="footer_text" rows="2" maxlength="500"
                         class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90">{{ $settings['footer_text'] }}</textarea>
+                    <textarea x-show="tab === 'bg'" x-cloak name="footer_text_bg" rows="2" maxlength="500"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90">{{ $settings['footer_text_bg'] }}</textarea>
                 </div>
-                <div>
-                    <label for="footer_copyright" class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('settings.footer_copyright') }}</label>
-                    <input type="text" name="footer_copyright" id="footer_copyright" value="{{ $settings['footer_copyright'] }}" maxlength="200"
+                <div x-data="{ tab: 'en' }">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('settings.footer_copyright') }}</label>
+                        <x-ui.lang-tabs />
+                    </div>
+                    <input x-show="tab === 'en'" type="text" name="footer_copyright" value="{{ $settings['footer_copyright'] }}" maxlength="200"
+                        placeholder="{{ __('settings.footer_copyright_placeholder') }}"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" />
+                    <input x-show="tab === 'bg'" x-cloak type="text" name="footer_copyright_bg" value="{{ $settings['footer_copyright_bg'] }}" maxlength="200"
                         placeholder="{{ __('settings.footer_copyright_placeholder') }}"
                         class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" />
                 </div>

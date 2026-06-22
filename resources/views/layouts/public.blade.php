@@ -297,7 +297,7 @@
                 @endif
                 <span class="text-sm font-bold text-gray-800 dark:text-white/90">{{ $appName }}</span>
             </div>
-            @php $footerText = \App\Models\Setting::get('footer_text', ''); @endphp
+            @php $footerText = \App\Models\Setting::getLocalized('footer_text', ''); @endphp
             @if($footerText)
             <p class="text-sm text-gray-500 dark:text-gray-400 text-center">{{ $footerText }}</p>
             @endif
@@ -308,7 +308,7 @@
                 @endforeach
                 <a href="{{ route('login') }}" class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">{{ __('auth.login') }}</a>
             </nav>
-            @php $footerCopyright = \App\Models\Setting::get('footer_copyright', ''); @endphp
+            @php $footerCopyright = \App\Models\Setting::getLocalized('footer_copyright', ''); @endphp
             <p class="text-sm text-gray-400 dark:text-gray-500">
                 {{ $footerCopyright ?: ('© ' . date('Y') . ' ' . $appName . '. ' . __('app.all_rights_reserved')) }}
             </p>
