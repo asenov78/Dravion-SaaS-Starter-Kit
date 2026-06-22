@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.90] — 2026-06-22
+requires: 1.10.87
+
+### Fixed
+- Flatpickr locale root cause: `window.appLocale` now reads `session('locale') ?? Setting::get('default_language')` instead of `app()->getLocale()`. Previously, if the admin user had `locale='en'` in their profile, it silently overrode the site's default_language setting — flatpickr always showed English regardless of what was set.
+- Settings language selector showed garbled text ("Ð'ÑŠÐ»Ð³Ð°Ñ€ÑÐºÐ¸") — fixed UTF-8 encoding.
+
+### Tests
+- Added `test_default_language_setting_bg_overrides_user_profile_locale_en` — catches the exact production bug where user profile locale overrides the site setting.
+
 ## [1.10.89] — 2026-06-22
 requires: 1.10.87
 

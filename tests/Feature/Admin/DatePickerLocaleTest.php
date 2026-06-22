@@ -60,6 +60,24 @@ class DatePickerLocaleTest extends TestCase
         $this->assertStringContainsString("window.appLocale = 'bg'", $html);
     }
 
+    public function test_default_language_setting_bg_overrides_user_profile_locale_en(): void
+    {
+        // User profile locale 'en' must NOT override the site default_language setting
+        // This is the production bug: admin user has locale='en' in DB, setting is 'bg'
+        Setting::set('default_language', 'bg');
+        Setting::flushCache();
+
+        $user = User::factory()->create(['locale' => 'en']);
+        $user->assignRole('admin');
+
+        $html = $this->actingAs($user)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString("window.appLocale = 'bg'", $html);
+    }
+
     // ------------------------------------------------------------------ //
     // window.appFirstDayOfWeek                                            //
     // ------------------------------------------------------------------ //

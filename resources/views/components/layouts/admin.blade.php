@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }} — {{ \App\Models\Setting::get('app_name', config('app.name')) }}</title>
-    <script>window.appLocale = '{{ app()->getLocale() }}'; window.appFirstDayOfWeek = {{ (int) \App\Models\Setting::get('week_start', '1') }};</script>
+    <script>window.appLocale = '{{ session('locale') ?? \App\Models\Setting::get('default_language', 'en') }}'; window.appFirstDayOfWeek = {{ (int) \App\Models\Setting::get('week_start', '1') }};</script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Alpine stores --}}
