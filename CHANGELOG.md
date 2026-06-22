@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.94] — 2026-06-22
+requires: 1.10.93
+
+### Added
+- **Localized settings**: Broadcast Banner, Header Tagline, Footer Text, and Copyright Text now support both English and Bulgarian. EN/BG tab switcher in the settings form. Display layer (`Setting::getLocalized()`) serves the appropriate locale with fallback to the EN value.
+- **`Setting::getLocalized($key)`**: New helper — reads `{key}_{locale}` first, falls back to `{key}` (EN default).
+- **`<x-ui.lang-tabs>`**: Reusable Alpine.js EN/BG tab switcher component.
+
 ## [1.10.93] — 2026-06-22
 requires: 1.10.92
 
