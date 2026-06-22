@@ -182,7 +182,7 @@
 
                     {{-- Next version to install (oldest non-blocked, one at a time) --}}
                     @if(!empty($update['newer']))
-                    @php $nextVersion = $update['next_installable'] ?? end($update['newer']); @endphp
+                    @php $newerArr = $update['newer']; $nextVersion = $update['next_installable'] ?? end($newerArr); @endphp
                     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                         <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{{ __('updates.whats_new') }}</p>
                         <div class="py-2">
@@ -207,7 +207,7 @@
                     {{-- Actions --}}
                     <div class="px-6 py-4">
                         @if($licensed)
-                            @php $nextVersion = $update['next_installable'] ?? end($update['newer'] ?? []); @endphp
+                            @php $newerArr2 = $update['newer'] ?? []; $nextVersion = $update['next_installable'] ?? end($newerArr2); @endphp
                             @if(!empty($nextVersion['blocked']))
                             {{-- Blocked: chain broken — a required predecessor version is missing --}}
                             <div class="flex items-start gap-3 rounded-xl border border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-500/10 p-4">

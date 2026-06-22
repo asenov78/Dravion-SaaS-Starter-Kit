@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.83] — 2026-06-22
+requires: 1.10.82
+
+### Fixed
+- updates/index.blade.php: `end()` called on inline array expression causes PHP 8 Error — assign to variable first before calling `end()`
+
 ## [1.10.82] — 2026-06-22
 requires: 1.10.81
 
