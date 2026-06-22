@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class UpdateController extends Controller
@@ -24,13 +25,27 @@ class UpdateController extends Controller
         // Cache-only check for page display (fast). install() + check() do live verification.
         $licensed = $this->license->isValid();
 
-        $update = $updater->checkForUpdate();
+        try {
+            $update = $updater->checkForUpdate();
+        } catch (\Throwable $e) {
+            Log::error('UpdateController::index checkForUpdate failed', ['error' => $e->getMessage()]);
+            $update = [
+                'current'          => $updater->getCurrentVersion(),
+                'latest'           => null,
+                'has_update'       => false,
+                'changelog'        => null,
+                'zip_url'          => null,
+                'newer'            => [],
+                'older'            => [],
+                'next_installable' => null,
+            ];
+        }
         if (! $licensed) {
             $update['zip_url'] = null;
             $update['newer']   = array_map(function ($r) {
                 $r['zip_url'] = null;
                 return $r;
-            }, $update['newer']);
+            }, $update['newer'] ?? []);
         }
 
         $updater->ensureHistoryExists();
@@ -91,18 +106,22 @@ class UpdateController extends Controller
      */
     public function check(UpdaterService $updater): JsonResponse
     {
-        // Live check: catches suspend/revoke that happened after the last cache refresh.
-        if (! $this->license->isValidLive()) {
-            $update = $updater->checkForUpdate();
-            $update['zip_url'] = null;
-            $update['newer']   = array_map(function ($r) {
-                $r['zip_url'] = null;
-                return $r;
-            }, $update['newer'] ?? []);
-            return response()->json($update);
-        }
+        try {
+            // Live check: catches suspend/revoke that happened after the last cache refresh.
+            if (! $this->license->isValidLive()) {
+                $update = $updater->checkForUpdate();
+                $update['zip_url'] = null;
+                $update['newer']   = array_map(function ($r) {
+                    $r['zip_url'] = null;
+                    return $r;
+                }, $update['newer'] ?? []);
+                return response()->json($update);
+            }
 
-        return response()->json($updater->checkForUpdate());
+            return response()->json($updater->checkForUpdate());
+        } catch (\Throwable $e) {
+            return response()->json(['ok' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     /**

@@ -2,6 +2,15 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.81] — 2026-06-22
+requires: 1.10.80
+
+### Fixed
+- ReleaseInstaller: run `lang:seed` after every update so new translation keys are seeded to the database (missing keys from v1.10.77 could cause 500 on check update page)
+- UpdateController::index(): wrap checkForUpdate() in try-catch — returns empty update state instead of 500 on unexpected errors
+- UpdateController::check(): wrap in try-catch — returns JSON error instead of 500
+- UpdaterService::checkForUpdate(): early return (GitHub unreachable) now includes `next_installable` and `older` keys for blade compatibility
+
 ## [1.10.80] — 2026-06-20
 requires: 1.10.79
 

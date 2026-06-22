@@ -39,6 +39,7 @@ class ReleaseInstaller
         Artisan::call('config:clear');
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
+        Artisan::call('lang:seed');
         @unlink(storage_path('license.cache'));
 
         if (function_exists('opcache_reset')) {

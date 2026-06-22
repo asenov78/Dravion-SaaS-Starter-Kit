@@ -102,12 +102,14 @@ class UpdaterService
 
         if ($releases === []) {
             return [
-                'current'    => $current,
-                'latest'     => null,
-                'has_update' => false,
-                'changelog'  => null,
-                'zip_url'    => null,
-                'newer'      => [],
+                'current'          => $current,
+                'latest'           => null,
+                'has_update'       => false,
+                'changelog'        => null,
+                'zip_url'          => null,
+                'newer'            => [],
+                'older'            => [],
+                'next_installable' => null,
             ];
         }
 
