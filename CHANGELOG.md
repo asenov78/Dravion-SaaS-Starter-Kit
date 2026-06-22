@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.89] — 2026-06-22
+requires: 1.10.87
+
+### Fixed
+- SettingsController: removed UTF-8 BOM that caused fatal PHP error on CI.
+
 ## [1.10.88] — 2026-06-22
 requires: 1.10.87
 
