@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.10.88] — 2026-06-22
+requires: 1.10.87
+
+### Fixed
+- Settings: language selector "Bulgarian" label was garbled (ISO-8859-1 bytes instead of UTF-8). Now shows correctly as "Български".
+
 ## [1.10.87] — 2026-06-22
 requires: 1.10.86
 

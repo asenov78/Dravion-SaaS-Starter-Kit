@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -39,7 +39,7 @@ class SettingsController extends Controller
             'header_tagline'         => Setting::get('header_tagline', ''),
         ];
 
-        $availableLocales = ['en' => 'English', 'bg' => 'Ð‘ÑŠÐ»Ð³Ð°Ñ€ÑÐºÐ¸'];
+        $availableLocales = ['en' => 'English', 'bg' => 'Български'];
 
         return view('admin.settings', compact('settings', 'timezones', 'availableLocales'));
     }
