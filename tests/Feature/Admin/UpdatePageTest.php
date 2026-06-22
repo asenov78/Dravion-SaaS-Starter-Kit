@@ -397,6 +397,77 @@ class UpdatePageTest extends TestCase
             ->assertJson(['ok' => true]);
     }
 
+    // --- blade render safety (no 500 on any update state) ---
+
+    public function test_page_renders_when_no_releases_available(): void
+    {
+        $this->licensed();
+        Http::fake(['api.github.com/*' => Http::response([], 200)]);
+        config(['updater.owner' => 'o', 'updater.repo' => 'r', 'dravion.version' => '1.0.0']);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk();
+    }
+
+    public function test_page_renders_when_up_to_date(): void
+    {
+        $this->licensed();
+        $this->fakeRelease('v1.0.0');
+        config(['dravion.version' => '1.0.0']);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk()
+            ->assertSee('1.0.0');
+    }
+
+    public function test_page_renders_when_single_update_available(): void
+    {
+        $this->licensed();
+        $this->fakeRelease('v1.0.1');
+        config(['dravion.version' => '1.0.0']);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk()
+            ->assertSee('1.0.1');
+    }
+
+    public function test_page_renders_when_multiple_updates_available(): void
+    {
+        $this->licensed();
+        $this->fakeReleases(['v1.0.3', 'v1.0.2', 'v1.0.1']);
+        config(['dravion.version' => '1.0.0']);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk()
+            ->assertSee('1.0.1');
+    }
+
+    public function test_page_renders_when_github_unreachable(): void
+    {
+        $this->licensed();
+        Http::fake(['api.github.com/*' => Http::response(null, 500)]);
+        config(['updater.owner' => 'o', 'updater.repo' => 'r', 'dravion.version' => '1.0.0']);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk();
+    }
+
+    public function test_page_renders_when_unlicensed_with_update_available(): void
+    {
+        $this->unlicensed();
+        $this->fakeRelease('v1.0.1');
+        config(['dravion.version' => '1.0.0']);
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.updates'))
+            ->assertOk();
+    }
+
     public function test_concurrent_install_rejected_with_409(): void
     {
         $this->licensed();
