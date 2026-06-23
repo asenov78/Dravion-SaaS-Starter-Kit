@@ -31,6 +31,15 @@
 
 ## Pending / Next Steps
 
+### TODO Feature — 2FA "Remember this device":
+- Setting в admin Settings: `2fa_remember_days` (0 = всеки път, 30/60/90 дни)
+- При успешен 2FA challenge → set signed cookie `dravion_2fa_<user_id>` с expiry = `2fa_remember_days`
+- Middleware `Require2FA` проверява cookie → ако валиден + същото устройство → skip challenge
+- "Ново устройство" = cookie не съществува или е изтекъл → задължителен challenge
+- Cookie трябва да е: `HttpOnly`, `Secure`, `SameSite=Strict`, подписан с `APP_KEY`
+- Опционално: при logout → изтрий cookie (или само session, потребителят решава)
+- Тестове: remember cookie set след verify, skip на challenge при валиден cookie, challenge при липсващ/изтекъл cookie
+
 ### TODO тестове (от mobile/UI одит, v1.12.0):
 - `test_dashboard_health_labels_in_bg_locale` — `app()->setLocale('bg')`, `assertSee('Ограничение на паметта')`
 - `test_settings_smtp_section_has_flex_wrap` — assertSee('flex-wrap') в settings SMTP блок (без реален SMTP)
