@@ -17,7 +17,7 @@
     @if($languages->count() > 1)
     <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800 lg:p-6">
         <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">{{ __('nav.language_pref') }}</h3>
-        <form method="POST" action="{{ route('profile.locale') }}" class="flex items-center gap-3">
+        <form method="POST" action="{{ route('profile.locale') }}" class="flex flex-wrap items-center gap-3">
             @csrf @method('PATCH')
             <select name="locale"
                 class="rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-600 dark:bg-gray-700 dark:text-white/90">

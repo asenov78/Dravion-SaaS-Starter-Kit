@@ -12,7 +12,7 @@
 @endif
 
 {{-- Create role --}}
-<div class="mb-6 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+<div class="mb-6 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
         <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('roles.roles') }}</h3>
     </div>
@@ -20,7 +20,7 @@
         <form method="POST" action="{{ route('admin.roles.store') }}" class="flex gap-3 mb-6">
             @csrf
             <input type="text" name="name" placeholder="{{ __('roles.new_placeholder') }}"
-                class="h-11 flex-1 max-w-xs rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
+                class="h-11 flex-1 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
             <button type="submit"
                 class="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors">
                 {{ __('roles.add') }}
@@ -71,7 +71,7 @@
 </div>
 
 {{-- Permissions matrix --}}
-<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
         <div>
             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('roles.matrix') }}</h3>
@@ -107,7 +107,7 @@
                         </td>
                     </tr>
                     @foreach($groupPerms as $permission)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <td class="px-6 py-3 text-sm text-gray-700 dark:text-gray-300 pl-8">{{ __('permissions.' . $permission->name) }}</td>
                         @foreach($roles->where('name', '!=', 'admin') as $role)
                         <td class="px-4 py-3 text-center">

@@ -48,4 +48,5 @@ return [
     'export_csv'       => 'Export CSV',
     'deleted_at'       => 'Deleted',
     'selected'         => 'selected',
+    'avatar_hint'      => 'JPG, PNG, GIF — max 2 MB',
 ];

@@ -1,4 +1,4 @@
-<div class="mx-auto mb-6 w-full max-w-60 rounded-2xl bg-gray-50 px-4 py-5 text-center dark:bg-white/[0.03]">
+﻿<div class="mx-auto mb-6 w-full max-w-60 rounded-2xl bg-gray-50 px-4 py-5 text-center dark:bg-gray-900">
     <h3 class="mb-1 text-sm font-semibold text-gray-900 dark:text-white">
         Dravion Admin
     </h3>

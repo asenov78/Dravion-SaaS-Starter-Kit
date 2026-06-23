@@ -1,4 +1,4 @@
-@php
+﻿@php
     $campaigns = [
         [
             'creator' => ['name' => 'Wilson Gouse', 'imageUrl' => '/images/user/user-01.jpg'],
@@ -62,7 +62,7 @@
 @endphp
 
 <div
-    class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6"
+    class="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pb-3 pt-4 dark:border-gray-800 dark:bg-gray-900 sm:px-6"
 >
     <div class="flex justify-between gap-2 mb-4 sm:items-center">
         <div>

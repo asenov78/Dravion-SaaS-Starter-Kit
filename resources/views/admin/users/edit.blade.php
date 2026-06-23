@@ -26,11 +26,11 @@
     @csrf @method('PUT')
 
     {{-- Avatar --}}
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('users.profile_photo') }}</h3>
         </div>
-        <div class="p-6 flex items-center gap-6">
+        <div class="p-6 flex flex-wrap items-center gap-6">
             <div class="h-20 w-20 shrink-0 overflow-hidden rounded-full bg-brand-500 flex items-center justify-center text-2xl font-semibold text-white">
                 @if($u->avatar)
                     <img src="{{ url('storage/' . $u->avatar) }}" alt="{{ $u->name }}" class="h-full w-full object-cover">
@@ -40,15 +40,15 @@
             </div>
             <div>
                 <input type="file" name="avatar" accept="image/*"
-                    class="block text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100 dark:text-gray-400 dark:file:bg-brand-500/10 dark:file:text-brand-400">
-                <p class="mt-1 text-xs text-gray-400">JPG, PNG, GIF — max 2 MB</p>
+                    class="block w-full text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-brand-700 hover:file:bg-brand-100 dark:text-gray-400 dark:file:bg-brand-500/10 dark:file:text-brand-400">
+                <p class="mt-1 text-xs text-gray-400">{{ __('users.avatar_hint') }}</p>
                 @error('avatar') <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p> @enderror
             </div>
         </div>
     </div>
 
     {{-- Account --}}
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('users.account') }}</h3>
         </div>
@@ -85,7 +85,7 @@
     </div>
 
     {{-- Personal Info --}}
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('users.personal') }}</h3>
         </div>
@@ -104,7 +104,7 @@
     </div>
 
     {{-- Address --}}
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('users.address') }}</h3>
         </div>
@@ -120,7 +120,7 @@
     </div>
 
     {{-- Social Links --}}
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('users.social') }}</h3>
         </div>
@@ -135,7 +135,7 @@
         </div>
     </div>
 
-    <div class="flex items-center justify-between gap-3">
+    <div class="flex flex-wrap items-center justify-between gap-3">
         @role('admin')
         @if($u->id !== auth()->id())
         <div class="flex items-center gap-2">

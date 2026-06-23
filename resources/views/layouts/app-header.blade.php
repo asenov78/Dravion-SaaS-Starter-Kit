@@ -13,7 +13,7 @@
             <!-- Desktop Sidebar Toggle Button -->
             <button
                 class="hidden xl:flex items-center justify-center w-10 h-10 text-gray-500 border border-gray-200 rounded-lg dark:border-gray-800 dark:text-gray-400 lg:h-11 lg:w-11"
-                :class="{ 'bg-gray-100 dark:bg-white/[0.03]': !$store.sidebar.isExpanded }"
+                :class="{ 'bg-gray-100 dark:bg-gray-900': !$store.sidebar.isExpanded }"
                 @click="$store.sidebar.toggleExpanded()" aria-label="Toggle Sidebar">
                 <svg x-show="!$store.sidebar.isMobileOpen" width="16" height="12" viewBox="0 0 16 12" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -32,7 +32,7 @@
             <!-- Mobile Menu Toggle Button -->
             <button
                 class="flex xl:hidden items-center justify-center w-10 h-10 text-gray-500 rounded-lg dark:text-gray-400 lg:h-11 lg:w-11"
-                :class="{ 'bg-gray-100 dark:bg-white/[0.03]': $store.sidebar.isMobileOpen }"
+                :class="{ 'bg-gray-100 dark:bg-gray-900': $store.sidebar.isMobileOpen }"
                 @click="$store.sidebar.toggleMobileOpen()" aria-label="Toggle Mobile Menu">
                 <svg x-show="!$store.sidebar.isMobileOpen" width="16" height="12" viewBox="0 0 16 12" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -194,7 +194,7 @@
                         @input="onInput()"
                         placeholder="{{ __('app.search_global') }}"
                         autocomplete="off"
-                        class="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px] transition-all" />
+                        class="h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px] transition-all" />
                     <!-- Clear button — removes ?search= from URL and reloads -->
                     <button
                         type="button"
@@ -218,7 +218,7 @@
                             @mousedown.prevent="filterOpen = !filterOpen"
                             class="flex items-center gap-0.5 rounded-lg border px-[7px] py-[4.5px] text-xs -tracking-[0.2px] transition-colors"
                             :class="allSelected
-                                ? 'border-gray-200 bg-gray-50 text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400'
+                                ? 'border-gray-200 bg-gray-50 text-gray-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400'
                                 : 'border-brand-300 bg-brand-50 text-brand-600 dark:border-brand-800 dark:bg-brand-500/10 dark:text-brand-400'">
                             <span> ⌘ </span>
                             <span> K </span>
@@ -369,7 +369,7 @@
                 <a href="{{ route('admin.updates') }}"
                     class="hidden xl:inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors
                         {{ $devLicense ? 'border-warning-200 bg-warning-50 text-warning-700 dark:border-warning-800 dark:bg-warning-500/10 dark:text-warning-400' : 'border-error-200 bg-error-50 text-error-700 dark:border-error-800 dark:bg-error-500/10 dark:text-error-400' }}">
-                    {{ $devLicense ? 'Dev License' : 'Unlicensed' }}
+                    {{ $devLicense ? __('license.dev_license') : __('license.unlicensed') }}
                 </a>
                 @endif
                 @php($webhookUpdateAvailable ??= null)
@@ -456,7 +456,7 @@
                     x-transition:leave="transition ease-in duration-75"
                     x-transition:leave-start="transform opacity-100 scale-100"
                     x-transition:leave-end="transform opacity-0 scale-95"
-                    style="position:absolute; right:0; top:calc(100% + 17px); width:350px; max-height:480px; display:none; z-index:50;"
+                    style="position:absolute; right:0; top:calc(100% + 17px); width:min(350px, calc(100vw - 1rem)); max-height:480px; display:none; z-index:50;"
                     class="flex flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
 
                     <!-- Header -->

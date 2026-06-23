@@ -1,4 +1,4 @@
-<x-layouts.admin :title="__('languages.edit_title')">
+﻿<x-layouts.admin :title="__('languages.edit_title')">
 
 <div class="mb-6 flex items-center justify-between">
     <div>
@@ -21,7 +21,7 @@
     <x-ui.alert variant="error" :message="$errors->first()" class="mb-6" />
 @endif
 
-<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+<div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
         <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
             {{ $language->flag }} {{ $language->name }}

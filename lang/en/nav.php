@@ -23,4 +23,6 @@ return [
     'portal'           => 'Portal',
     'home'             => 'Home',
     'view_site'        => 'View site',
+    'new_badge'        => 'new',
+    'update_badge'     => 'UPDATE',
 ];

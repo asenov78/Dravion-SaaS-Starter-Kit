@@ -91,7 +91,7 @@
                         default   => 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
                     };
                 @endphp
-                <tr class="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     <td class="px-6 py-3">
                         <span class="inline-block px-2.5 py-0.5 text-xs font-medium rounded-full {{ $eventClasses }}">
                             {{ $eventLabel }}

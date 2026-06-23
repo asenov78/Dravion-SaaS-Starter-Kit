@@ -14,4 +14,7 @@ return [
     'remove'     => 'Remove License',
     'info'               => 'Each license is tied to one domain. Re-activating on the same domain is safe and will return your existing key. If you need to move to a new domain, contact support.',
     'no_license_portal'  => 'is running without a valid license. Some features may be limited.',
+    'dev_license'        => 'Dev License',
+    'unlicensed'         => 'Unlicensed',
+    'key_prefix'         => 'Key:',
 ];

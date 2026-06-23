@@ -41,7 +41,7 @@
 <form method="POST" action="{{ route('admin.languages.batch', $language) }}">
     @csrf @method('PUT')
 
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] overflow-hidden">
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 overflow-hidden">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('languages.translations') }}</h3>
             <button type="submit"

@@ -1,4 +1,4 @@
-@php
+﻿@php
     $isAdmin = auth()->user()?->hasAnyRole(['admin','manager','editor']);
     $layout = $isAdmin ? 'layouts.admin' : 'layouts.portal';
     $backRoute = $isAdmin ? route('admin.dashboard') : route('dashboard');
@@ -24,7 +24,7 @@
 
 {{-- Active sessions list --}}
 @if($sessions->isNotEmpty())
-<div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] mb-5">
+<div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900 mb-5">
     <h3 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-4">{{ __('sessions.active') }}</h3>
     <div class="divide-y divide-gray-100 dark:divide-gray-800">
         @foreach($sessions as $session)
@@ -59,7 +59,7 @@
 @endif
 
 {{-- Logout other devices --}}
-<div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]"
+<div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900"
     x-data="{open: false}">
     <h3 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-1">{{ __('sessions.logout_others_title') }}</h3>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">{{ __('sessions.logout_others_desc') }}</p>

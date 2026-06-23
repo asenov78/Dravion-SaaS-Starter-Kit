@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 return [
     'subtitle'        => 'Overview of your SaaS platform',
@@ -11,6 +11,14 @@ return [
     'clear_cache'              => 'Clear Cache',
     'scheduler'                => 'Scheduler',
     'scheduler_last_run'       => 'Last run',
-    'scheduler_not_detected'   => 'Not detected — add the cron job below',
+    'scheduler_not_detected'   => 'Not detected â€” add the cron job below',
     'scheduler_desc'           => 'Add this line to your server cron (crontab -e) to enable automatic update checks and scheduled tasks:',
+    'health_php'          => 'PHP',
+    'health_laravel'      => 'Laravel',
+    'health_memory_limit' => 'Memory Limit',
+    'health_max_upload'   => 'Max Upload',
+    'health_disk_used'    => 'Disk Used',
+    'health_disk_free'    => 'Disk Free',
+    'health_db_size'      => 'DB Size',
+    'health_cache_driver' => 'Cache Driver',
 ];

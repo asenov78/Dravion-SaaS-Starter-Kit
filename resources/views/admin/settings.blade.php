@@ -21,7 +21,7 @@
     <div class="flex flex-col gap-5">
 
         {{-- General --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('settings.general') }}</h3>
             </div>
@@ -64,7 +64,7 @@
         </div>
 
         {{-- System --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('nav.system') }}</h3>
             </div>
@@ -130,7 +130,7 @@
         </div>
 
         {{-- Activity Log --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('settings.activity_log') }}</h3>
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ __('settings.activity_log_desc') }}</p>
@@ -163,7 +163,7 @@
     <div class="flex flex-col gap-5">
 
         {{-- Public Site --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('settings.public_site') }}</h3>
             </div>
@@ -204,7 +204,7 @@
         </div>
 
         {{-- Logo --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('settings.logo') }}</h3>
                 <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">{{ __('settings.logo_desc') }}</p>
@@ -226,7 +226,7 @@
         </div>
 
         {{-- Email --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('settings.email') }}</h3>
             </div>
@@ -252,7 +252,7 @@
                         <div class="h-6 w-11 rounded-full border border-gray-200 bg-gray-100 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all peer-checked:bg-brand-500 peer-checked:after:translate-x-full peer-checked:border-brand-500 dark:border-gray-700 dark:bg-gray-700"></div>
                     </label>
                 </div>
-                <div x-data="{ loading: false, result: null, ok: null }" class="flex items-center gap-4 pt-1">
+                <div x-data="{ loading: false, result: null, ok: null }" class="flex flex-wrap items-center gap-4 pt-1">
                     <button type="button"
                         @click="loading = true; result = null;
                             fetch('{{ route('admin.settings.smtp-test') }}', {
@@ -270,13 +270,13 @@
                     </button>
                     <p x-show="result !== null" x-text="result"
                         :class="ok ? 'text-success-600 dark:text-success-400' : 'text-error-600 dark:text-error-400'"
-                        class="text-sm" x-cloak></p>
+                        class="text-sm min-w-0 break-words" x-cloak></p>
                 </div>
             </div>
         </div>
 
         {{-- License info --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('nav.license') }}</h3>
             </div>
@@ -319,7 +319,7 @@
     $schedulerLastRun = \Illuminate\Support\Facades\Cache::get('scheduler_last_run');
     $cronCommand = '* * * * * cd ' . base_path() . ' && php artisan schedule:run >> /dev/null 2>&1';
 @endphp
-<div class="mt-6 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+<div class="mt-6 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
     <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
         <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-800">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-500"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>

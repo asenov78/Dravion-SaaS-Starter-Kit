@@ -13,7 +13,7 @@
     <div class="flex flex-col gap-4">
 
         {{-- License status card --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -25,7 +25,7 @@
                         <div>
                             <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('license.status') }}</h3>
                             @if($masked)
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Key: <span class="font-mono text-brand-500">{{ $masked }}</span></p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ __('license.key_prefix') }} <span class="font-mono text-brand-500">{{ $masked }}</span></p>
                             @else
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ __('license.no_key') }}</p>
                             @endif
@@ -101,7 +101,7 @@
         </div>
 
         {{-- Version comparison card --}}
-        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
             <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800">
                 <p class="text-xs font-semibold uppercase tracking-wider text-gray-400">{{ __('updates.version_info') }}</p>
             </div>
@@ -142,7 +142,7 @@
 
         @if($update['latest'] === null)
             {{-- Cannot reach server --}}
-            <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-6 flex flex-col gap-4">
+            <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 p-6 flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-gray-500"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
@@ -308,7 +308,7 @@
 
 {{-- UPDATE HISTORY ACCORDION --}}
 <div class="mt-6">
-    <div x-data="{ open: false }" class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+    <div x-data="{ open: false }" class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <button type="button" @click="open = !open"
             class="w-full flex items-center justify-between px-6 py-4 text-left focus:outline-none group">
             <div class="flex items-center gap-3">

@@ -70,7 +70,7 @@
     <span class="text-sm font-medium text-brand-700 dark:text-brand-300">
         <span x-text="selected.length"></span> {{ __('users.selected') }}
     </span>
-    <div class="flex items-center gap-2 ml-auto">
+    <div class="flex flex-wrap items-center gap-2 ml-auto">
         <form method="POST" action="{{ route('admin.users.bulk') }}" @submit.prevent="if(selected.length) $el.submit()">
             @csrf
             <input type="hidden" name="action" value="activate">
@@ -145,7 +145,7 @@
                 <tr id="row-{{ $user->id }}"
                     x-data="{ status: '{{ $user->status }}' }"
                     @user-status-updated.window="if ($event.detail.id === {{ $user->id }}) status = $event.detail.newStatus"
-                    :class="selected.includes({{ $user->id }}) ? 'bg-brand-50 dark:bg-brand-500/5' : 'hover:bg-gray-50 dark:hover:bg-white/[0.02]'"
+                    :class="selected.includes({{ $user->id }}) ? 'bg-brand-50 dark:bg-brand-500/5' : 'hover:bg-gray-50 dark:hover:bg-gray-800'"
                     class="transition-colors {{ $trashed ? 'opacity-60' : '' }}">
                     @if(!$trashed)
                     <td class="w-10 px-4 py-3">
