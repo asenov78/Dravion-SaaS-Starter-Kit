@@ -129,4 +129,21 @@ class MobileUiTest extends TestCase
         $this->assertStringNotContainsString('JPG, PNG, GIF — max 2 MB', $html);
         $this->assertStringContainsString('макс. 2 МБ', $html);
     }
+
+    public function test_dashboard_health_labels_in_bg_locale(): void
+    {
+        app()->setLocale('bg');
+        $html = $this->html('/admin/dashboard');
+        $this->assertStringContainsString('Ограничение на паметта', $html);
+        $this->assertStringNotContainsString('Memory Limit', $html);
+    }
+
+    public function test_settings_smtp_section_has_flex_wrap(): void
+    {
+        $html = $this->actingAs($this->admin())
+            ->get('/admin/settings')
+            ->assertOk()
+            ->getContent();
+        $this->assertStringContainsString('flex-wrap', $html);
+    }
 }
