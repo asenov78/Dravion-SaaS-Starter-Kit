@@ -32,6 +32,8 @@ return [
     'user_info'       => 'User Information',
     'select_role'     => 'Select a role',
     'confirm_delete'   => 'Delete user :name? This cannot be undone.',
+    '2fa_on'           => '2FA',
+    '2fa_off'          => '2FA off',
     'reset_2fa'        => 'Reset 2FA',
     'reset_2fa_title'  => 'Reset 2FA for :name?',
     'reset_2fa_confirm'=> 'This will disable two-factor authentication for this user. They can re-enable it from their profile.',
