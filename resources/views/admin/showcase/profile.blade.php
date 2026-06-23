@@ -41,9 +41,14 @@
 
         @if(auth()->user()->two_factor_confirmed_at)
             {{-- ENABLED --}}
-            <div class="mb-5 flex items-center gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 dark:border-green-800 dark:bg-green-900">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-600 dark:text-green-400" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                <span class="text-sm font-medium text-green-700 dark:text-green-300">{{ __('auth.2fa_enabled_badge') }}</span>
+            <div class="mb-5 flex items-center gap-2.5 rounded-xl px-4 py-3"
+                :style="$store.theme.theme === 'dark'
+                    ? 'background-color:#14532d;border:1px solid #166534;'
+                    : 'background-color:#f0fdf4;border:1px solid #bbf7d0;'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    :style="$store.theme.theme === 'dark' ? 'color:#4ade80;flex-shrink:0;' : 'color:#16a34a;flex-shrink:0;'"><polyline points="20 6 9 17 4 12"/></svg>
+                <span class="text-sm font-medium"
+                    :style="$store.theme.theme === 'dark' ? 'color:#86efac;' : 'color:#15803d;'">{{ __('auth.2fa_enabled_badge') }}</span>
             </div>
             <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">{{ __('auth.2fa_manage_description') }}</p>
 
