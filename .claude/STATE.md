@@ -1,13 +1,12 @@
 # Session State — Dravion SaaS Starter Kit
 
-> Updated: 2026-06-20 (session 8 end) | Version: 1.10.77
+> Updated: 2026-06-23 (session 9 end) | Version: 1.12.0
 
 ## Current State
 
-- **Tests:** 655 total, 653 passing, 2 skipped
+- **Tests:** 668+ total, all passing
 - **Branch:** main, up to date with origin
-- **Last commit:** (pending push) — feat: sequential update chain enforcement via requires: (v1.10.77)
-- **CI note:** v1.10.73, 74, 76 did not create GitHub Releases — likely Vite build failures in CI. Not yet investigated.
+- **Last commit:** 1a4838c — feat: mobile UI audit fixes + i18n + dark mode solid backgrounds (v1.12.0)
 
 ## Completed This Session
 
@@ -31,6 +30,11 @@
    - 5 candidates identified; #1 (UpdaterServiceInterface) and #2 (ActivityLogger fluent builder) are top priorities
 
 ## Pending / Next Steps
+
+### TODO тестове (от mobile/UI одит, v1.12.0):
+- `test_dashboard_health_labels_in_bg_locale` — `app()->setLocale('bg')`, `assertSee('Ограничение на паметта')`
+- `test_settings_smtp_section_has_flex_wrap` — assertSee('flex-wrap') в settings SMTP блок (без реален SMTP)
+- НЕ препоръчва layout flex-wrap тестове за avatar row/action row — fragile, viewport-dependent
 
 ### Architecture Candidates (from `/improve-codebase-architecture`):
 - **① UpdaterServiceInterface** (Strong) — extract interface, bind in AppServiceProvider, update 4 callers
