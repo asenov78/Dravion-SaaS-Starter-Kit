@@ -3,18 +3,15 @@
     <div class="flex h-screen w-full flex-col justify-center lg:flex-row dark:bg-gray-900">
 
         {{-- Left: Form --}}
-        <div class="flex w-full flex-1 flex-col overflow-y-auto lg:w-1/2">
-            <div class="mx-auto w-full max-w-md pt-5 sm:py-10 px-6 lg:px-0">
+        <div class="flex w-full flex-col justify-center lg:w-1/2">
+            <div class="mx-auto w-full max-w-md px-6 py-10 lg:px-0">
                 <a href="{{ url('/') }}"
-                    class="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-                    <svg class="stroke-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    class="inline-flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-8">
+                    <svg class="stroke-current" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
                         <path d="M12.7083 5L7.5 10.2083L12.7083 15.4167" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     {{ __('nav.home') }}
                 </a>
-            </div>
-
-            <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-8 lg:px-0">
                 <div class="mb-5 sm:mb-8">
                     <h1 class="text-title-sm sm:text-title-md mb-2 font-semibold text-gray-800 dark:text-white/90">
                         {{ __('auth.title_register') }}
@@ -88,12 +85,11 @@
                     </div>
                 </form>
 
-                <div class="mt-5">
-                    <p class="text-sm text-gray-700 dark:text-gray-400">
-                        {{ __('auth.have_account') }}
-                        <a href="{{ route('login') }}" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">{{ __('auth.login') }}</a>
-                    </p>
-                </div>
+                <p class="mt-5 text-sm text-gray-700 dark:text-gray-400">
+                    {{ __('auth.have_account') }}
+                    <a href="{{ route('login') }}" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">{{ __('auth.login') }}</a>
+                </p>
+
             </div>
         </div>
 
