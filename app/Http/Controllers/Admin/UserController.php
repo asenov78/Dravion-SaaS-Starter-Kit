@@ -271,5 +271,17 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')->with('success', __('flash.user_deleted'));
     }
+
+    public function resetTwoFactor(User $user)
+    {
+        $user->update([
+            'two_factor_secret'       => null,
+            'two_factor_confirmed_at' => null,
+        ]);
+
+        ActivityLogger::log('users', 'two_factor_reset', "Admin reset 2FA for {$user->name}", $user, auth()->user(), 'activity.log.two_factor_reset', ['name' => $user->name]);
+
+        return redirect()->route('admin.users.edit', $user)->with('success', __('flash.two_factor_reset'));
+    }
 }
 

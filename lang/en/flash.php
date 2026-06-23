@@ -38,6 +38,7 @@ return [
     'page_deleted'             => 'Page deleted.',
     '2fa_enabled'              => 'Two-factor authentication enabled.',
     '2fa_disabled'             => 'Two-factor authentication disabled.',
+    'two_factor_reset'         => '2FA has been reset for :name.',
     'license_verified'         => 'License is active. You can now install updates.',
     'license_not_found'        => 'No active license found. Please activate a license key.',
     'update_check_done'        => 'License and update status refreshed.',

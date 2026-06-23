@@ -138,11 +138,20 @@
     <div class="flex items-center justify-between gap-3">
         @role('admin')
         @if($u->id !== auth()->id())
-        <button type="button" x-data
-            @click="$dispatch('confirm-action', { title: '{{ addslashes(__('app.delete')) }} {{ addslashes($u->name) }}?', message: '{{ addslashes(__('users.confirm_delete', ['name' => $u->name])) }}', btnLabel: '{{ addslashes(__('app.delete')) }}', btnColor: '#dc2626', url: '{{ route('admin.users.destroy', $u) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.users.index') }}', toastMessage: '{{ addslashes(__('flash.user_deleted')) }}', toastVariant: 'error' })"
-            class="inline-flex items-center rounded-lg border border-error-300 bg-error-50 px-4 py-2.5 text-sm font-medium text-error-700 hover:bg-error-100 dark:border-error-700 dark:bg-error-500/10 dark:text-error-400">
-            {{ __('app.delete') }}
-        </button>
+        <div class="flex items-center gap-2">
+            @if($u->two_factor_confirmed_at)
+            <button type="button" x-data
+                @click="$dispatch('confirm-action', { title: '{{ addslashes(__('users.reset_2fa_title', ['name' => $u->name])) }}', message: '{{ addslashes(__('users.reset_2fa_confirm')) }}', btnLabel: '{{ addslashes(__('users.reset_2fa')) }}', btnColor: '#d97706', url: '{{ route('admin.users.two-factor.reset', $u) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.users.edit', $u) }}', toastMessage: '{{ addslashes(__('flash.two_factor_reset', ['name' => $u->name])) }}', toastVariant: 'success' })"
+                class="inline-flex items-center rounded-lg border border-warning-300 bg-warning-50 px-4 py-2.5 text-sm font-medium text-warning-700 hover:bg-warning-100 dark:border-warning-700 dark:bg-warning-500/10 dark:text-warning-400">
+                {{ __('users.reset_2fa') }}
+            </button>
+            @endif
+            <button type="button" x-data
+                @click="$dispatch('confirm-action', { title: '{{ addslashes(__('app.delete')) }} {{ addslashes($u->name) }}?', message: '{{ addslashes(__('users.confirm_delete', ['name' => $u->name])) }}', btnLabel: '{{ addslashes(__('app.delete')) }}', btnColor: '#dc2626', url: '{{ route('admin.users.destroy', $u) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.users.index') }}', toastMessage: '{{ addslashes(__('flash.user_deleted')) }}', toastVariant: 'error' })"
+                class="inline-flex items-center rounded-lg border border-error-300 bg-error-50 px-4 py-2.5 text-sm font-medium text-error-700 hover:bg-error-100 dark:border-error-700 dark:bg-error-500/10 dark:text-error-400">
+                {{ __('app.delete') }}
+            </button>
+        </div>
         @else
         <div></div>
         @endif

@@ -160,6 +160,7 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefi
     Route::patch('/users/{user}/activate',           [UserController::class, 'activate'])->name('users.activate')->middleware('can:suspend users');
     Route::patch('/users/{id}/restore',              [UserController::class, 'restore'])->name('users.restore')->middleware('can:delete users');
     Route::delete('/users/{user}',                   [UserController::class, 'destroy'])->name('users.destroy')->middleware('can:delete users');
+    Route::delete('/users/{user}/two-factor',        [UserController::class, 'resetTwoFactor'])->name('users.two-factor.reset')->middleware('can:edit users');
 
     // Roles — admin only
     Route::get('/roles',              [RoleController::class, 'index'])->name('roles.index')->middleware('role:admin');
