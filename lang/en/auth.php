@@ -53,4 +53,13 @@ return [
     'current_password'       => 'Current Password',
     'update_password'        => 'Update Password',
     'registration_disabled'  => 'Registration is currently disabled.',
+
+    // Auth page new keys
+    'remember_me'                   => 'Keep me signed in',
+    'email_placeholder'             => 'info@example.com',
+    'full_name_placeholder'         => 'John Doe',
+    'password_placeholder'          => '••••••••',
+    'confirm_password_placeholder'  => '••••••••',
+    'reset_password'                => 'Set New Password',
+    'brand_tagline'                 => 'Powerful SaaS management platform',
 ];

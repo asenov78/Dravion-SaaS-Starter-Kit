@@ -53,4 +53,13 @@ return [
     'current_password'       => 'Текуща парола',
     'update_password'        => 'Обнови паролата',
     'registration_disabled'  => 'Регистрацията е временно деактивирана.',
+
+    // Auth page new keys
+    'remember_me'                   => 'Запомни ме',
+    'email_placeholder'             => 'info@example.com',
+    'full_name_placeholder'         => 'Иван Иванов',
+    'password_placeholder'          => '••••••••',
+    'confirm_password_placeholder'  => '••••••••',
+    'reset_password'                => 'Задай нова парола',
+    'brand_tagline'                 => 'Мощна платформа за управление на SaaS',
 ];
