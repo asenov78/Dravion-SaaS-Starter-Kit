@@ -1,12 +1,12 @@
-<x-layouts.admin title="User Profile">
-    <x-common.page-breadcrumb pageTitle="User Profile" />
+<x-layouts.admin :title="__('nav.profile')">
+    <x-common.page-breadcrumb :pageTitle="__('nav.profile')" />
 
     @if($errors->any())
         <x-ui.alert variant="error" :message="$errors->first()" class="mb-6" />
     @endif
 
-    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">Profile</h3>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800 lg:p-6">
+        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">{{ __('nav.profile') }}</h3>
         <x-profile.profile-card />
         <x-profile.personal-info-card />
         <x-profile.address-card />
@@ -15,12 +15,12 @@
     {{-- Language preference --}}
     @php $languages = \App\Models\Language::orderBy('name')->get(); @endphp
     @if($languages->count() > 1)
-    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">Language</h3>
+    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800 lg:p-6">
+        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">{{ __('nav.language_pref') }}</h3>
         <form method="POST" action="{{ route('profile.locale') }}" class="flex items-center gap-3">
             @csrf @method('PATCH')
             <select name="locale"
-                class="rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                class="rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-600 dark:bg-gray-700 dark:text-white/90">
                 @foreach($languages as $lang)
                 <option value="{{ $lang->code }}" {{ auth()->user()->locale === $lang->code ? 'selected' : '' }}>
                     {{ $lang->flag }} {{ $lang->name }}
@@ -29,19 +29,19 @@
             </select>
             <button type="submit"
                 class="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors">
-                Save
+                {{ __('app.save') }}
             </button>
         </form>
     </div>
     @endif
 
     {{-- Two-Factor Authentication --}}
-    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-800 lg:p-6">
+    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800 lg:p-6">
         <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">{{ __('auth.2fa_manage_title') }}</h3>
 
         @if(auth()->user()->two_factor_confirmed_at)
             {{-- ENABLED --}}
-            <div class="mb-5 flex items-center gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 dark:border-green-700 dark:bg-green-500/10">
+            <div class="mb-5 flex items-center gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 dark:border-green-800 dark:bg-green-900">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-600 dark:text-green-400" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
                 <span class="text-sm font-medium text-green-700 dark:text-green-300">{{ __('auth.2fa_enabled_badge') }}</span>
             </div>
@@ -87,33 +87,27 @@
     </div>
 
     {{-- Change password --}}
-    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">Change Password</h3>
+    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800 lg:p-6">
+        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">{{ __('nav.change_password') }}</h3>
         <form method="POST" action="{{ route('profile.password') }}" class="max-w-md flex flex-col gap-5">
             @csrf @method('PUT')
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">Current Password</label>
-                <input type="password" name="current_password"
-                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" required />
+                <x-ui.label for="current_password">{{ __('auth.current_password') }}</x-ui.label>
+                <x-ui.input id="current_password" name="current_password" type="password" autocomplete="current-password" />
                 @error('current_password')
                     <p class="mt-1 text-xs text-error-500">{{ $message }}</p>
                 @enderror
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">New Password</label>
-                <input type="password" name="password"
-                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" required />
+                <x-ui.label for="password">{{ __('auth.new_password') }}</x-ui.label>
+                <x-ui.input id="password" name="password" type="password" autocomplete="new-password" />
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">Confirm New Password</label>
-                <input type="password" name="password_confirmation"
-                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:text-white/90" required />
+                <x-ui.label for="password_confirmation">{{ __('auth.confirm_password') }}</x-ui.label>
+                <x-ui.input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" />
             </div>
             <div>
-                <button type="submit"
-                    class="inline-flex items-center rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors">
-                    Update Password
-                </button>
+                <x-ui.button type="submit">{{ __('auth.update_password') }}</x-ui.button>
             </div>
         </form>
     </div>

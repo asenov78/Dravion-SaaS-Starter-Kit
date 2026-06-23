@@ -130,7 +130,28 @@ class ProfilePageTest extends TestCase
             ->assertSessionHasErrors('avatar');
     }
 
-    public function test_avatar_upload_replaces_old_file(): void
+    public function test_profile_page_uses_i18n_strings(): void
+    {
+        $this->actingAs($this->admin())
+            ->get('/admin/ui/profile')
+            ->assertOk()
+            ->assertSee(__('nav.profile'))
+            ->assertSee(__('nav.change_password'))
+            ->assertDontSee('User Profile');
+    }
+
+    public function test_profile_page_uses_bg_strings_in_bg_locale(): void
+    {
+        app()->setLocale('bg');
+
+        $this->actingAs($this->admin())
+            ->get('/admin/ui/profile')
+            ->assertOk()
+            ->assertSee('Профил')
+            ->assertSee('Промяна на парола');
+    }
+
+public function test_avatar_upload_replaces_old_file(): void
     {
         Storage::fake('public');
         $admin = $this->admin();
