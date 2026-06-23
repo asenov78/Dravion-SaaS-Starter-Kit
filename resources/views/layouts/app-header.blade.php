@@ -483,12 +483,14 @@
                         <template x-for="n in items" :key="n.id">
                             <li @click="if (!n.read) markRead(n.id)" class="cursor-pointer">
                                 <div class="flex gap-3 rounded-lg border-b border-gray-100 p-3 transition-colors dark:border-gray-800"
-                                    :style="!n.read ? 'background:rgba(255,237,213,0.7)' : ''"
-                                    @mouseenter="$el.style.background = !n.read ? 'rgba(254,215,170,0.8)' : 'rgba(243,244,246,1)'"
-                                    @mouseleave="$el.style.background = !n.read ? 'rgba(255,237,213,0.7)' : ''"
+                                    :style="!n.read
+                                        ? ($store.theme.theme === 'dark' ? 'background:#1c1f2e;' : 'background:rgba(255,237,213,0.7);')
+                                        : ''"
+                                    @mouseenter="$el.style.background = !n.read ? ($store.theme.theme === 'dark' ? '#252840' : 'rgba(254,215,170,0.8)') : ($store.theme.theme === 'dark' ? '#1a1d2e' : 'rgba(243,244,246,1)')"
+                                    @mouseleave="$el.style.background = !n.read ? ($store.theme.theme === 'dark' ? '#1c1f2e' : 'rgba(255,237,213,0.7)') : ''">
                                     <!-- Icon area -->
                                     <span class="relative flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full"
-                                        :style="!n.read ? 'background:rgba(254,215,170,0.6)' : 'background:#f3f4f6'">
+                                        :style="!n.read ? ($store.theme.theme === 'dark' ? 'background:#2d3047;' : 'background:rgba(254,215,170,0.6);') : ($store.theme.theme === 'dark' ? 'background:#1f2937;' : 'background:#f3f4f6;')">
                                         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
                                             :style="!n.read ? 'color:#f97316' : 'color:#9ca3af'"
                                             class="fill-current">

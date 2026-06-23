@@ -109,6 +109,21 @@ class NotificationTest extends TestCase
         $this->assertEquals(0, $user->unreadNotifications()->count());
     }
 
+    // --- Dark theme compatibility ---
+
+    public function test_notification_bell_uses_theme_store_for_unread_background(): void
+    {
+        $html = $this->actingAs($this->admin())
+            ->get('/admin/dashboard')
+            ->assertOk()
+            ->getContent();
+
+        // Unread item background must use $store.theme, not hardcoded light rgba
+        $this->assertStringContainsString('$store.theme', $html);
+        // Must NOT have the old hardcoded light-only orange (must use theme check)
+        $this->assertStringNotContainsString(":style=\"!n.read ? 'background:rgba(255,237,213", $html);
+    }
+
     // --- Auth guard ---
 
     public function test_unauthenticated_redirected_from_feed(): void
