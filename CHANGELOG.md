@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.14.0] — 2026-06-23
+
+### Added
+- **2FA Remember Device**: after a successful TOTP verify, set an encrypted cookie that skips the 2FA challenge on future logins from the same device
+- **Setting `2fa_remember_days`**: admin can configure 0 / 30 / 60 / 90 day retention; 0 disables the feature
+- **Logout clears cookie**: `Cookie::forget('dravion_2fa_{id}')` queued on logout
+- **7 new tests** in `TwoFactorRememberTest` covering verify-sets-cookie, no-cookie-when-disabled, bypass on login, challenge-without-cookie, challenge-when-disabled, logout-clears-cookie
+
 ## [1.10.96] — 2026-06-22
 requires: 1.10.92
 

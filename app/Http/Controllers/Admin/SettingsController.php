@@ -55,6 +55,7 @@ class SettingsController extends Controller
             'header_tagline'        => ['header_tagline',       ''],
             'header_tagline_bg'     => ['header_tagline_bg',    ''],
             'require_2fa'           => ['require_2fa',           '0'],
+            '2fa_remember_days'     => ['2fa_remember_days',     '0'],
         ];
     }
 
@@ -116,6 +117,9 @@ class SettingsController extends Controller
             'header_tagline'        => $request->input('header_tagline', ''),
             'header_tagline_bg'     => $request->input('header_tagline_bg', ''),
             'require_2fa'           => $request->boolean('require_2fa') ? '1' : '0',
+            '2fa_remember_days'     => in_array($request->input('2fa_remember_days'), ['0', '30', '60', '90'])
+                                        ? $request->input('2fa_remember_days')
+                                        : '0',
         ]);
 
         return redirect()->route('admin.settings')->with('success', __('flash.settings_saved'));

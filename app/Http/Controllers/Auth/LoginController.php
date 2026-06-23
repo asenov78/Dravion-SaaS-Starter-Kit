@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use App\Models\User;
 use App\Facades\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
@@ -45,8 +47,20 @@ class LoginController extends Controller
                 ->onlyInput('email');
         }
 
-        // 2FA challenge â€” store user ID in session, redirect to challenge page
+        // 2FA challenge — check remember-device cookie first
         if ($user->two_factor_confirmed_at) {
+            $days   = (int) Setting::get('2fa_remember_days', '0');
+            $cookie = $request->cookie('dravion_2fa_' . $user->id);
+
+            if ($days > 0 && $cookie === '1') {
+                // Trusted device — skip challenge, log in directly
+                Auth::login($user, $request->boolean('remember'));
+                $request->session()->regenerate();
+                ActivityLogger::log('auth', 'login', $user->name . ' logged in', $user, $user, 'activity.log.user_logged_in', ['name' => $user->name]);
+                $home = $user->hasAnyRole(['admin', 'manager']) ? route('admin.dashboard') : route('dashboard');
+                return redirect()->intended($home);
+            }
+
             $request->session()->put('2fa_user_id', $user->id);
             return redirect()->route('two-factor.challenge');
         }
@@ -72,7 +86,12 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
+
+        $response = redirect()->route('login');
+        if ($user) {
+            $response->withCookie(Cookie::forget('dravion_2fa_' . $user->id));
+        }
+        return $response;
     }
 }
 

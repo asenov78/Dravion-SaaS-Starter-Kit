@@ -126,6 +126,19 @@
                         <div class="h-6 w-11 rounded-full border border-gray-200 bg-gray-100 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all peer-checked:bg-brand-500 peer-checked:after:translate-x-full peer-checked:border-brand-500 dark:border-gray-700 dark:bg-gray-700"></div>
                     </label>
                 </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <div>
+                        <label for="2fa_remember_days" class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('settings.2fa_remember_days') }}</label>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ __('settings.2fa_remember_days_desc') }}</p>
+                    </div>
+                    <select id="2fa_remember_days" name="2fa_remember_days"
+                        class="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                        <option value="0"  {{ ($settings['2fa_remember_days'] ?? '0') === '0'  ? 'selected' : '' }}>{{ __('settings.2fa_remember_never') }}</option>
+                        <option value="30" {{ ($settings['2fa_remember_days'] ?? '0') === '30' ? 'selected' : '' }}>{{ __('settings.2fa_remember_30') }}</option>
+                        <option value="60" {{ ($settings['2fa_remember_days'] ?? '0') === '60' ? 'selected' : '' }}>{{ __('settings.2fa_remember_60') }}</option>
+                        <option value="90" {{ ($settings['2fa_remember_days'] ?? '0') === '90' ? 'selected' : '' }}>{{ __('settings.2fa_remember_90') }}</option>
+                    </select>
+                </div>
             </div>
         </div>
 

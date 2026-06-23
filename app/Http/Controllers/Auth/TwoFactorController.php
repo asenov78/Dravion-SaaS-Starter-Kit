@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use PragmaRX\Google2FA\Google2FA;
 
 class TwoFactorController extends Controller
@@ -92,7 +94,16 @@ class TwoFactorController extends Controller
         $request->session()->forget('2fa_user_id');
         $request->session()->regenerate();
 
-        $home = $user->hasAnyRole(['admin', 'manager']) ? route('admin.dashboard') : route('dashboard');
-        return redirect()->intended($home);
+        $home     = $user->hasAnyRole(['admin', 'manager']) ? route('admin.dashboard') : route('dashboard');
+        $redirect = redirect()->intended($home);
+
+        $days = (int) Setting::get('2fa_remember_days', '0');
+        if ($days > 0) {
+            $redirect->withCookie(
+                Cookie::make('dravion_2fa_' . $user->id, '1', $days * 24 * 60, '/', null, true, true, false, 'strict')
+            );
+        }
+
+        return $redirect;
     }
 }
