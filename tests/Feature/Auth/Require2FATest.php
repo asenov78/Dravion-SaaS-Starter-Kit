@@ -54,15 +54,16 @@ class Require2FATest extends TestCase
 
     public function test_2fa_setup_route_exempt_from_enforcement(): void
     {
+        // profile.two-factor must NOT redirect back to itself (infinite loop)
         $this->enableRequire2FA();
         $user = User::factory()->create([
             'two_factor_secret'       => (new Google2FA())->generateSecretKey(),
             'two_factor_confirmed_at' => null,
         ]);
 
-        $this->actingAs($user)
-            ->get(route('profile.two-factor'))
-            ->assertOk();
+        $response = $this->actingAs($user)->get(route('profile.two-factor'));
+        // Middleware exempts the route — so it must NOT redirect to profile.two-factor again
+        $this->assertNotSame(route('profile.two-factor'), $response->headers->get('Location'));
     }
 
     public function test_admin_without_2fa_redirected_when_required(): void

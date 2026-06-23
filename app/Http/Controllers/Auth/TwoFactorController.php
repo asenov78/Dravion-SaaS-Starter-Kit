@@ -15,27 +15,10 @@ class TwoFactorController extends Controller
         $this->google2fa = new Google2FA();
     }
 
-    /** Show 2FA setup page with QR code */
-    public function show(Request $request)
+    /** 2FA is embedded in the profile page — redirect there */
+    public function show(): \Illuminate\Http\RedirectResponse
     {
-        $user = $request->user();
-
-        if ($user->two_factor_confirmed_at) {
-            return view('auth.two-factor.manage');
-        }
-
-        if (! $user->two_factor_secret) {
-            $secret = $this->google2fa->generateSecretKey();
-            $user->update(['two_factor_secret' => $secret]);
-        }
-
-        $qrUrl = $this->google2fa->getQRCodeUrl(
-            config('app.name'),
-            $user->email,
-            $user->two_factor_secret
-        );
-
-        return view('auth.two-factor.setup', compact('qrUrl'));
+        return redirect()->route('admin.ui.profile');
     }
 
     /** Confirm TOTP code to enable 2FA */
@@ -57,7 +40,7 @@ class TwoFactorController extends Controller
 
         $user->update(['two_factor_confirmed_at' => now()]);
 
-        return redirect()->route('profile.two-factor')->with('success', __('flash.2fa_enabled'));
+        return redirect()->route('admin.ui.profile')->with('success', __('flash.2fa_enabled'));
     }
 
     /** Disable 2FA */
@@ -74,7 +57,7 @@ class TwoFactorController extends Controller
             'two_factor_confirmed_at' => null,
         ]);
 
-        return redirect()->route('profile.two-factor')->with('success', __('flash.2fa_disabled'));
+        return redirect()->route('admin.ui.profile')->with('success', __('flash.2fa_disabled'));
     }
 
     /** Show TOTP challenge after login */

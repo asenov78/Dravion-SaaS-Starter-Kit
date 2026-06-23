@@ -36,27 +36,54 @@
     @endif
 
     {{-- Two-Factor Authentication --}}
-    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90" style="margin:0 0 4px;">{{ __('auth.2fa_manage_title') }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400" style="margin:0;">
-                    @if(auth()->user()->two_factor_confirmed_at)
-                        {{ __('auth.2fa_enabled_badge') }}
-                    @else
-                        {{ __('auth.2fa_setup_title') }}
-                    @endif
-                </p>
+    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-800 lg:p-6">
+        <h3 class="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90">{{ __('auth.2fa_manage_title') }}</h3>
+
+        @if(auth()->user()->two_factor_confirmed_at)
+            {{-- ENABLED --}}
+            <div class="mb-5 flex items-center gap-2.5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 dark:border-green-700 dark:bg-green-500/10">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-green-600 dark:text-green-400" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                <span class="text-sm font-medium text-green-700 dark:text-green-300">{{ __('auth.2fa_enabled_badge') }}</span>
             </div>
-            <a href="{{ route('profile.two-factor') }}"
-                class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-white/[0.03] dark:text-gray-300 dark:hover:bg-white/[0.06] transition-colors">
-                @if(auth()->user()->two_factor_confirmed_at)
-                    {{ __('app.edit') }}
-                @else
-                    {{ __('auth.2fa_enable') }}
-                @endif
-            </a>
-        </div>
+            <p class="mb-4 text-sm text-gray-500 dark:text-gray-400">{{ __('auth.2fa_manage_description') }}</p>
+
+            @if($errors->has('password'))
+                <x-ui.alert variant="error" class="mb-4">{{ $errors->first('password') }}</x-ui.alert>
+            @endif
+
+            <form method="POST" action="{{ route('profile.two-factor.disable') }}" class="max-w-sm">
+                @csrf @method('DELETE')
+                <div style="margin-bottom:14px;">
+                    <x-ui.label for="2fa_password">{{ __('auth.current_password') }}</x-ui.label>
+                    <x-ui.input id="2fa_password" name="password" type="password" autocomplete="current-password" />
+                </div>
+                <x-ui.button type="submit" variant="danger">{{ __('auth.2fa_disable') }}</x-ui.button>
+            </form>
+
+        @else
+            {{-- NOT ENABLED --}}
+            <p class="mb-5 text-sm text-gray-500 dark:text-gray-400">{{ __('auth.2fa_setup_instructions') }}</p>
+
+            <div class="mb-5 flex justify-center rounded-xl bg-gray-50 p-4 dark:bg-gray-700">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ urlencode($qrUrl) }}&size=180x180"
+                    alt="QR Code" style="width:180px;height:180px;border-radius:8px;">
+            </div>
+
+            @if($errors->has('code'))
+                <x-ui.alert variant="error" class="mb-4">{{ $errors->first('code') }}</x-ui.alert>
+            @endif
+
+            <form method="POST" action="{{ route('profile.two-factor.confirm') }}" class="max-w-sm">
+                @csrf
+                <div style="margin-bottom:14px;">
+                    <x-ui.label for="2fa_code">{{ __('auth.2fa_enter_code') }}</x-ui.label>
+                    <x-ui.input id="2fa_code" name="code" type="text" inputmode="numeric" pattern="[0-9]{6}"
+                        maxlength="6" autocomplete="one-time-code"
+                        placeholder="000000" style="text-align:center;letter-spacing:0.3em;font-size:18px;" />
+                </div>
+                <x-ui.button type="submit">{{ __('auth.2fa_enable') }}</x-ui.button>
+            </form>
+        @endif
     </div>
 
     {{-- Change password --}}

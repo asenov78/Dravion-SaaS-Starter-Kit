@@ -7,13 +7,27 @@ use App\Http\Controllers\Controller;
 use App\Facades\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use PragmaRX\Google2FA\Google2FA;
 
 class ProfileController extends Controller
 {
     public function __construct(private AvatarServiceInterface $avatar) {}
+
     public function show()
     {
-        return view('admin.showcase.profile', ['user' => auth()->user()]);
+        $user   = auth()->user();
+        $qrUrl  = null;
+
+        if (! $user->two_factor_confirmed_at) {
+            $google2fa = new Google2FA();
+            if (! $user->two_factor_secret) {
+                $user->update(['two_factor_secret' => $google2fa->generateSecretKey()]);
+                $user->refresh();
+            }
+            $qrUrl = $google2fa->getQRCodeUrl(config('app.name'), $user->email, $user->two_factor_secret);
+        }
+
+        return view('admin.showcase.profile', compact('user', 'qrUrl'));
     }
 
     public function update(Request $request)

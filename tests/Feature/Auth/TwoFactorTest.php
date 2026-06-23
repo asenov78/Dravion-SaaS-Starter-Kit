@@ -67,36 +67,41 @@ class TwoFactorTest extends TestCase
         $this->assertNull(session('2fa_user_id'));
     }
 
-    // --- Setup + Confirm ---
+    // --- Setup embedded in profile ---
 
-    public function test_setup_page_requires_auth(): void
+    private function adminUser(array $attrs = []): \App\Models\User
     {
-        $this->get('/profile/two-factor')->assertRedirect(route('login'));
+        $u = User::factory()->create(array_merge(['email_verified_at' => now()], $attrs));
+        $u->assignRole('admin');
+        return $u;
     }
 
-    public function test_setup_page_shows_qr_when_2fa_not_enabled(): void
+    public function test_profile_page_shows_2fa_setup_section_when_not_enabled(): void
     {
-        $user = User::factory()->create(['email_verified_at' => now()]);
-
-        $response = $this->actingAs($user)->get('/profile/two-factor');
-
-        $response->assertOk();
-        $response->assertViewIs('auth.two-factor.setup');
-        $response->assertViewHas('qrUrl');
+        $this->actingAs($this->adminUser())
+            ->get(route('admin.ui.profile'))
+            ->assertOk()
+            ->assertSee(__('auth.2fa_enable'));
     }
 
-    public function test_setup_page_shows_manage_view_when_2fa_enabled(): void
+    public function test_profile_page_shows_2fa_enabled_status_when_active(): void
     {
-        $user = User::factory()->create([
-            'email_verified_at'       => now(),
+        $user = $this->adminUser([
             'two_factor_secret'       => (new Google2FA())->generateSecretKey(),
             'two_factor_confirmed_at' => now(),
         ]);
 
-        $response = $this->actingAs($user)->get('/profile/two-factor');
+        $this->actingAs($user)
+            ->get(route('admin.ui.profile'))
+            ->assertOk()
+            ->assertSee(__('auth.2fa_enabled_badge'));
+    }
 
-        $response->assertOk();
-        $response->assertViewIs('auth.two-factor.manage');
+    public function test_profile_two_factor_route_redirects_to_profile(): void
+    {
+        $this->actingAs($this->adminUser())
+            ->get(route('profile.two-factor'))
+            ->assertRedirect(route('admin.ui.profile'));
     }
 
     public function test_confirm_rejects_invalid_code(): void
