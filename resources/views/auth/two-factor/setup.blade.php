@@ -1,14 +1,14 @@
 <x-layouts.admin :title="__('auth.2fa_setup_title')">
     <div style="max-width:480px; margin:0 auto;">
         <x-ui.card>
-            <h2 style="font-size:16px; font-weight:600; margin:0 0 8px; color:var(--color-gray-900);" class="dark:text-white">
+            <h2 class="text-base font-semibold text-gray-900 dark:text-white" style="margin:0 0 8px;">
                 {{ __('auth.2fa_setup_title') }}
             </h2>
-            <p style="font-size:13px; color:var(--color-gray-500); margin:0 0 20px;">
+            <p class="text-sm text-gray-500 dark:text-gray-400" style="margin:0 0 20px;">
                 {{ __('auth.2fa_setup_instructions') }}
             </p>
 
-            <div style="display:flex; justify-content:center; margin-bottom:20px; padding:16px; background:#f9fafb; border-radius:12px;" class="dark:bg-gray-800">
+            <div class="bg-gray-50 dark:bg-gray-800" style="display:flex; justify-content:center; margin-bottom:20px; padding:16px; border-radius:12px;">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ urlencode($qrUrl) }}&size=180x180" alt="QR Code" style="width:180px; height:180px; border-radius:8px;">
             </div>
 
