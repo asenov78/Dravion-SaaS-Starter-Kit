@@ -107,6 +107,8 @@ class MobileUiTest extends TestCase
 
     public function test_updates_page_key_prefix_uses_translation(): void
     {
+        // Ensure $masked is truthy so the key_prefix line renders in the view
+        config(['dravion.license_key' => 'DEV-TESTKEY1234567890ABCDEF']);
         // Use BG locale so translated key_prefix is 'Ключ:' not 'Key:'
         // If hardcoded, 'Key: ' would still appear; if translated, only 'Ключ:' appears
         app()->setLocale('bg');
