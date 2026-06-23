@@ -265,4 +265,23 @@ class SystemSettingsTest extends TestCase
             ->assertSee('week_start')
             ->assertSee(__('settings.week_start'));
     }
+
+    public function test_require_2fa_setting_can_be_saved(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'app_name' => 'Test',
+                'app_url'  => 'http://localhost',
+                'require_2fa' => '1',
+            ])
+            ->assertRedirect();
+
+        Setting::flushCache();
+        $this->assertSame('1', Setting::get('require_2fa', '0'));
+    }
+
+    public function test_require_2fa_defaults_to_off(): void
+    {
+        $this->assertSame('0', Setting::get('require_2fa', '0'));
+    }
 }

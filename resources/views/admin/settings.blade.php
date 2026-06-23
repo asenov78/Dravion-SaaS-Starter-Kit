@@ -115,6 +115,17 @@
                         <div class="h-6 w-11 rounded-full border border-gray-200 bg-gray-100 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all peer-checked:bg-brand-500 peer-checked:after:translate-x-full peer-checked:border-brand-500 dark:border-gray-700 dark:bg-gray-700"></div>
                     </label>
                 </div>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('settings.require_2fa') }}</label>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ __('settings.require_2fa_desc') }}</p>
+                    </div>
+                    <label class="relative inline-flex cursor-pointer items-center">
+                        <input type="checkbox" name="require_2fa" value="1" class="sr-only peer"
+                            {{ ($settings['require_2fa'] ?? '0') === '1' ? 'checked' : '' }}>
+                        <div class="h-6 w-11 rounded-full border border-gray-200 bg-gray-100 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all peer-checked:bg-brand-500 peer-checked:after:translate-x-full peer-checked:border-brand-500 dark:border-gray-700 dark:bg-gray-700"></div>
+                    </label>
+                </div>
             </div>
         </div>
 

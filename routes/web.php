@@ -118,7 +118,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // User dashboard
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'require.2fa'])->group(function () {
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 });
 
@@ -145,7 +145,7 @@ Route::middleware('auth')->group(function () {
 
 
 // Admin
-Route::middleware(['auth', 'role:admin|manager|editor', 'license.check'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin|manager|editor', 'license.check', 'require.2fa'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Users — guarded by permission

@@ -9,6 +9,8 @@ return [
     'timezone'     => 'Timezone',
     'date_format'  => 'Date Format',
     'maintenance'  => 'Maintenance Mode',
+    'require_2fa'      => 'Require Two-Factor Authentication',
+    'require_2fa_desc' => 'Force all users to enable 2FA before accessing the app',
     'email'        => 'Email',
     'from_address' => 'From Address',
     'from_name'    => 'From Name',

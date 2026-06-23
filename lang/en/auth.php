@@ -49,6 +49,7 @@ return [
     '2fa_disable'            => 'Disable Two-Factor Auth',
     '2fa_not_setup'          => '2FA is not configured. Please set it up again.',
     '2fa_invalid_code'       => 'Invalid authentication code. Please try again.',
+    '2fa_required'           => 'Two-factor authentication is required. Please set it up to continue.',
     'current_password'       => 'Current Password',
     'registration_disabled'  => 'Registration is currently disabled.',
 ];
