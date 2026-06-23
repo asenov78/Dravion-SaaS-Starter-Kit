@@ -40,7 +40,7 @@ class TwoFactorController extends Controller
             return back()->withErrors(['code' => __('auth.2fa_invalid_code')]);
         }
 
-        $user->update(['two_factor_confirmed_at' => now()]);
+        $user->forceFill(['two_factor_confirmed_at' => now()])->save();
 
         return redirect()->route('admin.ui.profile')->with('success', __('flash.2fa_enabled'));
     }
@@ -54,10 +54,10 @@ class TwoFactorController extends Controller
             return back()->withErrors(['password' => __('auth.password')]);
         }
 
-        $request->user()->update([
+        $request->user()->forceFill([
             'two_factor_secret'       => null,
             'two_factor_confirmed_at' => null,
-        ]);
+        ])->save();
 
         return redirect()->route('admin.ui.profile')->with('success', __('flash.2fa_disabled'));
     }

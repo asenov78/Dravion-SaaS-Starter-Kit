@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.14.2] — 2026-06-23
+requires: 1.14.1
+
+### Security
+- **CI SHA pinning**: GitHub Actions pinned to commit SHA instead of mutable tags (`actions/checkout`, `setup-php`, `setup-node`, `action-gh-release`) — prevents supply chain compromise via tag force-push on a workflow with `contents: write`
+- **User model**: `two_factor_secret` + `two_factor_confirmed_at` removed from `#[Fillable]` — no longer mass-assignable; internal callers use `forceFill()` instead
+- **2 new unit tests** in `UserModelSecurityTest` verifying 2FA fields reject mass assignment
+
 ## [1.14.1] — 2026-06-23
 requires: 1.14.0
 
