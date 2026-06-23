@@ -62,4 +62,6 @@ return [
     'confirm_password_placeholder'  => '••••••••',
     'reset_password'                => 'Задай нова парола',
     'brand_tagline'                 => 'Мощна платформа за управление на SaaS',
+
+    '2fa_remember_device' => 'Запомни това устройство за :days дни',
 ];

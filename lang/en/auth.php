@@ -62,4 +62,6 @@ return [
     'confirm_password_placeholder'  => '••••••••',
     'reset_password'                => 'Set New Password',
     'brand_tagline'                 => 'Powerful SaaS management platform',
+
+    '2fa_remember_device' => 'Trust this device for :days days',
 ];

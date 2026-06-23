@@ -2,6 +2,18 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.14.1] — 2026-06-23
+requires: 1.14.0
+
+### Added
+- **2FA challenge checkbox**: "Trust this device for N days" checkbox shown on challenge page only when `2fa_remember_days > 0`; cookie set only when checkbox is checked
+- **User control**: previously cookie was set automatically on every verify; now user explicitly opts in per-login
+
+### Changed
+- `TwoFactorController::verify()` — cookie only when `remember_device` checkbox submitted
+- `TwoFactorController::challenge()` — passes `$rememberDays` to view
+- 4 new tests in `TwoFactorRememberTest` (checkbox show/hide, cookie with/without checkbox)
+
 ## [1.14.0] — 2026-06-23
 
 ### Added

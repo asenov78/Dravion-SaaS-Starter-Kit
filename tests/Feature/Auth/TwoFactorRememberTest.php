@@ -45,7 +45,7 @@ class TwoFactorRememberTest extends TestCase
         $validCode = $this->google2fa->getCurrentOtp($user->two_factor_secret);
 
         $response = $this->withSession(['2fa_user_id' => $user->id])
-            ->post('/two-factor/challenge', ['code' => $validCode]);
+            ->post('/two-factor/challenge', ['code' => $validCode, 'remember_device' => '1']);
 
         $cookies = collect($response->headers->getCookies())
             ->keyBy(fn($c) => $c->getName());
@@ -167,5 +167,59 @@ class TwoFactorRememberTest extends TestCase
             }
         }
         $this->assertTrue($found, 'Expected a cleared cookie for ' . $this->cookieName($user));
+    }
+
+    // ── remember_device checkbox on challenge page ───────────────────────────
+
+    public function test_challenge_shows_remember_checkbox_when_days_configured(): void
+    {
+        Setting::set('2fa_remember_days', '30');
+
+        $response = $this->withSession(['2fa_user_id' => 1])
+            ->get('/two-factor/challenge');
+
+        $response->assertOk();
+        $response->assertSee('remember_device');
+    }
+
+    public function test_challenge_hides_remember_checkbox_when_days_zero(): void
+    {
+        Setting::set('2fa_remember_days', '0');
+
+        $response = $this->withSession(['2fa_user_id' => 1])
+            ->get('/two-factor/challenge');
+
+        $response->assertOk();
+        $response->assertDontSee('remember_device');
+    }
+
+    public function test_verify_sets_cookie_only_when_checkbox_checked(): void
+    {
+        Setting::set('2fa_remember_days', '30');
+
+        $user      = $this->userWith2FA();
+        $validCode = $this->google2fa->getCurrentOtp($user->two_factor_secret);
+
+        $response = $this->withSession(['2fa_user_id' => $user->id])
+            ->post('/two-factor/challenge', ['code' => $validCode, 'remember_device' => '1']);
+
+        $cookies = collect($response->headers->getCookies())->keyBy(fn($c) => $c->getName());
+        $this->assertArrayHasKey($this->cookieName($user), $cookies->toArray());
+        $this->assertGreaterThan(0, $cookies[$this->cookieName($user)]->getMaxAge());
+    }
+
+    public function test_verify_no_cookie_when_checkbox_unchecked(): void
+    {
+        Setting::set('2fa_remember_days', '30');
+
+        $user      = $this->userWith2FA();
+        $validCode = $this->google2fa->getCurrentOtp($user->two_factor_secret);
+
+        // POST without remember_device
+        $response = $this->withSession(['2fa_user_id' => $user->id])
+            ->post('/two-factor/challenge', ['code' => $validCode]);
+
+        $cookieNames = array_map(fn($c) => $c->getName(), $response->headers->getCookies());
+        $this->assertNotContains($this->cookieName($user), $cookieNames);
     }
 }

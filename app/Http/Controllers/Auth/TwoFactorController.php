@@ -69,7 +69,9 @@ class TwoFactorController extends Controller
             return redirect()->route('login');
         }
 
-        return view('auth.two-factor.challenge');
+        $rememberDays = (int) Setting::get('2fa_remember_days', '0');
+
+        return view('auth.two-factor.challenge', compact('rememberDays'));
     }
 
     /** Verify TOTP challenge */
@@ -98,7 +100,7 @@ class TwoFactorController extends Controller
         $redirect = redirect()->intended($home);
 
         $days = (int) Setting::get('2fa_remember_days', '0');
-        if ($days > 0) {
+        if ($days > 0 && $request->boolean('remember_device')) {
             $redirect->withCookie(
                 Cookie::make('dravion_2fa_' . $user->id, '1', $days * 24 * 60, '/', null, true, true, false, 'strict')
             );
