@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.2] — 2026-06-24
+requires: 1.15.1
+
+### Fixed
+- **Custom Data modals**: "Add Category" button не отваряше модал — заменен `<x-ui.modal>` (без event listener) с inline Alpine `x-data="{open:false}"` за всички модали в `/admin/custom-data`
+- All modal interactions (add/edit/delete category, add/edit/delete field) работят правилно
+
 ## [1.15.1] — 2026-06-24
 requires: 1.15.0
 
