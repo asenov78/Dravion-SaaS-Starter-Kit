@@ -1,5 +1,11 @@
 <x-layouts.admin :title="__('nav.custom_data')">
 
+@php
+$reorderCategoriesUrl = route('admin.custom-data.categories.reorder');
+$reorderFieldsUrl     = route('admin.custom-data.fields.reorder');
+$csrfToken            = csrf_token();
+@endphp
+
 <div class="mb-6 flex items-center justify-between flex-wrap gap-3">
     <div>
         <h2 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ __('nav.custom_data') }}</h2>
@@ -16,22 +22,88 @@
 @if (session('success'))
     <x-ui.alert variant="success" :message="session('success')" class="mb-6" />
 @endif
-
 @if($errors->any())
     <x-ui.alert variant="error" :message="$errors->first()" class="mb-6" />
 @endif
 
-<div class="flex flex-col gap-6">
-    @forelse($categories as $category)
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+{{-- Category list with drag-reorder --}}
+<div
+    x-data="{
+        catIds: {{ json_encode($categories->pluck('id')->toArray()) }},
+        dragCatIdx: null,
+
+        moveCatUp(idx) {
+            if (idx === 0) return;
+            [this.catIds[idx - 1], this.catIds[idx]] = [this.catIds[idx], this.catIds[idx - 1]];
+            this.saveCatOrder();
+        },
+        moveCatDown(idx) {
+            if (idx >= this.catIds.length - 1) return;
+            [this.catIds[idx], this.catIds[idx + 1]] = [this.catIds[idx + 1], this.catIds[idx]];
+            this.saveCatOrder();
+        },
+        saveCatOrder() {
+            fetch('{{ $reorderCategoriesUrl }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ $csrfToken }}' },
+                body: JSON.stringify({ ids: this.catIds })
+            });
+        },
+
+        fieldIds: {},
+        initFields(catId, ids) { this.fieldIds[catId] = ids; },
+        moveFieldUp(catId, idx) {
+            if (idx === 0) return;
+            const arr = this.fieldIds[catId];
+            [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+            this.saveFieldOrder(catId);
+        },
+        moveFieldDown(catId, idx) {
+            const arr = this.fieldIds[catId];
+            if (idx >= arr.length - 1) return;
+            [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
+            this.saveFieldOrder(catId);
+        },
+        saveFieldOrder(catId) {
+            fetch('{{ $reorderFieldsUrl }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ $csrfToken }}' },
+                body: JSON.stringify({ ids: this.fieldIds[catId] })
+            });
+        }
+    }"
+    class="flex flex-col gap-6">
+
+    @forelse($categories as $catIdx => $category)
+    <div x-show="catIds.includes({{ $category->id }})"
+         :style="'order:' + catIds.indexOf({{ $category->id }})"
+         style="display:flex;flex-direction:column"
+         x-init="initFields({{ $category->id }}, {{ json_encode($category->fields->pluck('id')->toArray()) }})"
+         class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+
         {{-- Category header --}}
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
+                {{-- Category up/down arrows --}}
+                <div class="flex flex-col gap-0.5">
+                    <button type="button"
+                        @click="moveCatUp(catIds.indexOf({{ $category->id }}))"
+                        :disabled="catIds.indexOf({{ $category->id }}) === 0"
+                        class="p-0.5 rounded text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed dark:hover:text-gray-200 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+                    </button>
+                    <button type="button"
+                        @click="moveCatDown(catIds.indexOf({{ $category->id }}))"
+                        :disabled="catIds.indexOf({{ $category->id }}) >= catIds.length - 1"
+                        class="p-0.5 rounded text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed dark:hover:text-gray-200 transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                </div>
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ $category->label() }}</h3>
                 @if($category->is_system)
                 <span class="inline-flex items-center rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">{{ __('custom_data.system') }}</span>
                 @endif
-                <span class="text-sm text-gray-500 dark:text-gray-400">{{ $category->name_en }} / {{ $category->name_bg }}</span>
+                <span class="text-sm text-gray-400 dark:text-gray-500">{{ $category->name_en }} / {{ $category->name_bg }}</span>
             </div>
             <div class="flex items-center gap-2">
                 <button type="button"
@@ -66,6 +138,7 @@
             <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-800">
                 <thead>
                     <tr class="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                        <th class="px-6 py-3 w-10"></th>
                         <th class="px-6 py-3">{{ __('custom_data.field_label') }}</th>
                         <th class="px-6 py-3">{{ __('custom_data.field_type') }}</th>
                         <th class="px-6 py-3">{{ __('custom_data.field_required') }}</th>
@@ -74,8 +147,26 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                    @foreach($category->fields as $field)
-                    <tr class="text-sm text-gray-700 dark:text-gray-300">
+                    @foreach($category->fields as $fIdx => $field)
+                    <tr x-show="fieldIds[{{ $category->id }}] && fieldIds[{{ $category->id }}].includes({{ $field->id }})"
+                        :style="'order:' + (fieldIds[{{ $category->id }}] ? fieldIds[{{ $category->id }}].indexOf({{ $field->id }}) : {{ $fIdx }})"
+                        class="text-sm text-gray-700 dark:text-gray-300">
+                        <td class="px-4 py-3">
+                            <div class="flex flex-col gap-0.5">
+                                <button type="button"
+                                    @click="moveFieldUp({{ $category->id }}, fieldIds[{{ $category->id }}].indexOf({{ $field->id }}))"
+                                    :disabled="fieldIds[{{ $category->id }}].indexOf({{ $field->id }}) === 0"
+                                    class="p-0.5 rounded text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed dark:hover:text-gray-200 transition-colors">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+                                </button>
+                                <button type="button"
+                                    @click="moveFieldDown({{ $category->id }}, fieldIds[{{ $category->id }}].indexOf({{ $field->id }}))"
+                                    :disabled="fieldIds[{{ $category->id }}].indexOf({{ $field->id }}) >= fieldIds[{{ $category->id }}].length - 1"
+                                    class="p-0.5 rounded text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed dark:hover:text-gray-200 transition-colors">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                                </button>
+                            </div>
+                        </td>
                         <td class="px-6 py-3">
                             {{ $field->label() }}
                             @if($field->is_system)
@@ -122,7 +213,7 @@
         @endif
     </div>
 
-    {{-- Edit field modals for this category --}}
+    {{-- Field modals --}}
     @foreach($category->fields as $field)
     <x-ui.modal name="edit-field-{{ $field->id }}" :title="__('custom_data.edit_field')">
         <form method="POST" action="{{ route('admin.custom-data.fields.update', $field) }}">
@@ -166,8 +257,7 @@
                     class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">
                     {{ __('app.cancel') }}
                 </button>
-                <button type="submit"
-                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
+                <button type="submit" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                     {{ __('app.save') }}
                 </button>
             </div>
@@ -175,7 +265,7 @@
     </x-ui.modal>
     @endforeach
 
-    {{-- Add field modal for this category --}}
+    {{-- Add field modal --}}
     <x-ui.modal name="add-field-{{ $category->id }}" :title="__('custom_data.add_field')">
         <form method="POST" action="{{ route('admin.custom-data.fields.store') }}">
             @csrf
@@ -227,8 +317,7 @@
                     class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">
                     {{ __('app.cancel') }}
                 </button>
-                <button type="submit"
-                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
+                <button type="submit" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                     {{ __('app.save') }}
                 </button>
             </div>
@@ -257,19 +346,20 @@
                     class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">
                     {{ __('app.cancel') }}
                 </button>
-                <button type="submit"
-                    class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
+                <button type="submit" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                     {{ __('app.save') }}
                 </button>
             </div>
         </form>
     </x-ui.modal>
     @endif
+
     @empty
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 px-6 py-12 text-center">
         <p class="text-gray-500 dark:text-gray-400">{{ __('custom_data.no_categories') }}</p>
     </div>
     @endforelse
+
 </div>
 
 {{-- Add Category Modal --}}
@@ -293,8 +383,7 @@
                 class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">
                 {{ __('app.cancel') }}
             </button>
-            <button type="submit"
-                class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
+            <button type="submit" class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                 {{ __('app.save') }}
             </button>
         </div>

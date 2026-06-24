@@ -176,9 +176,11 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check', 'requir
     // Custom Data module
     Route::get('/custom-data',                              [CustomDataController::class, 'index'])->name('custom-data.index')->middleware('role:admin');
     Route::post('/custom-data/categories',                  [CustomDataController::class, 'storeCategory'])->name('custom-data.categories.store')->middleware('role:admin');
+    Route::post('/custom-data/categories/reorder',          [CustomDataController::class, 'reorderCategories'])->name('custom-data.categories.reorder')->middleware('role:admin');
     Route::put('/custom-data/categories/{customCategory}',  [CustomDataController::class, 'updateCategory'])->name('custom-data.categories.update')->middleware('role:admin');
     Route::delete('/custom-data/categories/{customCategory}',[CustomDataController::class, 'destroyCategory'])->name('custom-data.categories.destroy')->middleware('role:admin');
     Route::post('/custom-data/fields',                      [CustomDataController::class, 'storeField'])->name('custom-data.fields.store')->middleware('role:admin');
+    Route::post('/custom-data/fields/reorder',              [CustomDataController::class, 'reorderFields'])->name('custom-data.fields.reorder')->middleware('role:admin');
     Route::patch('/custom-data/fields/{customField}',       [CustomDataController::class, 'updateField'])->name('custom-data.fields.update')->middleware('role:admin');
     Route::delete('/custom-data/fields/{customField}',      [CustomDataController::class, 'destroyField'])->name('custom-data.fields.destroy')->middleware('role:admin');
 

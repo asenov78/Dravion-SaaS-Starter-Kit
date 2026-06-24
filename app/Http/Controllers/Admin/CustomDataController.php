@@ -20,6 +20,30 @@ class CustomDataController extends Controller
         return view('admin.custom-data.index', compact('categories'));
     }
 
+    // ── Reorder ──────────────────────────────────────────────────────────────
+
+    public function reorderCategories(Request $request)
+    {
+        $request->validate(['ids' => 'required|array', 'ids.*' => 'integer']);
+
+        foreach ($request->ids as $position => $id) {
+            CustomCategory::where('id', $id)->update(['sort_order' => $position + 1]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    public function reorderFields(Request $request)
+    {
+        $request->validate(['ids' => 'required|array', 'ids.*' => 'integer']);
+
+        foreach ($request->ids as $position => $id) {
+            CustomField::where('id', $id)->update(['sort_order' => $position + 1]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     // ── Categories ───────────────────────────────────────────────────────────
 
     public function storeCategory(Request $request)

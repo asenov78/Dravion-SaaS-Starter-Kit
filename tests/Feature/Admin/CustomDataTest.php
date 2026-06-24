@@ -239,4 +239,74 @@ class CustomDataTest extends TestCase
             'value'    => 'Batman',
         ]);
     }
+
+    // ── Phase 6: Reorder ─────────────────────────────────────────────────────
+
+    public function test_categories_can_be_reordered(): void
+    {
+        $cat1 = CustomCategory::where('key', 'personal_info')->first();
+        $cat2 = CustomCategory::where('key', 'address')->first();
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.custom-data.categories.reorder'), [
+                'ids' => [$cat2->id, $cat1->id],
+            ])
+            ->assertOk()
+            ->assertJson(['success' => true]);
+
+        $this->assertEquals(1, $cat2->fresh()->sort_order);
+        $this->assertEquals(2, $cat1->fresh()->sort_order);
+    }
+
+    public function test_fields_can_be_reordered(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+
+        $f1 = CustomField::create([
+            'category_id' => $cat->id, 'key' => 'field_a', 'label_en' => 'A',
+            'label_bg' => 'А', 'type' => 'text', 'sort_order' => 10,
+        ]);
+        $f2 = CustomField::create([
+            'category_id' => $cat->id, 'key' => 'field_b', 'label_en' => 'B',
+            'label_bg' => 'Б', 'type' => 'text', 'sort_order' => 20,
+        ]);
+
+        $this->actingAs($this->admin())
+            ->post(route('admin.custom-data.fields.reorder'), [
+                'ids' => [$f2->id, $f1->id],
+            ])
+            ->assertOk()
+            ->assertJson(['success' => true]);
+
+        $this->assertEquals(1, $f2->fresh()->sort_order);
+        $this->assertEquals(2, $f1->fresh()->sort_order);
+    }
+
+    public function test_reorder_requires_admin(): void
+    {
+        $editor = User::factory()->create();
+        $editor->assignRole('editor');
+
+        $this->actingAs($editor)
+            ->post(route('admin.custom-data.categories.reorder'), ['ids' => []])
+            ->assertForbidden();
+    }
+
+    public function test_index_shows_categories_in_sort_order(): void
+    {
+        $cat1 = CustomCategory::where('key', 'personal_info')->first();
+        $cat2 = CustomCategory::where('key', 'address')->first();
+        $cat1->update(['sort_order' => 50]);
+        $cat2->update(['sort_order' => 10]);
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.custom-data.index'))
+            ->assertOk()
+            ->getContent();
+
+        $pos1 = strpos($html, $cat1->name_en);
+        $pos2 = strpos($html, $cat2->name_en);
+        $this->assertLessThan($pos1, $pos2, 'Address (sort_order=10) should appear before Personal Information (sort_order=50)');
+    }
 }

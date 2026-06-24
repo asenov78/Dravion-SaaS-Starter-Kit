@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.1] — 2026-06-24
+requires: 1.15.0
+
+### Added
+- **Custom Data reorder**: up/down arrows on categories and fields; order persists via `sort_order`; reflected immediately in user edit form and future front-end usage
+- `POST /admin/custom-data/categories/reorder` + `POST /admin/custom-data/fields/reorder` JSON endpoints (admin-only)
+- 4 new tests covering category/field reorder, auth guard, and sort_order display order
+
 ## [1.15.0] — 2026-06-24
 requires: 1.14.2
 
