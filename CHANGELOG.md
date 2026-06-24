@@ -2,6 +2,26 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.0] — 2026-06-24
+requires: 1.14.2
+
+### Added
+- **Custom Data module** (`/admin/custom-data`): admin can create custom field categories and fields for users
+  - System categories: Personal Information (phone), Address (country, city/state) — cannot be deleted
+  - Account category (name, email, password, role) — immutable, hardcoded
+  - Custom categories/fields: text, textarea, select, checkbox types; EN + BG labels; visible/required toggles
+  - Field values stored in `user_field_values` table (entity-based, one row per user+field)
+  - Fields rendered dynamically in user edit form, grouped by category
+  - Admin can add/edit/delete non-system categories and fields
+- **3 new DB migrations**: `custom_categories`, `custom_fields`, `user_field_values`
+- **3 new models**: `CustomCategory`, `CustomField`, `UserFieldValue`
+- **`CustomDataSeeder`**: seeds system categories + fields idempotently on every install/seed
+
+### Changed
+- **User personal info**: removed Bio, Postal Code, Tax ID fields and Social Networks section from user edit form — replaced by Custom Data module
+- **`User#[Fillable]`**: cleaned up (bio, postal_code, tax_id, social URLs removed)
+- **`CustomDataSeeder`** added to `DatabaseSeeder` and `TestCase` base
+
 ## [1.14.2] — 2026-06-23
 requires: 1.14.1
 

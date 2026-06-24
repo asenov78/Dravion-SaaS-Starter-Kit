@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Contracts\AvatarServiceInterface;
 use App\Http\Controllers\Controller;
 use App\Mail\WelcomeMail;
+use App\Models\CustomField;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\UserFieldValue;
 use App\Notifications\AccountActivatedNotification;
 use App\Notifications\AccountSuspendedNotification;
 use App\Notifications\NewUserRegisteredNotification;
@@ -115,16 +117,9 @@ class UserController extends Controller
             'email'       => 'required|email|unique:users',
             'password'    => 'required|min:8',
             'role'        => 'required|exists:roles,name',
-            'bio'         => 'nullable|string|max:191',
-            'phone'       => 'nullable|string|max:191',
-            'country'     => 'nullable|string|max:191',
-            'city_state'  => 'nullable|string|max:191',
-            'postal_code' => 'nullable|string|max:191',
-            'tax_id'      => 'nullable|string|max:191',
-            'facebook'    => 'nullable|string|max:191',
-            'x_url'       => 'nullable|string|max:191',
-            'linkedin'    => 'nullable|string|max:191',
-            'instagram'   => 'nullable|string|max:191',
+            'phone'      => 'nullable|string|max:191',
+            'country'    => 'nullable|string|max:191',
+            'city_state' => 'nullable|string|max:191',
         ]);
 
         $role = $data['role'];
@@ -154,7 +149,17 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
-        return view('admin.users.edit', compact('user', 'roles'));
+
+        $customCategories = \App\Models\CustomCategory::where('entity', 'users')
+            ->where('key', '!=', 'account')
+            ->with(['fields' => fn($q) => $q->where('is_visible', true)->orderBy('sort_order')])
+            ->orderBy('sort_order')
+            ->get();
+
+        $fieldValues = UserFieldValue::where('user_id', $user->id)
+            ->pluck('value', 'field_id');
+
+        return view('admin.users.edit', compact('user', 'roles', 'customCategories', 'fieldValues'));
     }
 
     public function update(Request $request, User $user)
@@ -164,17 +169,10 @@ class UserController extends Controller
             'email'       => ['required', 'email', 'max:191', Rule::unique('users')->ignore($user->id)],
             'password'    => 'nullable|string|min:8',
             'role'        => 'required|exists:roles,name',
-            'bio'         => 'nullable|string|max:191',
-            'phone'       => 'nullable|string|max:191',
-            'country'     => 'nullable|string|max:191',
-            'city_state'  => 'nullable|string|max:191',
-            'postal_code' => 'nullable|string|max:191',
-            'tax_id'      => 'nullable|string|max:191',
-            'facebook'    => 'nullable|string|max:191',
-            'x_url'       => 'nullable|string|max:191',
-            'linkedin'    => 'nullable|string|max:191',
-            'instagram'   => 'nullable|string|max:191',
-            'avatar'      => 'nullable|image|max:2048',
+            'phone'      => 'nullable|string|max:191',
+            'country'    => 'nullable|string|max:191',
+            'city_state' => 'nullable|string|max:191',
+            'avatar'     => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('avatar')) {
@@ -194,6 +192,21 @@ class UserController extends Controller
 
         $user->update($data);
         $user->syncRoles([$role]);
+
+        // Save custom field values (field_{id} inputs)
+        $customFields = CustomField::where('is_visible', true)
+            ->whereHas('category', fn($q) => $q->where('entity', 'users')->where('key', '!=', 'account'))
+            ->get();
+
+        foreach ($customFields as $field) {
+            $inputKey = "field_{$field->id}";
+            if ($request->has($inputKey)) {
+                UserFieldValue::updateOrCreate(
+                    ['user_id' => $user->id, 'field_id' => $field->id],
+                    ['value'   => $request->input($inputKey)]
+                );
+            }
+        }
 
         return redirect()->route('admin.users.edit', $user)->with('success', __('flash.user_updated'));
     }

@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'add_category'          => 'Добави категория',
+    'edit_category'         => 'Редактирай категория',
+    'delete_category'       => 'Изтрий категория',
+    'delete_category_confirm' => 'Всички полета в тази категория ще бъдат изтрити.',
+    'add_field'             => 'Добави поле',
+    'edit_field'            => 'Редактирай поле',
+    'delete_field'          => 'Изтрий поле',
+    'delete_field_confirm'  => 'Всички записани стойности за това поле ще бъдат изтрити.',
+    'system'                => 'системно',
+    'no_categories'         => 'Няма категории. Добавете една за начало.',
+    'no_fields'             => 'Няма полета в тази категория.',
+    'label_en'              => 'Etикет (EN)',
+    'label_bg'              => 'Eтикет (BG)',
+    'field_label'           => 'Поле',
+    'field_type'            => 'Тип',
+    'field_required'        => 'Задължително',
+    'field_visible'         => 'Видимо',
+    'required'              => 'Задължително',
+    'visible'               => 'Видимо',
+    'options'               => 'Опции',
+    'options_hint'          => 'Един вариант на ред.',
+];

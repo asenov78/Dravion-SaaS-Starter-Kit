@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolesAndPermissionsSeeder::class);
         $this->call(PageSeeder::class);
+        $this->call(CustomDataSeeder::class);
 
         $admin = User::factory()->create([
             'name'  => 'Admin User',

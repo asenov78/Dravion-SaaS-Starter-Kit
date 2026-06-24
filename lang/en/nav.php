@@ -25,4 +25,5 @@ return [
     'view_site'        => 'View site',
     'new_badge'        => 'new',
     'update_badge'     => 'UPDATE',
+    'custom_data'      => 'Custom Data',
 ];

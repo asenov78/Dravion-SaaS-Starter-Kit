@@ -38,35 +38,21 @@ class UserEditTest extends TestCase
 
         $this->actingAs($admin)
             ->put("/admin/users/{$target->id}", [
-                'name'        => 'Updated Name',
-                'email'       => 'updated@dravion.test',
-                'role'        => 'user',
-                'bio'         => 'Developer',
-                'phone'       => '+359 888 000 111',
-                'country'     => 'Bulgaria',
-                'city_state'  => 'Sofia',
-                'postal_code' => '1000',
-                'tax_id'      => 'BG123456789',
-                'facebook'    => 'https://facebook.com/test',
-                'x_url'       => 'https://x.com/test',
-                'linkedin'    => 'https://linkedin.com/in/test',
-                'instagram'   => 'https://instagram.com/test',
+                'name'       => 'Updated Name',
+                'email'      => 'updated@dravion.test',
+                'role'       => 'user',
+                'phone'      => '+359 888 000 111',
+                'country'    => 'Bulgaria',
+                'city_state' => 'Sofia',
             ])
             ->assertRedirect();
 
         $target->refresh();
         $this->assertSame('Updated Name', $target->name);
         $this->assertSame('updated@dravion.test', $target->email);
-        $this->assertSame('Developer', $target->bio);
         $this->assertSame('+359 888 000 111', $target->phone);
         $this->assertSame('Bulgaria', $target->country);
         $this->assertSame('Sofia', $target->city_state);
-        $this->assertSame('1000', $target->postal_code);
-        $this->assertSame('BG123456789', $target->tax_id);
-        $this->assertSame('https://facebook.com/test', $target->facebook);
-        $this->assertSame('https://x.com/test', $target->x_url);
-        $this->assertSame('https://linkedin.com/in/test', $target->linkedin);
-        $this->assertSame('https://instagram.com/test', $target->instagram);
     }
 
     public function test_update_validates_required_fields(): void

@@ -41,5 +41,11 @@ return [
     'two_factor_reset'         => '2FA has been reset for :name.',
     'license_verified'         => 'License is active. You can now install updates.',
     'license_not_found'        => 'No active license found. Please activate a license key.',
-    'update_check_done'        => 'License and update status refreshed.',
+    'update_check_done'             => 'License and update status refreshed.',
+    'custom_category_created'       => 'Category created.',
+    'custom_category_updated'       => 'Category updated.',
+    'custom_category_deleted'       => 'Category deleted.',
+    'custom_field_created'          => 'Field created.',
+    'custom_field_updated'          => 'Field updated.',
+    'custom_field_deleted'          => 'Field deleted.',
 ];

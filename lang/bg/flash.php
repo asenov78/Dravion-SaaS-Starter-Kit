@@ -41,5 +41,11 @@ return [
     'two_factor_reset'         => '2FA е нулирано за :name.',
     'license_verified'         => 'Лицензът е активен. Вече можете да инсталирате обновявания.',
     'license_not_found'        => 'Не е намерен активен лиценз. Моля, активирайте лицензен ключ.',
-    'update_check_done'        => 'Статусът на лиценза и обновяванията е опреснен.',
+    'update_check_done'             => 'Статусът на лиценза и обновяванията е опреснен.',
+    'custom_category_created'       => 'Категорията е създадена.',
+    'custom_category_updated'       => 'Категорията е обновена.',
+    'custom_category_deleted'       => 'Категорията е изтрита.',
+    'custom_field_created'          => 'Полето е създадено.',
+    'custom_field_updated'          => 'Полето е обновено.',
+    'custom_field_deleted'          => 'Полето е изтрито.',
 ];

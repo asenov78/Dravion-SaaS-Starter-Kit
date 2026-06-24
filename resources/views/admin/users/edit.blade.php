@@ -84,56 +84,63 @@
         </div>
     </div>
 
-    {{-- Personal Info --}}
+    {{-- Dynamic custom categories (Personal Info, Address, + any custom ones) --}}
+    @foreach($customCategories as $category)
+    @if($category->fields->isNotEmpty())
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
-            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('users.personal') }}</h3>
+            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ $category->label() }}</h3>
         </div>
         <div class="p-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('users.phone') }}</label>
-                <input type="text" name="phone" value="{{ old('phone', $u->phone) }}"
-                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
-            </div>
-            <div class="lg:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ __('users.bio') }}</label>
-                <input type="text" name="bio" value="{{ old('bio', $u->bio) }}"
-                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
-            </div>
-        </div>
-    </div>
+            @foreach($category->fields as $field)
+            @php
+                $inputName = "field_{$field->id}";
+                $value = old($inputName, $fieldValues[$field->id] ?? '');
+                // system fields map to user columns
+                $systemColumnMap = ['phone' => $u->phone, 'country' => $u->country, 'city_state' => $u->city_state];
+                if ($field->is_system && isset($systemColumnMap[$field->key])) {
+                    $inputName = $field->key;
+                    $value = old($field->key, $systemColumnMap[$field->key] ?? '');
+                }
+            @endphp
+            <div @if($field->type === 'textarea') class="lg:col-span-2" @endif>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">
+                    {{ $field->label() }}@if($field->is_required)<span class="text-error-500 ml-0.5">*</span>@endif
+                </label>
 
-    {{-- Address --}}
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
-            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('users.address') }}</h3>
-        </div>
-        <div class="p-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            @foreach(['country' => __('users.country'), 'city_state' => __('users.city'), 'postal_code' => __('users.postal'), 'tax_id' => __('users.tax_id')] as $field => $label)
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ $label }}</label>
-                <input type="text" name="{{ $field }}" value="{{ old($field, $u->$field) }}"
-                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
+                @if($field->type === 'text')
+                    <input type="text" name="{{ $inputName }}" value="{{ $value }}"
+                        @if($field->is_required) required @endif
+                        class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
+
+                @elseif($field->type === 'textarea')
+                    <textarea name="{{ $inputName }}" rows="3"
+                        @if($field->is_required) required @endif
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800">{{ $value }}</textarea>
+
+                @elseif($field->type === 'select')
+                    <select name="{{ $inputName }}" @if($field->is_required) required @endif
+                        class="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800">
+                        <option value="">—</option>
+                        @foreach(($field->options ?? []) as $opt)
+                        <option value="{{ $opt }}" {{ $value === $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                        @endforeach
+                    </select>
+
+                @elseif($field->type === 'checkbox')
+                    <label class="flex items-center gap-2 mt-2 cursor-pointer">
+                        <input type="hidden" name="{{ $inputName }}" value="0">
+                        <input type="checkbox" name="{{ $inputName }}" value="1" {{ $value ? 'checked' : '' }}
+                            class="w-4 h-4 rounded border border-gray-300 text-brand-500 focus:ring-brand-500/20 dark:border-gray-700">
+                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ $field->label() }}</span>
+                    </label>
+                @endif
             </div>
             @endforeach
         </div>
     </div>
-
-    {{-- Social Links --}}
-    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
-            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('users.social') }}</h3>
-        </div>
-        <div class="p-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
-            @foreach(['facebook' => 'Facebook', 'x_url' => 'X.com', 'linkedin' => 'LinkedIn', 'instagram' => 'Instagram'] as $field => $label)
-            <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1.5">{{ $label }}</label>
-                <input type="text" name="{{ $field }}" value="{{ old($field, $u->$field) }}"
-                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800" />
-            </div>
-            @endforeach
-        </div>
-    </div>
+    @endif
+    @endforeach
 
     <div class="flex flex-wrap items-center justify-between gap-3">
         @role('admin')

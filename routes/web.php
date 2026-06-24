@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityController;
+use App\Http\Controllers\Admin\CustomDataController;
 use App\Http\Controllers\Admin\GlobalSearchController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LanguageController;
@@ -172,6 +173,15 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check', 'requir
     Route::get('/settings',              [SettingsController::class, 'index'])->name('settings')->middleware('can:view settings');
     Route::put('/settings',              [SettingsController::class, 'update'])->name('settings.update')->middleware('can:edit settings');
     Route::post('/settings/smtp-test',   [SettingsController::class, 'smtpTest'])->name('settings.smtp-test')->middleware('can:edit settings');
+    // Custom Data module
+    Route::get('/custom-data',                              [CustomDataController::class, 'index'])->name('custom-data.index')->middleware('role:admin');
+    Route::post('/custom-data/categories',                  [CustomDataController::class, 'storeCategory'])->name('custom-data.categories.store')->middleware('role:admin');
+    Route::put('/custom-data/categories/{customCategory}',  [CustomDataController::class, 'updateCategory'])->name('custom-data.categories.update')->middleware('role:admin');
+    Route::delete('/custom-data/categories/{customCategory}',[CustomDataController::class, 'destroyCategory'])->name('custom-data.categories.destroy')->middleware('role:admin');
+    Route::post('/custom-data/fields',                      [CustomDataController::class, 'storeField'])->name('custom-data.fields.store')->middleware('role:admin');
+    Route::patch('/custom-data/fields/{customField}',       [CustomDataController::class, 'updateField'])->name('custom-data.fields.update')->middleware('role:admin');
+    Route::delete('/custom-data/fields/{customField}',      [CustomDataController::class, 'destroyField'])->name('custom-data.fields.destroy')->middleware('role:admin');
+
     Route::get('/activity',         [ActivityController::class, 'index'])->name('activity')->middleware('can:view activity log');
     Route::get('/activity/export',  [ActivityController::class, 'export'])->name('activity.export')->middleware('can:view activity log');
     Route::post('/cache/clear', [DashboardController::class, 'clearCache'])->name('cache.clear')->middleware('can:edit settings');

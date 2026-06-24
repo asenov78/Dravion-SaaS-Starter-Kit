@@ -25,4 +25,5 @@ return array (
   'view_site' => 'Виж сайта',
   'new_badge' => 'ново',
   'update_badge' => 'UPDATE',
+  'custom_data' => 'Персонализирани данни',
 );

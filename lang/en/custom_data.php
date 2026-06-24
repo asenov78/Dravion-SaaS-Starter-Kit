@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'add_category'          => 'Add Category',
+    'edit_category'         => 'Edit Category',
+    'delete_category'       => 'Delete Category',
+    'delete_category_confirm' => 'All fields in this category will also be deleted.',
+    'add_field'             => 'Add Field',
+    'edit_field'            => 'Edit Field',
+    'delete_field'          => 'Delete Field',
+    'delete_field_confirm'  => 'All saved values for this field will be deleted.',
+    'system'                => 'system',
+    'no_categories'         => 'No categories yet. Add one to get started.',
+    'no_fields'             => 'No fields in this category.',
+    'label_en'              => 'Label (EN)',
+    'label_bg'              => 'Label (BG)',
+    'field_label'           => 'Field',
+    'field_type'            => 'Type',
+    'field_required'        => 'Required',
+    'field_visible'         => 'Visible',
+    'required'              => 'Required',
+    'visible'               => 'Visible',
+    'options'               => 'Options',
+    'options_hint'          => 'One option per line.',
+];

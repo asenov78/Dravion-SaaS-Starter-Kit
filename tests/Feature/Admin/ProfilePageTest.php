@@ -38,7 +38,6 @@ class ProfilePageTest extends TestCase
             ->put('/admin/ui/profile', [
                 'name'  => 'Jane Updated',
                 'email' => 'jane.new@dravion.test',
-                'bio'   => 'Team Lead',
                 'phone' => '+359 888 123 456',
             ])
             ->assertRedirect();
@@ -46,7 +45,6 @@ class ProfilePageTest extends TestCase
         $admin->refresh();
         $this->assertSame('Jane Updated', $admin->name);
         $this->assertSame('jane.new@dravion.test', $admin->email);
-        $this->assertSame('Team Lead', $admin->bio);
         $this->assertSame('+359 888 123 456', $admin->phone);
     }
 
