@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.7] — 2026-06-24
+requires: 1.15.6
+
+### Fixed
+- **Custom Data UI revert** — върнат дизайнът от v1.15.5 (raw Tailwind HTML — работещ и визуално коректен)
+
 ## [1.15.6] — 2026-06-24
 requires: 1.15.5
 

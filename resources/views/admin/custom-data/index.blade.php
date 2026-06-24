@@ -12,10 +12,11 @@ $csrfToken            = csrf_token();
 
     {{-- Add Category — inline modal --}}
     <div x-data="{ open: false }">
-        <x-ui.button variant="primary" type="button" @click="open = true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        <button type="button" @click="open = true"
+            class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 transition-colors">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
             {{ __('custom_data.add_category') }}
-        </x-ui.button>
+        </button>
 
         <div x-show="open" x-cloak @keydown.escape.window="open = false"
             class="fixed inset-0 z-99999 flex items-center justify-center p-5">
@@ -31,16 +32,26 @@ $csrfToken            = csrf_token();
                 <form method="POST" action="{{ route('admin.custom-data.categories.store') }}">
                     @csrf
                     <div class="p-6 flex flex-col gap-4">
-                        <x-ui.input name="name_en" :label="__('custom_data.label_en')" required />
-                        <x-ui.input name="name_bg" :label="__('custom_data.label_bg')" required />
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_en') }}</label>
+                            <input type="text" name="name_en" required
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_bg') }}</label>
+                            <input type="text" name="name_bg" required
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+                        </div>
                     </div>
                     <div class="flex justify-end gap-3 px-6 pb-6">
-                        <x-ui.button variant="secondary" type="button" @click="open = false">
+                        <button type="button" @click="open = false"
+                            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">
                             {{ __('app.cancel') }}
-                        </x-ui.button>
-                        <x-ui.button variant="primary" type="submit">
+                        </button>
+                        <button type="submit"
+                            class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                             {{ __('app.save') }}
-                        </x-ui.button>
+                        </button>
                     </div>
                 </form>
             </div>
@@ -127,7 +138,7 @@ $csrfToken            = csrf_token();
                 </div>
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ $category->label() }}</h3>
                 @if($category->is_system)
-                <x-ui.badge variant="accent">{{ __('custom_data.system') }}</x-ui.badge>
+                <span class="inline-flex items-center rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">{{ __('custom_data.system') }}</span>
                 @endif
                 <span class="text-sm text-gray-400 dark:text-gray-500">{{ $category->name_en }} / {{ $category->name_bg }}</span>
             </div>
@@ -135,11 +146,11 @@ $csrfToken            = csrf_token();
             <div class="flex items-center gap-2">
                 {{-- Add Field button + modal --}}
                 <div x-data="{ open: false }">
-                    <x-ui.button variant="secondary" size="sm" type="button" @click="open = true">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    <button type="button" @click="open = true"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-brand-300 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 hover:bg-brand-100 dark:border-brand-700 dark:bg-brand-500/10 dark:text-brand-400">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
                         {{ __('custom_data.add_field') }}
-                    </x-ui.button>
-
+                    </button>
                     <div x-show="open" x-cloak @keydown.escape.window="open = false"
                         class="fixed inset-0 z-99999 flex items-center justify-center p-5">
                         <div @click="open = false" class="absolute inset-0 bg-gray-400/50 backdrop-blur-[32px]"></div>
@@ -157,34 +168,66 @@ $csrfToken            = csrf_token();
                                 <input type="hidden" name="category_id" value="{{ $category->id }}">
                                 <div class="p-6 flex flex-col gap-4">
                                     <div class="grid grid-cols-2 gap-4">
-                                        <x-ui.input name="label_en" :label="__('custom_data.label_en')" required />
-                                        <x-ui.input name="label_bg" :label="__('custom_data.label_bg')" required />
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_en') }}</label>
+                                            <input type="text" name="label_en" required
+                                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_bg') }}</label>
+                                            <input type="text" name="label_bg" required
+                                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+                                        </div>
                                     </div>
-                                    <x-ui.select
-                                        name="type"
-                                        :label="__('custom_data.field_type')"
-                                        :options="['text' => 'text', 'textarea' => 'textarea', 'select' => 'select', 'checkbox' => 'checkbox']"
-                                        x-model="fieldType"
-                                    />
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.field_type') }}</label>
+                                        <select name="type" x-model="fieldType"
+                                            class="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+                                            <option value="text">text</option>
+                                            <option value="textarea">textarea</option>
+                                            <option value="select">select</option>
+                                            <option value="checkbox">checkbox</option>
+                                        </select>
+                                    </div>
                                     <div x-show="fieldType === 'select' || fieldType === 'checkbox'" x-cloak>
                                         <div class="grid grid-cols-2 gap-3">
-                                            <x-ui.textarea name="options_en" :label="__('custom_data.options_en')" :rows="4" placeholder="Male&#10;Female" />
-                                            <x-ui.textarea name="options_bg" :label="__('custom_data.options_bg')" :rows="4" placeholder="Мъж&#10;Жена" />
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.options_en') }}</label>
+                                                <textarea name="options_en" rows="4"
+                                                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                                                    placeholder="Male&#10;Female"></textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.options_bg') }}</label>
+                                                <textarea name="options_bg" rows="4"
+                                                    class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                                                    placeholder="Мъж&#10;Жена"></textarea>
+                                            </div>
                                         </div>
                                         <p class="mt-1 text-xs text-gray-400">{{ __('custom_data.options_hint') }}</p>
                                     </div>
                                     <div class="flex items-center gap-6">
-                                        <x-ui.checkbox name="is_required" :label="__('custom_data.required')" value="1" />
-                                        <x-ui.checkbox name="is_visible" :label="__('custom_data.visible')" value="1" :checked="true" />
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" name="is_required" value="1"
+                                                class="w-4 h-4 rounded border border-gray-300 text-brand-500 dark:border-gray-700">
+                                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ __('custom_data.required') }}</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" name="is_visible" value="1" checked
+                                                class="w-4 h-4 rounded border border-gray-300 text-brand-500 dark:border-gray-700">
+                                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ __('custom_data.visible') }}</span>
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="flex justify-end gap-3 px-6 pb-6">
-                                    <x-ui.button variant="secondary" type="button" @click="open = false">
+                                    <button type="button" @click="open = false"
+                                        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">
                                         {{ __('app.cancel') }}
-                                    </x-ui.button>
-                                    <x-ui.button variant="primary" type="submit">
+                                    </button>
+                                    <button type="submit"
+                                        class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                                         {{ __('app.save') }}
-                                    </x-ui.button>
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -194,10 +237,10 @@ $csrfToken            = csrf_token();
                 @if(!$category->is_system)
                 {{-- Edit Category --}}
                 <div x-data="{ open: false }">
-                    <x-ui.button variant="secondary" size="sm" type="button" @click="open = true">
+                    <button type="button" @click="open = true"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-transparent dark:text-gray-300">
                         {{ __('app.edit') }}
-                    </x-ui.button>
-
+                    </button>
                     <div x-show="open" x-cloak @keydown.escape.window="open = false"
                         class="fixed inset-0 z-99999 flex items-center justify-center p-5">
                         <div @click="open = false" class="absolute inset-0 bg-gray-400/50 backdrop-blur-[32px]"></div>
@@ -212,16 +255,26 @@ $csrfToken            = csrf_token();
                             <form method="POST" action="{{ route('admin.custom-data.categories.update', $category) }}">
                                 @csrf @method('PUT')
                                 <div class="p-6 flex flex-col gap-4">
-                                    <x-ui.input name="name_en" :label="__('custom_data.label_en')" value="{{ $category->name_en }}" required />
-                                    <x-ui.input name="name_bg" :label="__('custom_data.label_bg')" value="{{ $category->name_bg }}" required />
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_en') }}</label>
+                                        <input type="text" name="name_en" value="{{ $category->name_en }}" required
+                                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_bg') }}</label>
+                                        <input type="text" name="name_bg" value="{{ $category->name_bg }}" required
+                                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+                                    </div>
                                 </div>
                                 <div class="flex justify-end gap-3 px-6 pb-6">
-                                    <x-ui.button variant="secondary" type="button" @click="open = false">
+                                    <button type="button" @click="open = false"
+                                        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">
                                         {{ __('app.cancel') }}
-                                    </x-ui.button>
-                                    <x-ui.button variant="primary" type="submit">
+                                    </button>
+                                    <button type="submit"
+                                        class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                                         {{ __('app.save') }}
-                                    </x-ui.button>
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -229,11 +282,12 @@ $csrfToken            = csrf_token();
                 </div>
 
                 {{-- Delete Category --}}
-                <x-ui.button variant="danger" size="sm" type="button"
+                <button type="button"
                     x-data
-                    @click="$dispatch('confirm-action', { title: '{{ __('custom_data.delete_category') }}', message: '{{ __('custom_data.delete_category_confirm') }}', btnLabel: '{{ __('app.delete') }}', btnColor: '#dc2626', url: '{{ route('admin.custom-data.categories.destroy', $category) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.custom-data.index') }}', toastMessage: '{{ addslashes(__('flash.custom_category_deleted')) }}', toastVariant: 'success' })">
+                    @click="$dispatch('confirm-action', { title: '{{ __('custom_data.delete_category') }}', message: '{{ __('custom_data.delete_category_confirm') }}', btnLabel: '{{ __('app.delete') }}', btnColor: '#dc2626', url: '{{ route('admin.custom-data.categories.destroy', $category) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.custom-data.index') }}', toastMessage: '{{ addslashes(__('flash.custom_category_deleted')) }}', toastVariant: 'success' })"
+                    class="inline-flex items-center gap-1.5 rounded-lg border border-error-300 bg-error-50 px-3 py-1.5 text-xs font-medium text-error-700 hover:bg-error-100 dark:border-error-700 dark:bg-error-500/10 dark:text-error-400">
                     {{ __('app.delete') }}
-                </x-ui.button>
+                </button>
                 @endif
             </div>
         </div>
@@ -276,39 +330,36 @@ $csrfToken            = csrf_token();
                             </div>
                         </td>
                         <td class="px-6 py-3">
-                            <div class="font-medium flex items-center gap-1.5">
-                                {{ $field->label() }}
+                            <div class="font-medium">{{ $field->label() }}
                                 @if($field->is_system)
-                                <x-ui.badge>{{ __('custom_data.system') }}</x-ui.badge>
+                                <span class="ml-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-800">{{ __('custom_data.system') }}</span>
                                 @endif
                             </div>
                             <div class="text-xs text-gray-400">{{ $field->label_en }} / {{ $field->label_bg }}</div>
                         </td>
                         <td class="px-6 py-3">
-                            <x-ui.badge>{{ $field->type }}</x-ui.badge>
+                            <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">{{ $field->type }}</span>
                         </td>
                         <td class="px-6 py-3">
                             @if($field->is_required)
-                            <x-ui.badge variant="success">{{ __('app.yes') }}</x-ui.badge>
+                            <span class="inline-flex items-center rounded-full bg-success-50 px-2 py-0.5 text-xs text-success-600 dark:bg-success-500/10 dark:text-success-400">{{ __('app.yes') }}</span>
                             @else
                             <span class="text-gray-400">—</span>
                             @endif
                         </td>
                         <td class="px-6 py-3">
                             @if($field->is_visible)
-                            <x-ui.badge variant="success">{{ __('app.yes') }}</x-ui.badge>
+                            <span class="inline-flex items-center rounded-full bg-success-50 px-2 py-0.5 text-xs text-success-600 dark:bg-success-500/10 dark:text-success-400">{{ __('app.yes') }}</span>
                             @else
-                            <x-ui.badge variant="danger">{{ __('app.no') }}</x-ui.badge>
+                            <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-800">{{ __('app.no') }}</span>
                             @endif
                         </td>
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
                                 {{-- Edit field modal --}}
                                 <div x-data="{ open: false }">
-                                    <x-ui.button variant="ghost" size="sm" type="button" @click="open = true">
-                                        {{ __('app.edit') }}
-                                    </x-ui.button>
-
+                                    <button type="button" @click="open = true"
+                                        class="text-xs text-brand-500 hover:underline">{{ __('app.edit') }}</button>
                                     <div x-show="open" x-cloak @keydown.escape.window="open = false"
                                         class="fixed inset-0 z-99999 flex items-center justify-center p-5">
                                         <div @click="open = false" class="absolute inset-0 bg-gray-400/50 backdrop-blur-[32px]"></div>
@@ -324,8 +375,16 @@ $csrfToken            = csrf_token();
                                                 @csrf @method('PATCH')
                                                 <div class="p-6 flex flex-col gap-4">
                                                     <div class="grid grid-cols-2 gap-4">
-                                                        <x-ui.input name="label_en" :label="__('custom_data.label_en')" value="{{ $field->label_en }}" required />
-                                                        <x-ui.input name="label_bg" :label="__('custom_data.label_bg')" value="{{ $field->label_bg }}" required />
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_en') }}</label>
+                                                            <input type="text" name="label_en" value="{{ $field->label_en }}" required
+                                                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_bg') }}</label>
+                                                            <input type="text" name="label_bg" value="{{ $field->label_bg }}" required
+                                                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
+                                                        </div>
                                                     </div>
                                                     @if(in_array($field->type, ['select', 'checkbox']))
                                                     @php
@@ -333,23 +392,41 @@ $csrfToken            = csrf_token();
                                                         $optBg = implode("\n", array_map(fn($o) => is_array($o) ? ($o['bg'] ?? '') : '', $field->options ?? []));
                                                     @endphp
                                                     <div class="grid grid-cols-2 gap-3">
-                                                        <x-ui.textarea name="options_en" :label="__('custom_data.options_en')" :rows="4">{{ $optEn }}</x-ui.textarea>
-                                                        <x-ui.textarea name="options_bg" :label="__('custom_data.options_bg')" :rows="4">{{ $optBg }}</x-ui.textarea>
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.options_en') }}</label>
+                                                            <textarea name="options_en" rows="4"
+                                                                class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">{{ $optEn }}</textarea>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.options_bg') }}</label>
+                                                            <textarea name="options_bg" rows="4"
+                                                                class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">{{ $optBg }}</textarea>
+                                                        </div>
                                                     </div>
                                                     <p class="mt-1 text-xs text-gray-400">{{ __('custom_data.options_hint') }}</p>
                                                     @endif
                                                     <div class="flex items-center gap-6">
-                                                        <x-ui.checkbox name="is_required" :label="__('custom_data.required')" value="1" :checked="$field->is_required" />
-                                                        <x-ui.checkbox name="is_visible" :label="__('custom_data.visible')" value="1" :checked="$field->is_visible" />
+                                                        <label class="flex items-center gap-2 cursor-pointer">
+                                                            <input type="checkbox" name="is_required" value="1" {{ $field->is_required ? 'checked' : '' }}
+                                                                class="w-4 h-4 rounded border border-gray-300 text-brand-500 dark:border-gray-700">
+                                                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ __('custom_data.required') }}</span>
+                                                        </label>
+                                                        <label class="flex items-center gap-2 cursor-pointer">
+                                                            <input type="checkbox" name="is_visible" value="1" {{ $field->is_visible ? 'checked' : '' }}
+                                                                class="w-4 h-4 rounded border border-gray-300 text-brand-500 dark:border-gray-700">
+                                                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ __('custom_data.visible') }}</span>
+                                                        </label>
                                                     </div>
                                                 </div>
                                                 <div class="flex justify-end gap-3 px-6 pb-6">
-                                                    <x-ui.button variant="secondary" type="button" @click="open = false">
+                                                    <button type="button" @click="open = false"
+                                                        class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300">
                                                         {{ __('app.cancel') }}
-                                                    </x-ui.button>
-                                                    <x-ui.button variant="primary" type="submit">
+                                                    </button>
+                                                    <button type="submit"
+                                                        class="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">
                                                         {{ __('app.save') }}
-                                                    </x-ui.button>
+                                                    </button>
                                                 </div>
                                             </form>
                                         </div>
@@ -357,11 +434,10 @@ $csrfToken            = csrf_token();
                                 </div>
 
                                 @if(!$field->is_system)
-                                <x-ui.button variant="danger" size="sm" type="button"
+                                <button type="button"
                                     x-data
-                                    @click="$dispatch('confirm-action', { title: '{{ __('custom_data.delete_field') }}', message: '{{ __('custom_data.delete_field_confirm') }}', btnLabel: '{{ __('app.delete') }}', btnColor: '#dc2626', url: '{{ route('admin.custom-data.fields.destroy', $field) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.custom-data.index') }}', toastMessage: '{{ addslashes(__('flash.custom_field_deleted')) }}', toastVariant: 'success' })">
-                                    {{ __('app.delete') }}
-                                </x-ui.button>
+                                    @click="$dispatch('confirm-action', { title: '{{ __('custom_data.delete_field') }}', message: '{{ __('custom_data.delete_field_confirm') }}', btnLabel: '{{ __('app.delete') }}', btnColor: '#dc2626', url: '{{ route('admin.custom-data.fields.destroy', $field) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.custom-data.index') }}', toastMessage: '{{ addslashes(__('flash.custom_field_deleted')) }}', toastVariant: 'success' })"
+                                    class="text-xs text-error-500 hover:underline">{{ __('app.delete') }}</button>
                                 @endif
                             </div>
                         </td>
