@@ -103,7 +103,8 @@ class CustomDataController extends Controller
             'label_en'    => 'required|string|max:191',
             'label_bg'    => 'required|string|max:191',
             'type'        => 'required|in:text,textarea,select,checkbox',
-            'options'     => 'nullable|string',
+            'options_en'  => 'nullable|string',
+            'options_bg'  => 'nullable|string',
             'is_required' => 'boolean',
             'is_visible'  => 'boolean',
         ]);
@@ -113,8 +114,8 @@ class CustomDataController extends Controller
         $key  = Str::snake(Str::lower($data['label_en'])) . '_' . uniqid();
 
         $options = null;
-        if ($data['type'] === 'select' && !empty($data['options'])) {
-            $options = array_filter(array_map('trim', explode("\n", $data['options'])));
+        if (in_array($data['type'], ['select', 'checkbox']) && !empty($data['options_en'])) {
+            $options = $this->parseMultilingualOptions($data['options_en'] ?? '', $data['options_bg'] ?? '');
         }
 
         CustomField::create([
@@ -139,14 +140,15 @@ class CustomDataController extends Controller
         $data = $request->validate([
             'label_en'    => 'required|string|max:191',
             'label_bg'    => 'required|string|max:191',
-            'options'     => 'nullable|string',
+            'options_en'  => 'nullable|string',
+            'options_bg'  => 'nullable|string',
             'is_required' => 'boolean',
             'is_visible'  => 'boolean',
         ]);
 
         $options = $customField->options;
-        if ($customField->type === 'select' && isset($data['options'])) {
-            $options = array_filter(array_map('trim', explode("\n", $data['options'])));
+        if (in_array($customField->type, ['select', 'checkbox']) && isset($data['options_en'])) {
+            $options = $this->parseMultilingualOptions($data['options_en'] ?? '', $data['options_bg'] ?? '');
         }
 
         $customField->update([
@@ -159,6 +161,17 @@ class CustomDataController extends Controller
 
         return redirect()->route('admin.custom-data.index')
             ->with('success', __('flash.custom_field_updated'));
+    }
+
+    private function parseMultilingualOptions(string $en, string $bg): array
+    {
+        $enLines = array_values(array_filter(array_map('trim', explode("\n", $en))));
+        $bgLines = array_values(array_filter(array_map('trim', explode("\n", $bg))));
+
+        return array_map(fn($i) => [
+            'en' => $enLines[$i] ?? '',
+            'bg' => $bgLines[$i] ?? $enLines[$i] ?? '',
+        ], array_keys($enLines));
     }
 
     public function destroyField(CustomField $customField)

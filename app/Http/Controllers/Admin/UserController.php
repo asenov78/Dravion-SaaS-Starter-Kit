@@ -201,9 +201,11 @@ class UserController extends Controller
         foreach ($customFields as $field) {
             $inputKey = "field_{$field->id}";
             if ($request->has($inputKey)) {
+                $raw = $request->input($inputKey);
+                $value = is_array($raw) ? implode(',', array_filter($raw)) : $raw;
                 UserFieldValue::updateOrCreate(
                     ['user_id' => $user->id, 'field_id' => $field->id],
-                    ['value'   => $request->input($inputKey)]
+                    ['value'   => $value]
                 );
             }
         }

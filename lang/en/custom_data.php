@@ -21,5 +21,7 @@ return [
     'required'              => 'Required',
     'visible'               => 'Visible',
     'options'               => 'Options',
-    'options_hint'          => 'One option per line.',
+    'options_en'            => 'Options (EN)',
+    'options_bg'            => 'Options (BG)',
+    'options_hint'          => 'One option per line. EN and BG lines must match by position.',
 ];

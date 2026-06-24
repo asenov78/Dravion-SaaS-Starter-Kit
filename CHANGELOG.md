@@ -2,6 +2,18 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.3] — 2026-06-24
+requires: 1.15.2
+
+### Added
+- **Multilingual options** за `select` и `checkbox` полета: опциите се съхраняват като `[{en, bg}]`; в user edit формата се рендират с локала на приложението
+- `checkbox` тип вече поддържа множество опции (като select); стойностите се пазят като comma-separated string
+- `options_en` + `options_bg` textarea в add/edit field модала (ред по ред, по позиция)
+- 5 нови теста: multilingual options store/render, checkbox multi-option, checkbox values save
+
+### Changed
+- **Редизайн на `/admin/custom-data`**: `<x-ui.dialog>` за всички модали (trigger+content в един Alpine scope → вече работят правилно); `<x-ui.button>` + `<x-ui.badge>`; table стил като `users/index`; reorder стрелки се показват само при hover
+
 ## [1.15.2] — 2026-06-24
 requires: 1.15.1
 

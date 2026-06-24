@@ -240,7 +240,49 @@ class CustomDataTest extends TestCase
         ]);
     }
 
-    // ── Phase 6: Reorder ─────────────────────────────────────────────────────
+    // ── Phase 6: System fields visible in user edit ──────────────────────────
+
+    public function test_system_fields_appear_in_user_edit_form(): void
+    {
+        $user = User::factory()->create(['phone' => '+359888000111', 'country' => 'Bulgaria']);
+
+        $html = $this->actingAs($this->admin())
+            ->get("/admin/users/{$user->id}/edit")
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('name="phone"', $html);
+        $this->assertStringContainsString('name="country"', $html);
+        $this->assertStringContainsString('name="city_state"', $html);
+        $this->assertStringContainsString('+359888000111', $html);
+        $this->assertStringContainsString('Bulgaria', $html);
+    }
+
+    public function test_custom_data_index_contains_add_category_form(): void
+    {
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.custom-data.index'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('name="name_en"', $html);
+        $this->assertStringContainsString('action="' . route('admin.custom-data.categories.store') . '"', $html);
+    }
+
+    public function test_custom_data_index_shows_system_categories(): void
+    {
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.custom-data.index'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('Personal Information', $html);
+        $this->assertStringContainsString('Address', $html);
+        $this->assertStringContainsString('Phone', $html);
+        $this->assertStringContainsString('Country', $html);
+    }
+
+    // ── Phase 8: Reorder ─────────────────────────────────────────────────────
 
     public function test_categories_can_be_reordered(): void
     {
@@ -291,6 +333,153 @@ class CustomDataTest extends TestCase
         $this->actingAs($editor)
             ->post(route('admin.custom-data.categories.reorder'), ['ids' => []])
             ->assertForbidden();
+    }
+
+    // ── Phase 9: Multilingual options (select + checkbox) ────────────────────
+
+    public function test_select_field_stores_multilingual_options(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+
+        $this->actingAs($this->admin())
+            ->post('/admin/custom-data/fields', [
+                'category_id' => $cat->id,
+                'label_en'    => 'Gender',
+                'label_bg'    => 'Пол',
+                'type'        => 'select',
+                'options_en'  => "Male\nFemale",
+                'options_bg'  => "Мъж\nЖена",
+                'is_visible'  => true,
+            ])
+            ->assertRedirect();
+
+        $field = CustomField::where('label_en', 'Gender')->first();
+        $this->assertNotNull($field);
+        $this->assertEquals([
+            ['en' => 'Male',   'bg' => 'Мъж'],
+            ['en' => 'Female', 'bg' => 'Жена'],
+        ], $field->options);
+    }
+
+    public function test_select_field_renders_locale_option_labels(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+        $field = CustomField::create([
+            'category_id' => $cat->id,
+            'key'         => 'gender',
+            'label_en'    => 'Gender',
+            'label_bg'    => 'Пол',
+            'type'        => 'select',
+            'options'     => [['en' => 'Male', 'bg' => 'Мъж'], ['en' => 'Female', 'bg' => 'Жена']],
+            'is_visible'  => true,
+            'is_system'   => false,
+            'sort_order'  => 99,
+        ]);
+
+        $user = User::factory()->create();
+        app()->setLocale('bg');
+
+        $html = $this->actingAs($this->admin())
+            ->get("/admin/users/{$user->id}/edit")
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('Мъж', $html);
+        $this->assertStringContainsString('Жена', $html);
+    }
+
+    public function test_checkbox_field_stores_multiple_options(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+
+        $this->actingAs($this->admin())
+            ->post('/admin/custom-data/fields', [
+                'category_id' => $cat->id,
+                'label_en'    => 'Interests',
+                'label_bg'    => 'Интереси',
+                'type'        => 'checkbox',
+                'options_en'  => "Sports\nMusic\nTravel",
+                'options_bg'  => "Спорт\nМузика\nПътуване",
+                'is_visible'  => true,
+            ])
+            ->assertRedirect();
+
+        $field = CustomField::where('label_en', 'Interests')->first();
+        $this->assertNotNull($field);
+        $this->assertCount(3, $field->options);
+        $this->assertEquals(['en' => 'Sports', 'bg' => 'Спорт'], $field->options[0]);
+    }
+
+    public function test_checkbox_field_renders_multiple_checkboxes_in_user_edit(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+        $field = CustomField::create([
+            'category_id' => $cat->id,
+            'key'         => 'interests',
+            'label_en'    => 'Interests',
+            'label_bg'    => 'Интереси',
+            'type'        => 'checkbox',
+            'options'     => [
+                ['en' => 'Sports', 'bg' => 'Спорт'],
+                ['en' => 'Music',  'bg' => 'Музика'],
+            ],
+            'is_visible'  => true,
+            'is_system'   => false,
+            'sort_order'  => 99,
+        ]);
+
+        $user = User::factory()->create();
+
+        $html = $this->actingAs($this->admin())
+            ->get("/admin/users/{$user->id}/edit")
+            ->assertOk()
+            ->getContent();
+
+        $this->assertStringContainsString('value="Sports"', $html);
+        $this->assertStringContainsString('value="Music"', $html);
+    }
+
+    public function test_checkbox_multiple_values_saved_on_user_update(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+        $field = CustomField::create([
+            'category_id' => $cat->id,
+            'key'         => 'interests',
+            'label_en'    => 'Interests',
+            'label_bg'    => 'Интереси',
+            'type'        => 'checkbox',
+            'options'     => [
+                ['en' => 'Sports', 'bg' => 'Спорт'],
+                ['en' => 'Music',  'bg' => 'Музика'],
+                ['en' => 'Travel', 'bg' => 'Пътуване'],
+            ],
+            'is_visible'  => true,
+            'is_system'   => false,
+            'sort_order'  => 99,
+        ]);
+
+        $user = User::factory()->create(['email_verified_at' => now()]);
+
+        $this->actingAs($this->admin())
+            ->put("/admin/users/{$user->id}", [
+                'name'                   => $user->name,
+                'email'                  => $user->email,
+                'role'                   => 'user',
+                "field_{$field->id}"     => ['Sports', 'Travel'],
+            ])
+            ->assertRedirect();
+
+        $stored = UserFieldValue::where('user_id', $user->id)
+            ->where('field_id', $field->id)
+            ->value('value');
+
+        $this->assertStringContainsString('Sports', $stored);
+        $this->assertStringContainsString('Travel', $stored);
     }
 
     public function test_index_shows_categories_in_sort_order(): void

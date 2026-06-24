@@ -98,7 +98,7 @@
                 $value = old($inputName, $fieldValues[$field->id] ?? '');
                 // system fields map to user columns
                 $systemColumnMap = ['phone' => $u->phone, 'country' => $u->country, 'city_state' => $u->city_state];
-                if ($field->is_system && isset($systemColumnMap[$field->key])) {
+                if ($field->is_system && array_key_exists($field->key, $systemColumnMap)) {
                     $inputName = $field->key;
                     $value = old($field->key, $systemColumnMap[$field->key] ?? '');
                 }
@@ -123,17 +123,37 @@
                         class="h-11 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800">
                         <option value="">—</option>
                         @foreach(($field->options ?? []) as $opt)
-                        <option value="{{ $opt }}" {{ $value === $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                        @php $optVal = is_array($opt) ? $field->optionValue($opt) : $opt; @endphp
+                        <option value="{{ $optVal }}" {{ $value === $optVal ? 'selected' : '' }}>
+                            {{ is_array($opt) ? $field->optionLabel($opt) : $opt }}
+                        </option>
                         @endforeach
                     </select>
 
                 @elseif($field->type === 'checkbox')
-                    <label class="flex items-center gap-2 mt-2 cursor-pointer">
-                        <input type="hidden" name="{{ $inputName }}" value="0">
-                        <input type="checkbox" name="{{ $inputName }}" value="1" {{ $value ? 'checked' : '' }}
-                            class="w-4 h-4 rounded border border-gray-300 text-brand-500 focus:ring-brand-500/20 dark:border-gray-700">
-                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ $field->label() }}</span>
-                    </label>
+                    @php $checkedValues = array_filter(explode(',', (string)$value)); @endphp
+                    @if($field->options)
+                        <div class="flex flex-wrap gap-4 mt-2">
+                        @foreach($field->options as $opt)
+                        @php $optVal = is_array($opt) ? $field->optionValue($opt) : $opt; @endphp
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" name="{{ $inputName }}[]" value="{{ $optVal }}"
+                                {{ in_array($optVal, $checkedValues) ? 'checked' : '' }}
+                                class="w-4 h-4 rounded border border-gray-300 text-brand-500 focus:ring-brand-500/20 dark:border-gray-700">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">
+                                {{ is_array($opt) ? $field->optionLabel($opt) : $opt }}
+                            </span>
+                        </label>
+                        @endforeach
+                        </div>
+                    @else
+                        <label class="flex items-center gap-2 mt-2 cursor-pointer">
+                            <input type="hidden" name="{{ $inputName }}" value="0">
+                            <input type="checkbox" name="{{ $inputName }}" value="1" {{ $value ? 'checked' : '' }}
+                                class="w-4 h-4 rounded border border-gray-300 text-brand-500 focus:ring-brand-500/20 dark:border-gray-700">
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $field->label() }}</span>
+                        </label>
+                    @endif
                 @endif
             </div>
             @endforeach

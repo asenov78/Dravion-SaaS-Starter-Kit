@@ -38,4 +38,15 @@ class CustomField extends Model
         $locale = app()->getLocale();
         return $locale === 'bg' ? $this->label_bg : $this->label_en;
     }
+
+    public function optionLabel(array $option): string
+    {
+        $locale = app()->getLocale();
+        return $option[$locale] ?? $option['en'] ?? '';
+    }
+
+    public function optionValue(array $option): string
+    {
+        return $option['en'] ?? '';
+    }
 }

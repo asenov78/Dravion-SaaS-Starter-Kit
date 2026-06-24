@@ -19,6 +19,8 @@ return [
     'created_at'   => 'Created At',
     'yes'          => 'Yes',
     'no'           => 'No',
+    'move_up'      => 'Move up',
+    'move_down'    => 'Move down',
     'success'      => 'Success',
     'error'        => 'Error',
     'warning'      => 'Warning',
