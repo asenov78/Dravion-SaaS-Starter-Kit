@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.6] — 2026-06-24
+requires: 1.15.5
+
+### Changed
+- **Custom Data UI** — бутони → `<x-ui.button>`, inputs → `<x-ui.input>`, textareas → `<x-ui.textarea>`, selects → `<x-ui.select>`, checkboxes → `<x-ui.checkbox>`, badges → `<x-ui.badge>`; модалните контейнери (Alpine scope) остават непроменени; без промяна на функционалността
+
 ## [1.15.5] — 2026-06-24
 requires: 1.15.4
 
