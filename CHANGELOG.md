@@ -2,6 +2,15 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.8] — 2026-06-24
+requires: 1.15.7
+
+### Fixed
+- **Field reorder стрелки** — `<table>/<tbody>/<tr>` не поддържат CSS `order`; заменено с `display:flex;flex-direction:column` контейнер от `<div>` редове → стрелките вече преподреждат визуално
+
+### Changed
+- **Бутони** — заменени с `<x-ta.button>` (`variant="primary"/"outline"`, `size="sm"`) с иконки (plus/edit/trash) от `/admin/ui/buttons` системата
+
 ## [1.15.7] — 2026-06-24
 requires: 1.15.6
 
