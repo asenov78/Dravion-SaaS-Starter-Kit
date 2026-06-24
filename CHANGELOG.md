@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.9] — 2026-06-24
+requires: 1.15.8
+
+### Added
+- Profile page shows/saves custom fields (ProfileController + view rewrite)
+- 2 new tests: test_profile_page_shows_custom_fields, test_profile_custom_field_value_saved
+
+### Fixed
+- Removed nonexistent fields from ProfileController update validation
+
 ## [1.15.8] — 2026-06-24
 requires: 1.15.7
 

@@ -2,7 +2,10 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\CustomCategory;
+use App\Models\CustomField;
 use App\Models\User;
+use App\Models\UserFieldValue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -149,7 +152,59 @@ class ProfilePageTest extends TestCase
             ->assertSee('Промяна на парола');
     }
 
-public function test_avatar_upload_replaces_old_file(): void
+public function test_profile_page_shows_custom_fields(): void
+    {
+        $admin = $this->admin();
+
+        $cat = CustomCategory::create([
+            'entity' => 'users', 'key' => 'profile_test',
+            'name_en' => 'Extra Info', 'name_bg' => 'Допълнителна информация',
+            'sort_order' => 10,
+        ]);
+        CustomField::create([
+            'category_id' => $cat->id, 'key' => 'linkedin_url', 'type' => 'text',
+            'label_en' => 'LinkedIn', 'label_bg' => 'LinkedIn',
+            'is_visible' => true, 'is_required' => false, 'is_system' => false, 'sort_order' => 1,
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/admin/ui/profile')
+            ->assertOk()
+            ->assertSee('Extra Info')
+            ->assertSee('LinkedIn');
+    }
+
+    public function test_profile_custom_field_value_saved(): void
+    {
+        $admin = $this->admin();
+
+        $cat = CustomCategory::create([
+            'entity' => 'users', 'key' => 'extra_profile',
+            'name_en' => 'Extra', 'name_bg' => 'Допълнителна',
+            'sort_order' => 10,
+        ]);
+        $field = CustomField::create([
+            'category_id' => $cat->id, 'key' => 'nickname', 'type' => 'text',
+            'label_en' => 'Nickname', 'label_bg' => 'Прякор',
+            'is_visible' => true, 'is_required' => false, 'is_system' => false, 'sort_order' => 1,
+        ]);
+
+        $this->actingAs($admin)
+            ->put('/admin/ui/profile', [
+                'name'             => 'Jane Admin',
+                'email'            => 'jane@dravion.test',
+                "field_{$field->id}" => 'J-Admin',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('user_field_values', [
+            'user_id'  => $admin->id,
+            'field_id' => $field->id,
+            'value'    => 'J-Admin',
+        ]);
+    }
+
+    public function test_avatar_upload_replaces_old_file(): void
     {
         Storage::fake('public');
         $admin = $this->admin();
