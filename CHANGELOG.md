@@ -2,6 +2,14 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.5] — 2026-06-24
+requires: 1.15.4
+
+### Fixed
+- **Redesign rollback** — върнат оригиналния дизайн на `/admin/custom-data` (inline Alpine modals от v1.15.1) — бутоните и визуалното оформление са идентични на преди v1.15.3
+- **Alpine scope fix** в Add Field modal — `x-data="{fieldType:'text'}"` на `<form>` вместо `x-data` на `<select>` → `x-show` за options работи коректно
+- **options_en + options_bg** полетата добавени в старата view за Add Field и Edit Field (select + checkbox)
+
 ## [1.15.4] — 2026-06-24
 requires: 1.15.3
 
