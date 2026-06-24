@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.10] — 2026-06-24
+requires: 1.15.9
+
+### Fixed
+- Modal Cancel/Save бутони вече имат иконки (checkmark + X)
+- ACTIONS колона 160px -> 200px (побира 2 бутона с иконки без overflow)
+
 ## [1.15.9] — 2026-06-24
 requires: 1.15.8
 

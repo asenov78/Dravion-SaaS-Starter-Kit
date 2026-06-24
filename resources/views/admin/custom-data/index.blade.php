@@ -8,6 +8,8 @@ $csrfToken            = csrf_token();
 $iconPlus   = new \Illuminate\Support\HtmlString('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>');
 $iconEdit   = new \Illuminate\Support\HtmlString('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>');
 $iconTrash  = new \Illuminate\Support\HtmlString('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>');
+$iconSave   = new \Illuminate\Support\HtmlString('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>');
+$iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>');
 @endphp
 
 {{-- ── Page header ──────────────────────────────────────────────────────── --}}
@@ -46,10 +48,10 @@ $iconTrash  = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                         </div>
                     </div>
                     <div class="flex justify-end gap-3 px-6 pb-6">
-                        <x-ta.button type="button" variant="outline" size="sm" @click="open = false">
+                        <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconCancel" @click="open = false">
                             {{ __('app.cancel') }}
                         </x-ta.button>
-                        <x-ta.button type="submit" variant="primary" size="sm">
+                        <x-ta.button type="submit" variant="primary" size="sm" :startIcon="$iconSave">
                             {{ __('app.save') }}
                         </x-ta.button>
                     </div>
@@ -219,10 +221,10 @@ $iconTrash  = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                     </div>
                                 </div>
                                 <div class="flex justify-end gap-3 px-6 pb-6">
-                                    <x-ta.button type="button" variant="outline" size="sm" @click="open = false">
+                                    <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconCancel" @click="open = false">
                                         {{ __('app.cancel') }}
                                     </x-ta.button>
-                                    <x-ta.button type="submit" variant="primary" size="sm">
+                                    <x-ta.button type="submit" variant="primary" size="sm" :startIcon="$iconSave">
                                         {{ __('app.save') }}
                                     </x-ta.button>
                                 </div>
@@ -264,10 +266,10 @@ $iconTrash  = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                     </div>
                                 </div>
                                 <div class="flex justify-end gap-3 px-6 pb-6">
-                                    <x-ta.button type="button" variant="outline" size="sm" @click="open = false">
+                                    <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconCancel" @click="open = false">
                                         {{ __('app.cancel') }}
                                     </x-ta.button>
-                                    <x-ta.button type="submit" variant="primary" size="sm">
+                                    <x-ta.button type="submit" variant="primary" size="sm" :startIcon="$iconSave">
                                         {{ __('app.save') }}
                                     </x-ta.button>
                                 </div>
@@ -297,7 +299,7 @@ $iconTrash  = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
             <div style="width:110px" class="px-2">{{ __('custom_data.field_type') }}</div>
             <div style="width:90px" class="px-2">{{ __('custom_data.field_required') }}</div>
             <div style="width:90px" class="px-2">{{ __('custom_data.field_visible') }}</div>
-            <div style="width:160px" class="px-2">{{ __('app.actions') }}</div>
+            <div style="width:200px" class="px-2">{{ __('app.actions') }}</div>
         </div>
         {{-- Field rows — flex container so CSS order works --}}
         <div style="display:flex;flex-direction:column">
@@ -358,7 +360,7 @@ $iconTrash  = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                 </div>
 
                 {{-- Actions --}}
-                <div style="width:160px" class="px-2 flex items-center gap-2">
+                <div style="width:200px" class="px-2 flex items-center gap-2">
                     {{-- Edit field modal --}}
                     <div x-data="{ open: false }">
                         <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconEdit" @click="open = true">
@@ -424,10 +426,10 @@ $iconTrash  = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                         </div>
                                     </div>
                                     <div class="flex justify-end gap-3 px-6 pb-6">
-                                        <x-ta.button type="button" variant="outline" size="sm" @click="open = false">
+                                        <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconCancel" @click="open = false">
                                             {{ __('app.cancel') }}
                                         </x-ta.button>
-                                        <x-ta.button type="submit" variant="primary" size="sm">
+                                        <x-ta.button type="submit" variant="primary" size="sm" :startIcon="$iconSave">
                                             {{ __('app.save') }}
                                         </x-ta.button>
                                     </div>
