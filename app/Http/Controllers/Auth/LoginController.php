@@ -41,9 +41,16 @@ class LoginController extends Controller
                 ->onlyInput('email');
         }
 
-        // Reject suspended accounts before any session is written.
+        // Reject suspended accounts — return same generic error to avoid credential oracle.
         if ($user->status === 'suspended') {
-            return back()->withErrors(['email' => 'Your account has been suspended.'])
+            ActivityLogger::log('auth', 'login_suspended',
+                'Login attempt on suspended account: ' . $credentials['email'],
+                $user, $user,
+                'activity.log.login_suspended',
+                ['email' => $credentials['email']]
+            );
+
+            return back()->withErrors(['email' => 'These credentials do not match our records.'])
                 ->onlyInput('email');
         }
 

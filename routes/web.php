@@ -224,8 +224,8 @@ Route::middleware(['auth', 'role:admin|manager|editor', 'license.check', 'requir
     Route::post('/updates/install',         [UpdateController::class, 'install'])->name('updates.install')->middleware('role:admin');
 
     Route::get('/license',    [LicenseController::class, 'show'])->name('license');
-    Route::post('/license',   [LicenseController::class, 'update'])->name('license.update');
-    Route::delete('/license', [LicenseController::class, 'remove'])->name('license.remove');
+    Route::post('/license',   [LicenseController::class, 'update'])->name('license.update')->middleware('role:admin');
+    Route::delete('/license', [LicenseController::class, 'remove'])->name('license.remove')->middleware('role:admin');
 
     // UI Showcase (TailAdmin elements)
     Route::prefix('ui')->name('ui.')->group(function () {

@@ -92,9 +92,9 @@ class TwoFactorController extends Controller
             return back()->withErrors(['code' => __('auth.2fa_invalid_code')]);
         }
 
+        $request->session()->regenerate();
         \Illuminate\Support\Facades\Auth::login($user);
         $request->session()->forget('2fa_user_id');
-        $request->session()->regenerate();
 
         $home     = $user->hasAnyRole(['admin', 'manager']) ? route('admin.dashboard') : route('dashboard');
         $redirect = redirect()->intended($home);

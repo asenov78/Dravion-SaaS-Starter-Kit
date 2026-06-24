@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.12] — 2026-06-24
+requires: 1.15.11
+
+### Security
+- #38: role:admin middleware на license POST/DELETE маршрути
+- #39: suspend login — generic error (no credential oracle) + ActivityLog
+- #40: 2FA verify — session regenerate() ПРЕДИ Auth::login() (fixation fix)
+- #41: HtmlSanitizer — strip style= от всички елементи (CSS injection)
+- #42: Webhook 401 — махнато "secret not configured" от response body
+
 ## [1.15.11] — 2026-06-24
 requires: 1.15.10
 

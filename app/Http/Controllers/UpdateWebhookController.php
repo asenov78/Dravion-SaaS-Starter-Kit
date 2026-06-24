@@ -42,7 +42,7 @@ class UpdateWebhookController extends Controller
         $secret = config('updater.webhook_secret', '');
 
         if (! $secret) {
-            abort(401, 'Webhook secret not configured.');
+            abort(401);
         }
 
         $header = $request->header('X-Hub-Signature-256', '');

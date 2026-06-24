@@ -13,7 +13,7 @@ class HtmlSanitizer
     private const ALLOWED_ATTRS = [
         'a'   => ['href','title','target','rel'],
         'img' => ['src','alt','title','width','height'],
-        '*'   => ['class','id','style'],
+        '*'   => ['class','id'],
     ];
 
     public function sanitize(?string $html): ?string
@@ -75,16 +75,6 @@ class HtmlSanitizer
                         $attrRemove[] = $urlAttr;
                     }
                 }
-            }
-
-            // Strip CSS data-exfiltration vectors from style attribute.
-            // Blocks: url(), expression(), behavior(), vbscript(), @-rules, and -moz-binding property.
-            if ($child->hasAttribute('style')) {
-                $style = $child->getAttribute('style');
-                $style = preg_replace('/-moz-binding\s*:[^;]*/i', '', $style);
-                $style = preg_replace('/\b(url|expression|behavior|vbscript)\s*\(/i', 'BLOCKED(', $style ?? '');
-                $style = preg_replace('/@\w+/i', 'BLOCKED', $style ?? '');
-                $child->setAttribute('style', $style ?? '');
             }
 
             foreach (array_unique($attrRemove) as $a) {
