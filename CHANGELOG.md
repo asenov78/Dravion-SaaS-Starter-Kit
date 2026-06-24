@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.11] — 2026-06-24
+requires: 1.15.10
+
+### Fixed
+- Modal overflow/margin — max-h-[90vh] + overflow-y-auto на всички 4 модала
+
 ## [1.15.10] — 2026-06-24
 requires: 1.15.9
 

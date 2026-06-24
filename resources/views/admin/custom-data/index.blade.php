@@ -25,7 +25,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
         <div x-show="open" x-cloak @keydown.escape.window="open = false"
             class="fixed inset-0 z-99999 flex items-center justify-center p-5">
             <div @click="open = false" class="absolute inset-0 bg-gray-400/50 backdrop-blur-[32px]"></div>
-            <div @click.stop class="relative w-full max-w-md rounded-3xl bg-white dark:bg-gray-900 shadow-xl">
+            <div @click.stop class="relative w-full max-w-md rounded-3xl bg-white dark:bg-gray-900 shadow-xl overflow-y-auto max-h-[90vh]">
                 <button @click="open = false"
                     class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -155,7 +155,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                     <div x-show="open" x-cloak @keydown.escape.window="open = false"
                         class="fixed inset-0 z-99999 flex items-center justify-center p-5">
                         <div @click="open = false" class="absolute inset-0 bg-gray-400/50 backdrop-blur-[32px]"></div>
-                        <div @click.stop class="relative w-full max-w-lg rounded-3xl bg-white dark:bg-gray-900 shadow-xl">
+                        <div @click.stop class="relative w-full max-w-lg rounded-3xl bg-white dark:bg-gray-900 shadow-xl overflow-y-auto max-h-[90vh]">
                             <button @click="open = false"
                                 class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -243,7 +243,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                     <div x-show="open" x-cloak @keydown.escape.window="open = false"
                         class="fixed inset-0 z-99999 flex items-center justify-center p-5">
                         <div @click="open = false" class="absolute inset-0 bg-gray-400/50 backdrop-blur-[32px]"></div>
-                        <div @click.stop class="relative w-full max-w-md rounded-3xl bg-white dark:bg-gray-900 shadow-xl">
+                        <div @click.stop class="relative w-full max-w-md rounded-3xl bg-white dark:bg-gray-900 shadow-xl overflow-y-auto max-h-[90vh]">
                             <button @click="open = false"
                                 class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -370,7 +370,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                         <div x-show="open" x-cloak @keydown.escape.window="open = false"
                             class="fixed inset-0 z-99999 flex items-center justify-center p-5">
                             <div @click="open = false" class="absolute inset-0 bg-gray-400/50 backdrop-blur-[32px]"></div>
-                            <div @click.stop class="relative w-full max-w-lg rounded-3xl bg-white dark:bg-gray-900 shadow-xl">
+                            <div @click.stop class="relative w-full max-w-lg rounded-3xl bg-white dark:bg-gray-900 shadow-xl overflow-y-auto max-h-[90vh]">
                                 <button @click="open = false"
                                     class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
