@@ -169,9 +169,9 @@ class UserController extends Controller
             'email'       => ['required', 'email', 'max:191', Rule::unique('users')->ignore($user->id)],
             'password'    => 'nullable|string|min:8',
             'role'        => 'required|exists:roles,name',
-            'phone'      => 'nullable|string|max:191',
-            'country'    => 'nullable|string|max:191',
-            'city_state' => 'nullable|string|max:191',
+            'phone'      => 'sometimes|nullable|string|max:191',
+            'country'    => 'sometimes|nullable|string|max:191',
+            'city_state' => 'sometimes|nullable|string|max:191',
             'avatar'     => 'nullable|image|max:2048',
         ]);
 

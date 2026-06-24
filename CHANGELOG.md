@@ -2,6 +2,18 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.4] — 2026-06-24
+requires: 1.15.3
+
+### Fixed
+- **`updateField` трие options** при edit без промяна на options_en (empty string → `isset` = true → options се нулираха); fix: `!empty(trim(...))`
+- **`updateCategory` без guard** — system категории можеха да се преименуват; fix: `abort(403)` ако `is_system`
+- **`storeField` без guard за `account` категория** — полета добавени там никога не се рендират; fix: `abort(403)` ако `$cat->key === 'account'`
+- **`UserController::update()` трие phone/country/city_state** при save на потребител когато system полето е invisible (полето не се рендира → null в request → колоната се нулира); fix: `sometimes|nullable` validation rule
+
+### Added
+- 9 нови регресионни теста: options preserved, system category cannot be updated, account category guard, cascade delete, field value idempotency, invisible field hidden, non-admin access denied
+
 ## [1.15.3] — 2026-06-24
 requires: 1.15.2
 

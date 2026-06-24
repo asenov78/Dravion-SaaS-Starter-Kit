@@ -71,6 +71,10 @@ class CustomDataController extends Controller
 
     public function updateCategory(Request $request, CustomCategory $customCategory)
     {
+        if ($customCategory->is_system) {
+            abort(403, 'System categories cannot be updated.');
+        }
+
         $data = $request->validate([
             'name_en' => 'required|string|max:191',
             'name_bg' => 'required|string|max:191',
@@ -110,6 +114,11 @@ class CustomDataController extends Controller
         ]);
 
         $cat  = CustomCategory::findOrFail($data['category_id']);
+
+        if ($cat->key === 'account') {
+            abort(403, 'Cannot add custom fields to the account category.');
+        }
+
         $sort = ($cat->fields()->max('sort_order') ?? 0) + 10;
         $key  = Str::snake(Str::lower($data['label_en'])) . '_' . uniqid();
 
@@ -147,8 +156,8 @@ class CustomDataController extends Controller
         ]);
 
         $options = $customField->options;
-        if (in_array($customField->type, ['select', 'checkbox']) && isset($data['options_en'])) {
-            $options = $this->parseMultilingualOptions($data['options_en'] ?? '', $data['options_bg'] ?? '');
+        if (in_array($customField->type, ['select', 'checkbox']) && !empty(trim($data['options_en'] ?? ''))) {
+            $options = $this->parseMultilingualOptions($data['options_en'], $data['options_bg'] ?? '');
         }
 
         $customField->update([

@@ -482,6 +482,182 @@ class CustomDataTest extends TestCase
         $this->assertStringContainsString('Travel', $stored);
     }
 
+    // ── Phase 10: Bug regression ──────────────────────────────────────────────
+
+    public function test_update_select_field_preserves_options_when_submitted_empty(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+        $field = CustomField::create([
+            'category_id' => $cat->id,
+            'key'         => 'gender',
+            'label_en'    => 'Gender',
+            'label_bg'    => 'Пол',
+            'type'        => 'select',
+            'options'     => [['en' => 'Male', 'bg' => 'Мъж'], ['en' => 'Female', 'bg' => 'Жена']],
+            'is_visible'  => true,
+            'is_system'   => false,
+            'sort_order'  => 99,
+        ]);
+
+        // PATCH without providing options_en (browser sends empty string)
+        $this->actingAs($this->admin())
+            ->patch("/admin/custom-data/fields/{$field->id}", [
+                'label_en'   => 'Gender Updated',
+                'label_bg'   => 'Пол Обновен',
+                'options_en' => '',
+                'options_bg' => '',
+                'is_visible' => true,
+            ])
+            ->assertRedirect();
+
+        $fresh = $field->fresh();
+        $this->assertNotNull($fresh->options, 'Options should be preserved when options_en is empty');
+        $this->assertCount(2, $fresh->options);
+        $this->assertEquals('Male', $fresh->options[0]['en']);
+    }
+
+    public function test_system_category_cannot_be_updated(): void
+    {
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+
+        $this->actingAs($this->admin())
+            ->put("/admin/custom-data/categories/{$cat->id}", [
+                'name_en' => 'Hacked Name',
+                'name_bg' => 'Хакнато',
+            ])
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('custom_categories', ['key' => 'personal_info', 'name_en' => 'Personal Information']);
+    }
+
+    public function test_cannot_add_field_to_account_category(): void
+    {
+        $cat = CustomCategory::where('key', 'account')->first();
+
+        $this->actingAs($this->admin())
+            ->post('/admin/custom-data/fields', [
+                'category_id' => $cat->id,
+                'label_en'    => 'Test Field',
+                'label_bg'    => 'Тест',
+                'type'        => 'text',
+                'is_visible'  => true,
+            ])
+            ->assertForbidden();
+
+        $this->assertEquals(0, CustomField::where('category_id', $cat->id)->count());
+    }
+
+    public function test_invisible_system_field_does_not_clear_user_column_on_save(): void
+    {
+        $field = CustomField::where('key', 'phone')->first();
+        $field->update(['is_visible' => false]);
+
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+            'phone'             => '+359888999000',
+        ]);
+
+        // Save user without phone in request (invisible → not rendered)
+        $this->actingAs($this->admin())
+            ->put("/admin/users/{$user->id}", [
+                'name'  => $user->name,
+                'email' => $user->email,
+                'role'  => 'user',
+            ])
+            ->assertRedirect();
+
+        $this->assertSame('+359888999000', $user->fresh()->phone, 'Phone should not be cleared when its system field is invisible');
+    }
+
+    public function test_delete_category_cascades_to_fields_and_values(): void
+    {
+        $cat = CustomCategory::create([
+            'entity' => 'users', 'key' => 'temp_cat', 'name_en' => 'Temp', 'name_bg' => 'Временна',
+            'is_system' => false, 'sort_order' => 99,
+        ]);
+        $field = CustomField::create([
+            'category_id' => $cat->id, 'key' => 'temp_field', 'label_en' => 'Tmp',
+            'label_bg' => 'Тмп', 'type' => 'text', 'sort_order' => 1,
+        ]);
+        $user = User::factory()->create();
+        UserFieldValue::create(['user_id' => $user->id, 'field_id' => $field->id, 'value' => 'v']);
+
+        $this->actingAs($this->admin())
+            ->delete("/admin/custom-data/categories/{$cat->id}")
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('custom_categories',  ['id' => $cat->id]);
+        $this->assertDatabaseMissing('custom_fields',      ['id' => $field->id]);
+        $this->assertDatabaseMissing('user_field_values',  ['field_id' => $field->id]);
+    }
+
+    public function test_field_value_updated_on_re_save(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+        $field = CustomField::create([
+            'category_id' => $cat->id, 'key' => 'nickname2', 'label_en' => 'Nick',
+            'label_bg' => 'Псевдоним', 'type' => 'text', 'is_visible' => true,
+            'is_system' => false, 'sort_order' => 99,
+        ]);
+        $user = User::factory()->create(['email_verified_at' => now()]);
+
+        $this->actingAs($this->admin())
+            ->put("/admin/users/{$user->id}", [
+                'name' => $user->name, 'email' => $user->email, 'role' => 'user',
+                "field_{$field->id}" => 'First',
+            ])->assertRedirect();
+
+        $this->actingAs($this->admin())
+            ->put("/admin/users/{$user->id}", [
+                'name' => $user->name, 'email' => $user->email, 'role' => 'user',
+                "field_{$field->id}" => 'Second',
+            ])->assertRedirect();
+
+        $this->assertDatabaseHas('user_field_values', ['user_id' => $user->id, 'field_id' => $field->id, 'value' => 'Second']);
+        $this->assertEquals(1, UserFieldValue::where('user_id', $user->id)->where('field_id', $field->id)->count());
+    }
+
+    public function test_non_admin_cannot_access_custom_data_index(): void
+    {
+        $editor = User::factory()->create();
+        $editor->assignRole('editor');
+
+        $this->actingAs($editor)
+            ->get(route('admin.custom-data.index'))
+            ->assertForbidden();
+    }
+
+    public function test_non_admin_cannot_create_custom_category(): void
+    {
+        $editor = User::factory()->create();
+        $editor->assignRole('editor');
+
+        $this->actingAs($editor)
+            ->post('/admin/custom-data/categories', ['name_en' => 'X', 'name_bg' => 'X'])
+            ->assertForbidden();
+    }
+
+    public function test_invisible_custom_field_not_shown_in_user_edit(): void
+    {
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+        $field = CustomField::create([
+            'category_id' => $cat->id, 'key' => 'hidden_field', 'label_en' => 'SecretField',
+            'label_bg' => 'Скрито', 'type' => 'text', 'is_visible' => false,
+            'is_system' => false, 'sort_order' => 99,
+        ]);
+
+        $user = User::factory()->create();
+        $html = $this->actingAs($this->admin())
+            ->get("/admin/users/{$user->id}/edit")
+            ->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('SecretField', $html);
+        $this->assertStringNotContainsString("field_{$field->id}", $html);
+    }
+
     public function test_index_shows_categories_in_sort_order(): void
     {
         $cat1 = CustomCategory::where('key', 'personal_info')->first();
