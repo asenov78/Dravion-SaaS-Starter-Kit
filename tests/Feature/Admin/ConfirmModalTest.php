@@ -104,9 +104,12 @@ class ConfirmModalTest extends TestCase
             ->assertOk()
             ->getContent();
 
-        // Inline modals: rounded-3xl bg-white dark:bg-gray-900
-        $this->assertStringContainsString('rounded-3xl bg-white dark:bg-gray-900', $html,
-            'Custom-data inline modals must use bg-white dark:bg-gray-900');
+        // Inline modals match the confirm modal: rounded-2xl + border + bg-white + dark:bg-gray-900
+        $this->assertStringContainsString('rounded-2xl border border-gray-200 bg-white', $html,
+            'Custom-data inline modals must use rounded-2xl border-gray-200 bg-white (matches confirm modal)');
+
+        $this->assertStringContainsString('dark:bg-gray-900', $html,
+            'Custom-data inline modals must use dark:bg-gray-900 for dark theme');
     }
 
     public function test_custom_data_inline_modals_have_pr14_header(): void
@@ -175,16 +178,17 @@ class ConfirmModalTest extends TestCase
             ->assertOk()
             ->getContent();
 
-        // All inline modals must use "bg-white dark:bg-gray-900" not bare "bg-gray-900"
-        $bareCount   = substr_count($html, '" bg-gray-900"') + substr_count($html, ' bg-gray-900 ');
-        $prefixCount = substr_count($html, 'dark:bg-gray-900');
-
-        // Any bg-gray-900 must be accompanied by a dark: prefix somewhere on the same element.
-        // The simplest check: confirm inline modals use the correct combined class.
+        // Inline modals must match confirm modal style:
+        // rounded-2xl + border + bg-white in light, dark:bg-gray-900 in dark
         $this->assertStringContainsString(
-            'bg-white dark:bg-gray-900',
+            'rounded-2xl border border-gray-200 bg-white',
             $html,
-            'Inline modals on custom-data page must use bg-white dark:bg-gray-900 (not bare bg-gray-900)'
+            'Inline modals on custom-data page must use rounded-2xl border-gray-200 bg-white (not bare bg-gray-900)'
+        );
+        $this->assertStringNotContainsString(
+            'rounded-3xl',
+            $html,
+            'Inline modals must not use rounded-3xl — must match confirm modal rounded-2xl'
         );
     }
 }

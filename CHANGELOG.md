@@ -2,6 +2,15 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.16] — 2026-06-25
+requires: 1.15.15
+
+### Fixed
+- Custom-data inline modals now match confirm modal visually: rounded-2xl (was 3xl), border-gray-200, shadow-2xl (was xl), overlay bg-gray-900/60 (was backdrop-blur), x-transition на overlay и panel
+
+### Tests
+- ConfirmModalTest: обновени assertions за новия стил (rounded-2xl border-gray-200, not rounded-3xl)
+
 ## [1.15.15] — 2026-06-25
 requires: 1.15.14
 
