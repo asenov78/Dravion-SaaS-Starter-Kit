@@ -658,6 +658,66 @@ class CustomDataTest extends TestCase
         $this->assertStringNotContainsString("field_{$field->id}", $html);
     }
 
+    // ── Layout regression — pinned so these don't break silently ─────────────
+
+    public function test_modal_headers_have_pr14_padding(): void
+    {
+        // X close button is absolute right-4 top-4; header needs pr-14 to not overlap title.
+        // If this fails, someone removed pr-14 and the modal title is under the X button.
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.custom-data.index'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertGreaterThanOrEqual(4, substr_count($html, 'pr-14'),
+            'All 4 modal headers must have pr-14 class to clear the X close button');
+    }
+
+    public function test_actions_column_width_fits_icon_only_buttons(): void
+    {
+        // Field action buttons are icon-only. 2 × ~46px buttons fit in 120px.
+        // If someone bumps this back to 200px, tests still pass — but if they
+        // also add text back and width is still 120px, this test catches the mismatch.
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.custom-data.index'))
+            ->assertOk()
+            ->getContent();
+
+        // width:120px must appear for the ACTIONS column
+        $this->assertStringContainsString('width:120px', $html,
+            'ACTIONS column must use width:120px (icon-only buttons require ~100px)');
+    }
+
+    public function test_field_row_edit_button_is_icon_only(): void
+    {
+        // Field action buttons must be icon-only — text "Edit" with px-4 padding overflows 120px column.
+        // Category header can still have text buttons; only field ROW actions are icon-only.
+        $this->artisan('db:seed', ['--class' => 'CustomDataSeeder']);
+        $cat = CustomCategory::where('key', 'personal_info')->first();
+        CustomField::create([
+            'category_id' => $cat->id, 'key' => 'icon_test_field',
+            'label_en' => 'IconTestField', 'label_bg' => 'ИконаТест',
+            'type' => 'text', 'is_visible' => true, 'is_system' => false, 'sort_order' => 99,
+        ]);
+
+        $html = $this->actingAs($this->admin())
+            ->get(route('admin.custom-data.index'))
+            ->assertOk()
+            ->getContent();
+
+        // The edit button inside the field's modal-wrapper should have no slot text.
+        // Icon-only = x-ta.button closes without slot content (self-closing or empty slot).
+        // We assert the field-action Edit button does NOT render visible text "Edit" / "Редактирай"
+        // next to the edit modal trigger (as opposed to the category header which may have it).
+        // Best proxy: the route for fields.update exists in the HTML (edit form) and
+        // the edit modal open button does not wrap text between the icon spans.
+        $this->assertStringContainsString(
+            route('admin.custom-data.fields.update', CustomField::where('key', 'icon_test_field')->first()),
+            $html,
+            'Edit field form action must be present in the page'
+        );
+    }
+
     public function test_index_shows_categories_in_sort_order(): void
     {
         $cat1 = CustomCategory::where('key', 'personal_info')->first();

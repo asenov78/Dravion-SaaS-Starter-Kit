@@ -30,7 +30,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                     class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                 </button>
-                <div class="px-6 pt-6 pb-2 border-b border-gray-100 dark:border-gray-800">
+                <div class="px-6 pt-6 pb-2 pr-14 border-b border-gray-100 dark:border-gray-800">
                     <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('custom_data.add_category') }}</h3>
                 </div>
                 <form method="POST" action="{{ route('admin.custom-data.categories.store') }}">
@@ -160,7 +160,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                 class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                             </button>
-                            <div class="px-6 pt-6 pb-2 border-b border-gray-100 dark:border-gray-800">
+                            <div class="px-6 pt-6 pb-2 pr-14 border-b border-gray-100 dark:border-gray-800">
                                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('custom_data.add_field') }}</h3>
                             </div>
                             <form method="POST" action="{{ route('admin.custom-data.fields.store') }}"
@@ -248,7 +248,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                 class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                             </button>
-                            <div class="px-6 pt-6 pb-2 border-b border-gray-100 dark:border-gray-800">
+                            <div class="px-6 pt-6 pb-2 pr-14 border-b border-gray-100 dark:border-gray-800">
                                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('custom_data.edit_category') }}</h3>
                             </div>
                             <form method="POST" action="{{ route('admin.custom-data.categories.update', $category) }}">
@@ -297,9 +297,9 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
             <div style="width:40px"></div>
             <div class="flex-1 px-2">{{ __('custom_data.field_label') }}</div>
             <div style="width:110px" class="px-2">{{ __('custom_data.field_type') }}</div>
-            <div style="width:90px" class="px-2">{{ __('custom_data.field_required') }}</div>
-            <div style="width:90px" class="px-2">{{ __('custom_data.field_visible') }}</div>
-            <div style="width:200px" class="px-2">{{ __('app.actions') }}</div>
+            <div style="width:90px;overflow:hidden;white-space:nowrap" class="px-2">{{ __('custom_data.field_required') }}</div>
+            <div style="width:90px;overflow:hidden;white-space:nowrap" class="px-2">{{ __('custom_data.field_visible') }}</div>
+            <div style="width:120px" class="px-2">{{ __('app.actions') }}</div>
         </div>
         {{-- Field rows — flex container so CSS order works --}}
         <div style="display:flex;flex-direction:column">
@@ -360,12 +360,10 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                 </div>
 
                 {{-- Actions --}}
-                <div style="width:200px" class="px-2 flex items-center gap-2">
+                <div style="width:120px" class="px-2 flex items-center gap-2">
                     {{-- Edit field modal --}}
                     <div x-data="{ open: false }">
-                        <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconEdit" @click="open = true">
-                            {{ __('app.edit') }}
-                        </x-ta.button>
+                        <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconEdit" @click="open = true" />
 
                         <div x-show="open" x-cloak @keydown.escape.window="open = false"
                             class="fixed inset-0 z-99999 flex items-center justify-center p-5">
@@ -375,7 +373,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                     class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                                 </button>
-                                <div class="px-6 pt-6 pb-2 border-b border-gray-100 dark:border-gray-800">
+                                <div class="px-6 pt-6 pb-2 pr-14 border-b border-gray-100 dark:border-gray-800">
                                     <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('custom_data.edit_field') }}</h3>
                                 </div>
                                 <form method="POST" action="{{ route('admin.custom-data.fields.update', $field) }}">
@@ -442,7 +440,6 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                     <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconTrash"
                         x-data
                         @click="$dispatch('confirm-action', { title: '{{ __('custom_data.delete_field') }}', message: '{{ __('custom_data.delete_field_confirm') }}', btnLabel: '{{ __('app.delete') }}', btnColor: '#dc2626', url: '{{ route('admin.custom-data.fields.destroy', $field) }}', method: 'DELETE', successAction: 'redirect', targetId: '{{ route('admin.custom-data.index') }}', toastMessage: '{{ addslashes(__('flash.custom_field_deleted')) }}', toastVariant: 'success' })">
-                        {{ __('app.delete') }}
                     </x-ta.button>
                     @endif
                 </div>

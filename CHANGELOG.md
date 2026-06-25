@@ -2,6 +2,18 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.13] — 2026-06-24
+requires: 1.15.12
+
+### Fixed
+- Modal header pr-14 padding — заглавие вече не се скрива зад X бутона (всички 4 модала)
+- Field action бутони icon-only — "Редактирай" текст не overflow-ва 120px колоната
+- ACTIONS колона 200px → 120px (2 icon бутона = ~100px)
+- ЗАДЪЛЖИТЕЛНО/ВИДИМО хедъри overflow:hidden;white-space:nowrap
+
+### Tests
+- 3 layout regression теста добавени в CustomDataTest (pr-14, width:120px, edit route present)
+
 ## [1.15.12] — 2026-06-24
 requires: 1.15.11
 
