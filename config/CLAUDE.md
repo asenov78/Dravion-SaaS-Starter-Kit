@@ -20,7 +20,7 @@ Laravel configuration files. All standard Laravel configs plus two project-speci
 | `repo` | `GITHUB_REPO` | GitHub repo name. |
 | `token` | `GITHUB_TOKEN` | Fine-grained PAT (`contents:read` scope, this repo only). Empty = public repo access. |
 | `work_dir` | — | `storage/app/updates` — staging area for downloaded ZIPs. |
-| `protected_paths` | — | Paths never overwritten by an update: `.env`, `config/dravion.php`, `config/google2fa.php`, `storage`, `vendor`, `node_modules`, `public/storage`, `public/build`. |
+| `protected_paths` | — | Paths never overwritten by an update: `.env`, `config/dravion.php`, `config/google2fa.php`, `storage`, `vendor`, `node_modules`, `public/storage`. Note: `public/build` is NOT protected — the release ZIP includes compiled assets built by CI. |
 
 ## Standard Laravel configs (present, not customised)
 

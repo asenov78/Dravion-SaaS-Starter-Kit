@@ -227,4 +227,83 @@ class UpdaterServiceTest extends TestCase
         $releases = $this->svc()->getReleases();
         $this->assertSame('1.0.0', $releases[0]['requires']); // v prefix stripped
     }
+
+    // --- asset URL preference tests ---
+
+    public function test_prefers_release_asset_zip_over_zipball_url(): void
+    {
+        // The CI workflow builds dravion-vX.Y.Z.zip with npm run build + no dev deps.
+        // zipball_url is the raw git source and does NOT include public/build (gitignored).
+        // The updater must prefer the release asset over zipball_url.
+        config(['dravion.version' => '1.0.0', 'updater.owner' => 'o', 'updater.repo' => 'r', 'updater.token' => '']);
+
+        $assetUrl = 'https://github.com/o/r/releases/download/v1.0.1/dravion-v1.0.1.zip';
+        Http::fake([
+            'api.github.com/*' => Http::response([[
+                'tag_name'    => 'v1.0.1',
+                'body'        => 'Some changes',
+                'zipball_url' => 'https://api.github.com/repos/o/r/zipball/v1.0.1',
+                'draft'       => false,
+                'prerelease'  => false,
+                'assets'      => [[
+                    'name'                  => 'dravion-v1.0.1.zip',
+                    'browser_download_url'  => $assetUrl,
+                ]],
+            ]], 200),
+        ]);
+
+        $releases = $this->svc()->getReleases();
+
+        $this->assertSame($assetUrl, $releases[0]['zip_url'],
+            'zip_url must point to the release asset (has public/build), not zipball_url (missing public/build)');
+    }
+
+    public function test_falls_back_to_zipball_when_no_release_asset(): void
+    {
+        // Older releases or releases without the custom ZIP should still work via zipball_url.
+        config(['dravion.version' => '1.0.0', 'updater.owner' => 'o', 'updater.repo' => 'r', 'updater.token' => '']);
+
+        $zipballUrl = 'https://api.github.com/repos/o/r/zipball/v1.0.1';
+        Http::fake([
+            'api.github.com/*' => Http::response([[
+                'tag_name'    => 'v1.0.1',
+                'body'        => 'Some changes',
+                'zipball_url' => $zipballUrl,
+                'draft'       => false,
+                'prerelease'  => false,
+                'assets'      => [],
+            ]], 200),
+        ]);
+
+        $releases = $this->svc()->getReleases();
+
+        $this->assertSame($zipballUrl, $releases[0]['zip_url'],
+            'When no release asset exists, must fall back to zipball_url');
+    }
+
+    public function test_ignores_non_dravion_assets(): void
+    {
+        // Only assets named "dravion-*.zip" should be used; other attachments are ignored.
+        config(['dravion.version' => '1.0.0', 'updater.owner' => 'o', 'updater.repo' => 'r', 'updater.token' => '']);
+
+        $zipballUrl = 'https://api.github.com/repos/o/r/zipball/v1.0.1';
+        Http::fake([
+            'api.github.com/*' => Http::response([[
+                'tag_name'    => 'v1.0.1',
+                'body'        => 'Some changes',
+                'zipball_url' => $zipballUrl,
+                'draft'       => false,
+                'prerelease'  => false,
+                'assets'      => [[
+                    'name'                 => 'checksums.txt',
+                    'browser_download_url' => 'https://github.com/o/r/releases/download/v1.0.1/checksums.txt',
+                ]],
+            ]], 200),
+        ]);
+
+        $releases = $this->svc()->getReleases();
+
+        $this->assertSame($zipballUrl, $releases[0]['zip_url'],
+            'Non-dravion assets (e.g. checksums.txt) must be ignored; fall back to zipball_url');
+    }
 }

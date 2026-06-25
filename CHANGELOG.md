@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.15] — 2026-06-25
+requires: 1.15.14
+
+### Fixed
+- Updater: prefer release asset ZIP (`dravion-vX.Y.Z.zip`) over `zipball_url` — zipball lacks `public/build` (gitignored), asset has CI-compiled assets
+- `config/updater.php` CLAUDE.md: corrected stale note claiming `public/build` is in protected_paths (it is not)
+
+### Tests
+- UpdaterServiceTest: 3 new tests — prefers asset over zipball, falls back when no asset, ignores non-dravion assets
+
 ## [1.15.14] — 2026-06-24
 requires: 1.15.13
 

@@ -68,11 +68,22 @@ class UpdaterService
             preg_match('/^requires:\s*v?(\d+\.\d+\.\d+)/mi', $body, $m);
             $requires = $m[1] ?? null;
 
+            // Prefer the release asset ZIP (built with npm run build + no dev deps)
+            // over zipball_url which is the raw git source and lacks public/build.
+            $zipUrl = (string) ($item['zipball_url'] ?? '');
+            foreach ((array) ($item['assets'] ?? []) as $asset) {
+                $name = (string) ($asset['name'] ?? '');
+                if (str_ends_with($name, '.zip') && str_starts_with($name, 'dravion-')) {
+                    $zipUrl = (string) ($asset['browser_download_url'] ?? $zipUrl);
+                    break;
+                }
+            }
+
             $releases[] = [
                 'tag'       => $tag,
                 'version'   => ltrim($tag, 'vV'),
                 'changelog' => $body,
-                'zip_url'   => (string) ($item['zipball_url'] ?? ''),
+                'zip_url'   => $zipUrl,
                 'requires'  => $requires,
             ];
         }
