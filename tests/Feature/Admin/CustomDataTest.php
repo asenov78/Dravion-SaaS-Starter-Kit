@@ -660,17 +660,20 @@ class CustomDataTest extends TestCase
 
     // ── Layout regression — pinned so these don't break silently ─────────────
 
-    public function test_modal_headers_have_pr14_padding(): void
+    public function test_modal_headers_flat_layout(): void
     {
-        // X close button is absolute right-4 top-4; header needs pr-14 to not overlap title.
-        // If this fails, someone removed pr-14 and the modal title is under the X button.
+        // Flat p-6 panel layout (no header separator, no X button) — matches confirm modal style.
         $html = $this->actingAs($this->admin())
             ->get(route('admin.custom-data.index'))
             ->assertOk()
             ->getContent();
 
-        $this->assertGreaterThanOrEqual(4, substr_count($html, 'pr-14'),
-            'All 4 modal headers must have pr-14 class to clear the X close button');
+        $this->assertStringNotContainsString('pt-6 pb-2 pr-14', $html,
+            'Modals must not have old header div — flat p-6 layout required');
+        $this->assertStringNotContainsString('absolute right-4 top-4', $html,
+            'Modals must not have X close button — flat layout removed it');
+        $this->assertGreaterThanOrEqual(4, substr_count($html, 'mb-6'),
+            'All 4 modal titles must use mb-6 (flat layout)');
     }
 
     public function test_actions_column_width_fits_icon_only_buttons(): void

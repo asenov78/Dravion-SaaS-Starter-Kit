@@ -112,16 +112,20 @@ class ConfirmModalTest extends TestCase
             'Custom-data inline modals must use dark:bg-gray-900 for dark theme');
     }
 
-    public function test_custom_data_inline_modals_have_pr14_header(): void
+    public function test_custom_data_inline_modals_have_flat_p6_layout(): void
     {
-        // Modal headers need pr-14 to clear the X close button
+        // Modals use flat p-6 panel (no header separator, no X button) — same as confirm modal
         $html = $this->actingAs($this->admin())
             ->get(route('admin.custom-data.index'))
             ->assertOk()
             ->getContent();
 
-        $this->assertGreaterThanOrEqual(4, substr_count($html, 'pr-14'),
-            'All 4 modal headers must have pr-14 padding to clear the X close button');
+        $this->assertStringNotContainsString('pt-6 pb-2 pr-14', $html,
+            'Inline modals must not have old header div with pt-6 pb-2 pr-14 — flat p-6 layout required');
+        $this->assertStringNotContainsString('absolute right-4 top-4', $html,
+            'Inline modals must not have X close button — flat layout removed it');
+        $this->assertGreaterThanOrEqual(4, substr_count($html, 'mb-6'),
+            'All 4 modal titles must use mb-6 spacing (flat layout without header separator)');
     }
 
     public function test_custom_data_field_modals_use_confirm_event_for_delete(): void

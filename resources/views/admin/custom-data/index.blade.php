@@ -31,17 +31,11 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
             <div @click.stop
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-y-auto max-h-[90vh] dark:border-gray-800 dark:bg-gray-900">
-                <button @click="open = false"
-                    class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
-                <div class="px-6 pt-6 pb-2 pr-14 border-b border-gray-100 dark:border-gray-800">
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('custom_data.add_category') }}</h3>
-                </div>
+                 class="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl overflow-y-auto max-h-[90vh] dark:border-gray-800 dark:bg-gray-900">
+                <h3 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-6">{{ __('custom_data.add_category') }}</h3>
                 <form method="POST" action="{{ route('admin.custom-data.categories.store') }}">
                     @csrf
-                    <div class="p-6 flex flex-col gap-4">
+                    <div class="flex flex-col gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_en') }}</label>
                             <input type="text" name="name_en" required
@@ -53,7 +47,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                 class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
                         </div>
                     </div>
-                    <div class="flex justify-end gap-3 px-6 pb-6">
+                    <div class="flex justify-end gap-3 mt-6">
                         <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconCancel" @click="open = false">
                             {{ __('app.cancel') }}
                         </x-ta.button>
@@ -167,19 +161,13 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                         <div @click.stop
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-lg rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-y-auto max-h-[90vh] dark:border-gray-800 dark:bg-gray-900">
-                            <button @click="open = false"
-                                class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                            </button>
-                            <div class="px-6 pt-6 pb-2 pr-14 border-b border-gray-100 dark:border-gray-800">
-                                <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('custom_data.add_field') }}</h3>
-                            </div>
+                 class="relative w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl overflow-y-auto max-h-[90vh] dark:border-gray-800 dark:bg-gray-900">
+                            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-6">{{ __('custom_data.add_field') }}</h3>
                             <form method="POST" action="{{ route('admin.custom-data.fields.store') }}"
                                 x-data="{ fieldType: 'text' }">
                                 @csrf
                                 <input type="hidden" name="category_id" value="{{ $category->id }}">
-                                <div class="p-6 flex flex-col gap-4">
+                                <div class="flex flex-col gap-4">
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_en') }}</label>
@@ -232,7 +220,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                         </label>
                                     </div>
                                 </div>
-                                <div class="flex justify-end gap-3 px-6 pb-6">
+                                <div class="flex justify-end gap-3 mt-6">
                                     <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconCancel" @click="open = false">
                                         {{ __('app.cancel') }}
                                     </x-ta.button>
@@ -261,17 +249,11 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                         <div @click.stop
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-y-auto max-h-[90vh] dark:border-gray-800 dark:bg-gray-900">
-                            <button @click="open = false"
-                                class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                            </button>
-                            <div class="px-6 pt-6 pb-2 pr-14 border-b border-gray-100 dark:border-gray-800">
-                                <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('custom_data.edit_category') }}</h3>
-                            </div>
+                 class="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl overflow-y-auto max-h-[90vh] dark:border-gray-800 dark:bg-gray-900">
+                            <h3 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-6">{{ __('custom_data.edit_category') }}</h3>
                             <form method="POST" action="{{ route('admin.custom-data.categories.update', $category) }}">
                                 @csrf @method('PUT')
-                                <div class="p-6 flex flex-col gap-4">
+                                <div class="flex flex-col gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_en') }}</label>
                                         <input type="text" name="name_en" value="{{ $category->name_en }}" required
@@ -283,7 +265,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                             class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90" />
                                     </div>
                                 </div>
-                                <div class="flex justify-end gap-3 px-6 pb-6">
+                                <div class="flex justify-end gap-3 mt-6">
                                     <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconCancel" @click="open = false">
                                         {{ __('app.cancel') }}
                                     </x-ta.button>
@@ -392,17 +374,11 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                             <div @click.stop
                  x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                  x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-                 class="relative w-full max-w-lg rounded-2xl border border-gray-200 bg-white shadow-2xl overflow-y-auto max-h-[90vh] dark:border-gray-800 dark:bg-gray-900">
-                                <button @click="open = false"
-                                    class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                                </button>
-                                <div class="px-6 pt-6 pb-2 pr-14 border-b border-gray-100 dark:border-gray-800">
-                                    <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">{{ __('custom_data.edit_field') }}</h3>
-                                </div>
+                 class="relative w-full max-w-lg rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl overflow-y-auto max-h-[90vh] dark:border-gray-800 dark:bg-gray-900">
+                                <h3 class="text-base font-semibold text-gray-800 dark:text-white/90 mb-6">{{ __('custom_data.edit_field') }}</h3>
                                 <form method="POST" action="{{ route('admin.custom-data.fields.update', $field) }}">
                                     @csrf @method('PATCH')
-                                    <div class="p-6 flex flex-col gap-4">
+                                    <div class="flex flex-col gap-4">
                                         <div class="grid grid-cols-2 gap-4">
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-1">{{ __('custom_data.label_en') }}</label>
@@ -447,7 +423,7 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="flex justify-end gap-3 px-6 pb-6">
+                                    <div class="flex justify-end gap-3 mt-6">
                                         <x-ta.button type="button" variant="outline" size="sm" :startIcon="$iconCancel" @click="open = false">
                                             {{ __('app.cancel') }}
                                         </x-ta.button>
