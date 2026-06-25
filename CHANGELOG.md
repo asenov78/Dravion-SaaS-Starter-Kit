@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.19] — 2026-06-25
+requires: 1.15.18
+
+### Changed
+- Custom Data модали (Add/Edit Category, Add/Edit Field) — плосък `p-6` layout без header separator и X бутон, съвпадащ с confirm modal стила
+
 ## [1.15.18] — 2026-06-25
 requires: 1.15.17
 
