@@ -301,23 +301,23 @@
     <div @click.stop
          x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
          x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-         class="relative w-full max-w-md rounded-2xl border border-gray-800 bg-gray-900 p-6 shadow-2xl">
+         class="relative w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-800 dark:bg-gray-900">
 
         <div class="flex items-start gap-4">
             <div class="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-error-500/10 border border-error-500/20">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="text-error-400">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="text-error-500 dark:text-error-400">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                 </svg>
             </div>
             <div class="flex-1 min-w-0">
-                <h3 class="text-base font-semibold text-white/90 mb-1" x-text="title"></h3>
-                <p class="text-sm text-gray-400" x-text="message"></p>
+                <h3 class="text-base font-semibold text-gray-800 mb-1 dark:text-white/90" x-text="title"></h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400" x-text="message"></p>
             </div>
         </div>
 
         <div class="flex justify-end gap-3 mt-6">
             <button @click="open = false"
-                class="inline-flex items-center rounded-lg border border-gray-700 bg-transparent px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 transition-colors">
+                class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors dark:border-gray-700 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800">
                 {{ __('app.cancel') }}
             </button>
             <button @click="confirm()" :disabled="loading"

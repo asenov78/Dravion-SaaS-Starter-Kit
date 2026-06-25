@@ -2,6 +2,15 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.14] — 2026-06-24
+requires: 1.15.13
+
+### Fixed
+- Confirm modal (global) — light theme fix: bg-white dark:bg-gray-900, text-gray-800 dark:text-white/90, Cancel border-gray-300 dark:border-gray-700
+
+### Tests
+- ConfirmModalTest.php (9 теста) — пин на светла/тъмна тема структура на модалите
+
 ## [1.15.13] — 2026-06-24
 requires: 1.15.12
 
