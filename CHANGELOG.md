@@ -2,6 +2,15 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.17] — 2026-06-25
+requires: 1.15.16
+
+### Fixed
+- GitHubZipUrl validation rule now accepts release asset URLs (`https://github.com/{owner}/{repo}/releases/download/...`) — previously only `api.github.com` zipball URLs passed, causing install POST to return 302 HTML redirect instead of JSON → "Unexpected token '<'" error in JS
+
+### Tests
+- UpdatePageTest: 3 new tests — accepts zipball_url, accepts release asset URL, rejects different repo
+
 ## [1.15.16] — 2026-06-25
 requires: 1.15.15
 

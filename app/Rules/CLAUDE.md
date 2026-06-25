@@ -6,7 +6,7 @@ Custom Laravel validation rules implementing `ValidationRule`. Each rule is sing
 
 | File | Purpose |
 |---|---|
-| `GitHubZipUrl.php` | Validates that a ZIP URL belongs to the configured GitHub repo (`updater.owner` / `updater.repo`). Used in `UpdateController` to prevent installing arbitrary ZIPs. Checks prefix `https://api.github.com/repos/{owner}/{repo}/`. |
+| `GitHubZipUrl.php` | Validates that a ZIP URL belongs to the configured GitHub repo (`updater.owner` / `updater.repo`). Used in `UpdateController` to prevent installing arbitrary ZIPs. Accepts two prefixes: `https://api.github.com/repos/{owner}/{repo}/` (zipball_url) OR `https://github.com/{owner}/{repo}/releases/download/` (release asset). |
 
 ## Conventions
 

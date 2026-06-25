@@ -322,6 +322,42 @@ class UpdatePageTest extends TestCase
             ->assertStatus(302);
     }
 
+    // --- GitHubZipUrl rule: asset URL vs zipball_url ---
+
+    public function test_github_zip_url_rule_accepts_zipball_url(): void
+    {
+        config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+        $rule = new \App\Rules\GitHubZipUrl;
+        $failed = false;
+        $rule->validate('zip_url', 'https://api.github.com/repos/acme/my-app/zipball/v1.0.1', function () use (&$failed) {
+            $failed = true;
+        });
+        $this->assertFalse($failed, 'GitHubZipUrl rule must accept zipball_url');
+    }
+
+    public function test_github_zip_url_rule_accepts_release_asset_url(): void
+    {
+        // browser_download_url pattern — added in v1.15.17 to support CI-built release ZIPs
+        config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+        $rule = new \App\Rules\GitHubZipUrl;
+        $failed = false;
+        $rule->validate('zip_url', 'https://github.com/acme/my-app/releases/download/v1.0.1/dravion-v1.0.1.zip', function () use (&$failed) {
+            $failed = true;
+        });
+        $this->assertFalse($failed, 'GitHubZipUrl rule must accept release asset URL (browser_download_url)');
+    }
+
+    public function test_github_zip_url_rule_rejects_different_repo(): void
+    {
+        config(['updater.owner' => 'acme', 'updater.repo' => 'my-app']);
+        $rule = new \App\Rules\GitHubZipUrl;
+        $failed = false;
+        $rule->validate('zip_url', 'https://github.com/evil/other-repo/releases/download/v1.0.1/file.zip', function () use (&$failed) {
+            $failed = true;
+        });
+        $this->assertTrue($failed, 'GitHubZipUrl rule must reject asset URLs from a different repo');
+    }
+
     // --- requires / sequential chain install gate ---
 
     public function test_install_blocked_when_requires_not_satisfied(): void
