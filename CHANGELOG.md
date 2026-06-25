@@ -2,6 +2,12 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.20] — 2026-06-25
+requires: 1.15.19
+
+### Fixed
+- Custom Data: премахнат дублиран success alert — `session('success')` в blade + layout toast бяха едновременно активни
+
 ## [1.15.19] — 2026-06-25
 requires: 1.15.18
 

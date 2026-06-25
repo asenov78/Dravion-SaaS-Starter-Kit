@@ -61,9 +61,6 @@ $iconCancel = new \Illuminate\Support\HtmlString('<svg width="14" height="14" vi
     </div>
 </div>
 
-@if (session('success'))
-    <x-ui.alert variant="success" :message="session('success')" class="mb-6" />
-@endif
 @if($errors->any())
     <x-ui.alert variant="error" :message="$errors->first()" class="mb-6" />
 @endif
