@@ -2,6 +2,13 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.18] — 2026-06-25
+requires: 1.15.17
+
+### Fixed
+- CSP: добавени `https://fonts.googleapis.com` към `style-src` и `https://fonts.gstatic.com` към `font-src` — Tailwind v4 `@import` в compiled CSS беше блокиран
+- Alpine.js Collapse plugin (`@alpinejs/collapse`) добавен към `app.js` — `x-collapse` на Updates страница и accordion компоненти вече работи
+
 ## [1.15.17] — 2026-06-25
 requires: 1.15.16
 
