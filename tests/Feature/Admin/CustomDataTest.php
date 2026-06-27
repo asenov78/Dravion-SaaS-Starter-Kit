@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\CustomCategory;
 use App\Models\CustomField;
+use App\Models\Setting;
 use App\Models\User;
 use App\Models\UserFieldValue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -736,5 +737,118 @@ class CustomDataTest extends TestCase
         $pos1 = strpos($html, $cat1->name_en);
         $pos2 = strpos($html, $cat2->name_en);
         $this->assertLessThan($pos1, $pos2, 'Address (sort_order=10) should appear before Personal Information (sort_order=50)');
+    }
+
+    // ── Activity Log ─────────────────────────────────────────────────────────
+
+    private function enableCustomDataLog(): void
+    {
+        Setting::set('activity_log_custom_data', '1');
+    }
+
+    public function test_create_category_logs_activity(): void
+    {
+        $this->enableCustomDataLog();
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->post(route('admin.custom-data.categories.store'), [
+            'name_en' => 'Test Log Cat', 'name_bg' => 'Тест Лог Кат',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'custom_data',
+            'event'     => 'category_created',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    public function test_update_category_logs_activity(): void
+    {
+        $this->enableCustomDataLog();
+        $admin = $this->admin();
+        $cat = CustomCategory::factory()->create(['is_system' => false]);
+
+        $this->actingAs($admin)->put(route('admin.custom-data.categories.update', $cat), [
+            'name_en' => 'Updated EN', 'name_bg' => 'Updated BG',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'   => 'custom_data',
+            'event'      => 'category_updated',
+            'causer_id'  => $admin->id,
+            'subject_id' => $cat->id,
+        ]);
+    }
+
+    public function test_delete_category_logs_activity(): void
+    {
+        $this->enableCustomDataLog();
+        $admin = $this->admin();
+        $cat = CustomCategory::factory()->create(['is_system' => false]);
+
+        $this->actingAs($admin)->delete(route('admin.custom-data.categories.destroy', $cat))
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'custom_data',
+            'event'     => 'category_deleted',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    public function test_create_field_logs_activity(): void
+    {
+        $this->enableCustomDataLog();
+        $admin = $this->admin();
+        $cat = CustomCategory::factory()->create(['is_system' => false, 'key' => 'log_test_cat_' . uniqid()]);
+
+        $this->actingAs($admin)->post(route('admin.custom-data.fields.store'), [
+            'category_id' => $cat->id,
+            'label_en'    => 'Log Field EN',
+            'label_bg'    => 'Log Field BG',
+            'type'        => 'text',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'custom_data',
+            'event'     => 'field_created',
+            'causer_id' => $admin->id,
+        ]);
+    }
+
+    public function test_update_field_logs_activity(): void
+    {
+        $this->enableCustomDataLog();
+        $admin = $this->admin();
+        $cat = CustomCategory::factory()->create(['is_system' => false]);
+        $field = CustomField::factory()->create(['category_id' => $cat->id, 'is_system' => false]);
+
+        $this->actingAs($admin)->patch(route('admin.custom-data.fields.update', $field), [
+            'label_en' => 'New EN', 'label_bg' => 'New BG',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'   => 'custom_data',
+            'event'      => 'field_updated',
+            'causer_id'  => $admin->id,
+            'subject_id' => $field->id,
+        ]);
+    }
+
+    public function test_delete_field_logs_activity(): void
+    {
+        $this->enableCustomDataLog();
+        $admin = $this->admin();
+        $cat = CustomCategory::factory()->create(['is_system' => false]);
+        $field = CustomField::factory()->create(['category_id' => $cat->id, 'is_system' => false]);
+
+        $this->actingAs($admin)->delete(route('admin.custom-data.fields.destroy', $field))
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('activity_log', [
+            'log_name'  => 'custom_data',
+            'event'     => 'field_deleted',
+            'causer_id' => $admin->id,
+        ]);
     }
 }

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CustomField extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'category_id', 'key', 'label_en', 'label_bg',
         'type', 'options', 'is_required', 'is_visible', 'is_system', 'sort_order',

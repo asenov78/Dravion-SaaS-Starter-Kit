@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Facades\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\CustomCategory;
 use App\Models\CustomField;
@@ -56,7 +57,7 @@ class CustomDataController extends Controller
         $key = Str::snake(Str::lower($data['name_en']));
         $sort = (CustomCategory::where('entity', 'users')->max('sort_order') ?? 0) + 10;
 
-        CustomCategory::create([
+        $category = CustomCategory::create([
             'entity'     => 'users',
             'key'        => $key . '_' . uniqid(),
             'name_en'    => $data['name_en'],
@@ -64,6 +65,9 @@ class CustomDataController extends Controller
             'is_system'  => false,
             'sort_order' => $sort,
         ]);
+
+        ActivityLogger::log('custom_data', 'category_created',
+            "Created category {$category->name_en}", $category);
 
         return redirect()->route('admin.custom-data.index')
             ->with('success', __('flash.custom_category_created'));
@@ -82,6 +86,9 @@ class CustomDataController extends Controller
 
         $customCategory->update($data);
 
+        ActivityLogger::log('custom_data', 'category_updated',
+            "Updated category {$customCategory->name_en}", $customCategory);
+
         return redirect()->route('admin.custom-data.index')
             ->with('success', __('flash.custom_category_updated'));
     }
@@ -92,7 +99,11 @@ class CustomDataController extends Controller
             abort(403, 'System categories cannot be deleted.');
         }
 
+        $name = $customCategory->name_en;
         $customCategory->delete();
+
+        ActivityLogger::log('custom_data', 'category_deleted',
+            "Deleted category {$name}");
 
         return redirect()->route('admin.custom-data.index')
             ->with('success', __('flash.custom_category_deleted'));
@@ -127,7 +138,7 @@ class CustomDataController extends Controller
             $options = $this->parseMultilingualOptions($data['options_en'] ?? '', $data['options_bg'] ?? '');
         }
 
-        CustomField::create([
+        $field = CustomField::create([
             'category_id' => $data['category_id'],
             'key'         => $key,
             'label_en'    => $data['label_en'],
@@ -139,6 +150,9 @@ class CustomDataController extends Controller
             'is_system'   => false,
             'sort_order'  => $sort,
         ]);
+
+        ActivityLogger::log('custom_data', 'field_created',
+            "Created field {$field->label_en}", $field);
 
         return redirect()->route('admin.custom-data.index')
             ->with('success', __('flash.custom_field_created'));
@@ -168,6 +182,9 @@ class CustomDataController extends Controller
             'is_visible'  => $request->boolean('is_visible'),
         ]);
 
+        ActivityLogger::log('custom_data', 'field_updated',
+            "Updated field {$customField->label_en}", $customField);
+
         return redirect()->route('admin.custom-data.index')
             ->with('success', __('flash.custom_field_updated'));
     }
@@ -189,7 +206,11 @@ class CustomDataController extends Controller
             abort(403, 'System fields cannot be deleted.');
         }
 
+        $label = $customField->label_en;
         $customField->delete();
+
+        ActivityLogger::log('custom_data', 'field_deleted',
+            "Deleted field {$label}");
 
         return redirect()->route('admin.custom-data.index')
             ->with('success', __('flash.custom_field_deleted'));

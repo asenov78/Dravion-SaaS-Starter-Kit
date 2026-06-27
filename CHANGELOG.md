@@ -2,6 +2,16 @@
 
 All notable changes to Dravion SaaS Starter Kit.
 
+## [1.15.21] — 2026-06-27
+requires: 1.15.20
+
+### Added
+- Custom Data actions (create/update/delete category и field) логват в Activity Log (`log_name: custom_data`)
+- `activity_log_custom_data` setting в DefaultSettingsSeeder (default: enabled)
+- `CustomCategoryFactory` и `CustomFieldFactory` за тестове
+- `HasFactory` trait на `CustomCategory` и `CustomField` модели
+- 6 нови теста за activity logging в CustomDataTest
+
 ## [1.15.20] — 2026-06-25
 requires: 1.15.19
 

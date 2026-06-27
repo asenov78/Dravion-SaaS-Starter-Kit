@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CustomCategory extends Model
 {
+    use HasFactory;
     protected $fillable = ['entity', 'key', 'name_en', 'name_bg', 'is_system', 'sort_order'];
 
     protected function casts(): array
